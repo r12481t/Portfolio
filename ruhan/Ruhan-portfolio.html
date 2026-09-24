@@ -1,600 +1,94 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ruhan Tahlil Islam Britto — Taqen</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --ink:        #181410;
-      --cream:      #f5f0e8;
-      --sand:       #e0d5be;
-      --gold:       #b8922a;
-      --gold-light: #d4a84b;
-      --warm-grey:  #8a8278;
-      --rule:       rgba(184,146,42,0.28);
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background-color: var(--ink);
-      color: var(--cream);
-      font-family: 'Jost', sans-serif;
-      font-weight: 300;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
-
-    /* ── BACKGROUND: Arabesque diagonal star lattice — unique to Ruhan ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      opacity: 0.06;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cg fill='none' stroke='%23b8922a' stroke-width='0.7'%3E%3Cpolygon points='50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35'/%3E%3Cpolygon points='50,20 58,40 80,40 63,53 70,75 50,62 30,75 37,53 20,40 42,40'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 100px 100px;
-    }
-
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.1rem 1.8rem;
-      background: rgba(24,20,16,0.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--rule);
-    }
-    .nav-logo {
-      font-family: 'Cinzel', serif;
-      font-size: 0.95rem; letter-spacing: 0.28em;
-      color: var(--gold-light); text-decoration: none;
-    }
-    .nav-back {
-      font-size: 0.58rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--warm-grey);
-      text-decoration: none; transition: color 0.2s;
-    }
-    .nav-back:hover { color: var(--cream); }
-
-    /* ── HERO ── */
-    .hero {
-      position: relative; z-index: 1;
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 7rem 1.5rem 4rem;
-    }
-    .hero::after {
-      content: '';
-      position: absolute; inset: 0; z-index: -1;
-      background: radial-gradient(ellipse 70% 55% at 50% 45%, rgba(184,146,42,0.08) 0%, transparent 68%);
-    }
-
-    /* Photo circle */
-    .photo-wrap {
-      position: relative; margin-bottom: 2rem;
-      animation: fadeUp 0.9s ease both;
-    }
-    .photo-circle {
-      width: 150px; height: 150px;
-      border-radius: 50%;
-      border: 1px solid rgba(184,146,42,0.5);
-      overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(184,146,42,0.05);
-      position: relative;
-    }
-    .photo-circle img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-    }
-    .photo-circle .photo-placeholder {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      width: 100%; height: 100%;
-    }
-    .photo-circle .photo-placeholder svg { width: 65px; opacity: 0.3; }
-    .photo-ring-outer {
-      position: absolute; inset: -10px;
-      border-radius: 50%;
-      border: 1px solid var(--rule);
-      pointer-events: none;
-    }
-
-    .hero-eyebrow {
-      font-family: 'Cinzel', serif;
-      font-size: 0.58rem; letter-spacing: 0.42em;
-      text-transform: uppercase; color: var(--gold);
-      margin-bottom: 0.9rem;
-      animation: fadeUp 0.9s 0.1s ease both;
-    }
-    .hero-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 6vw, 4rem);
-      font-weight: 300; line-height: 1.1; color: var(--cream);
-      animation: fadeUp 0.9s 0.2s ease both;
-    }
-    .hero-name em { font-style: italic; color: var(--gold-light); }
-    .hero-rule {
-      width: 36px; height: 1px; background: var(--gold);
-      margin: 1.4rem auto;
-      animation: scaleIn 0.7s 0.35s ease both;
-    }
-    .hero-titles {
-      display: flex; gap: 0.6rem; align-items: center; justify-content: center;
-      flex-wrap: wrap; margin-bottom: 1rem;
-      animation: fadeUp 0.9s 0.42s ease both;
-    }
-    .hero-title-pill {
-      font-family: 'Cinzel', serif;
-      font-size: 0.55rem; letter-spacing: 0.24em;
-      text-transform: uppercase; color: var(--gold-light);
-      border: 1px solid var(--rule);
-      padding: 0.32rem 0.85rem;
-    }
-    .hero-tagline {
-      max-width: 340px; margin: 0 auto;
-      font-size: 0.88rem; color: var(--sand); opacity: 0.72;
-      font-style: italic; line-height: 1.6;
-      animation: fadeUp 0.9s 0.52s ease both;
-    }
-
-    /* ── LAYOUT ── */
-    main { position: relative; z-index: 1; }
-    .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
-    section { padding: 3.5rem 0; }
-
-    .divider {
-      display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem;
-    }
-    .divider::before, .divider::after {
-      content: ''; flex: 1; height: 1px; background: var(--rule);
-    }
-    .divider span { color: var(--gold); font-size: 0.46rem; letter-spacing: 0.5em; }
-
-    .label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.58rem; letter-spacing: 0.38em;
-      text-transform: uppercase; color: var(--gold); margin-bottom: 0.7rem;
-    }
-    .heading {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.7rem, 3.5vw, 2.6rem);
-      font-weight: 300; line-height: 1.15; color: var(--cream);
-      margin-bottom: 1.4rem;
-    }
-    .heading em { font-style: italic; color: var(--gold-light); }
-
-    /* ── TRAITS — inline dot-separated ── */
-    .traits-row {
-      display: flex; flex-wrap: wrap; gap: 0 0;
-      align-items: center; margin-bottom: 2.2rem;
-    }
-    .trait-word {
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--gold-light);
-      opacity: 0.85; padding: 0.15rem 0;
-    }
-    .trait-dot {
-      color: var(--gold); opacity: 0.4;
-      margin: 0 0.6rem; font-size: 0.4rem; line-height: 1;
-    }
-
-    /* ── FACTS STRIP — 2 column ── */
-    .facts-strip {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 1px; margin: 2rem 0;
-      border: 1px solid var(--rule);
-    }
-    .fact {
-      padding: 1.4rem 1.2rem; text-align: center;
-      border-right: 1px solid var(--rule);
-    }
-    .fact:last-child { border-right: none; }
-    .fact-val {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.2rem; font-weight: 300; color: var(--gold-light);
-      line-height: 1;
-    }
-    .fact-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.5rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--warm-grey); margin-top: 0.35rem;
-    }
-
-    /* ── PROSE ── */
-    .prose p {
-      font-size: 0.96rem; color: var(--sand);
-      opacity: 0.87; margin-bottom: 1.2rem; line-height: 1.85;
-    }
-    .prose p:last-child { margin-bottom: 0; }
-
-    /* ── PULL QUOTE ── */
-    .pull-quote {
-      border-left: 2px solid var(--gold);
-      padding: 1rem 1.5rem; margin: 2.2rem 0;
-      background: rgba(184,146,42,0.04);
-    }
-    .pull-quote p {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.1rem, 2.4vw, 1.45rem);
-      font-style: italic; color: var(--cream);
-      line-height: 1.5; margin: 0;
-    }
-    .pull-quote cite {
-      display: block; margin-top: 0.6rem;
-      font-size: 0.58rem; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--gold); opacity: 0.62;
-      font-style: normal;
-    }
-
-    /* ── ROLE MODELS — editorial list style ── */
-    .role-model {
-      padding: 1.5rem 0;
-      border-bottom: 1px solid var(--rule);
-      display: flex; gap: 1.4rem; align-items: flex-start;
-    }
-    .role-model:first-of-type { border-top: 1px solid var(--rule); }
-    .rm-number {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem; font-weight: 300;
-      color: var(--gold); opacity: 0.18;
-      line-height: 1; flex-shrink: 0; width: 2rem; text-align: right;
-    }
-    .rm-content { flex: 1; }
-    .rm-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem; color: var(--cream);
-      line-height: 1.2; margin-bottom: 0.22rem;
-    }
-    .rm-sub {
-      font-family: 'Cinzel', serif;
-      font-size: 0.5rem; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--gold); opacity: 0.62;
-      margin-bottom: 0.55rem;
-    }
-    .rm-note { font-size: 0.84rem; color: var(--sand); opacity: 0.75; line-height: 1.7; }
-
-    /* ── TAQEN BELIEFS ── */
-    .beliefs { margin: 1.8rem 0; }
-    .belief {
-      padding: 1.3rem 0;
-      border-bottom: 1px solid var(--rule);
-      display: grid; grid-template-columns: 1fr 2fr; gap: 1.2rem;
-      align-items: start;
-    }
-    .belief:first-of-type { border-top: 1px solid var(--rule); }
-    .belief-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.55rem; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--gold-light); opacity: 0.8;
-      padding-top: 0.2rem;
-    }
-    .belief-body { font-size: 0.87rem; color: var(--sand); opacity: 0.78; line-height: 1.72; }
-
-    /* ── FEATURED DESIGN ── */
-    .featured-design {
-      position: relative; overflow: hidden;
-      border: 1px solid var(--rule);
-      padding: 0; margin: 2rem 0;
-    }
-    .design-image-area {
-      width: 100%; height: 200px;
-      background: rgba(184,146,42,0.04);
-      display: flex; align-items: center; justify-content: center;
-      border-bottom: 1px solid var(--rule);
-      position: relative; overflow: hidden;
-    }
-    .design-image-area img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-    .design-image-area .design-placeholder {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 0.8rem; opacity: 0.3;
-    }
-    .design-image-area .design-placeholder svg { width: 70px; }
-    .design-image-area .design-placeholder span {
-      font-family: 'Cinzel', serif;
-      font-size: 0.52rem; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--gold);
-    }
-    .design-text { padding: 1.5rem 1.5rem; }
-    .design-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.52rem; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--gold); opacity: 0.65; margin-bottom: 0.35rem;
-    }
-    .design-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem; color: var(--cream); margin-bottom: 0.6rem;
-    }
-    .design-body { font-size: 0.85rem; color: var(--sand); opacity: 0.75; line-height: 1.72; }
-
-    /* ── CLOSING ── */
-    .closing {
-      text-align: center; padding: 3.5rem 0 6rem;
-    }
-
-    /* Taqwa word — clearly labelled */
-    .taqwa-block {
-      display: inline-flex; flex-direction: column;
-      align-items: center; gap: 0.4rem;
-      margin-bottom: 2.5rem;
-    }
-    .taqwa-arabic {
-      font-size: 2.6rem; color: var(--gold); opacity: 0.5; line-height: 1;
-    }
-    .taqwa-meaning {
-      font-family: 'Cinzel', serif;
-      font-size: 0.52rem; letter-spacing: 0.3em;
-      text-transform: uppercase; color: var(--gold); opacity: 0.45;
-    }
-
-    /* Separator before ayah */
-    .closing-sep {
-      width: 1px; height: 40px;
-      background: linear-gradient(to bottom, var(--rule), transparent);
-      margin: 0 auto 2rem;
-    }
-
-    .closing-quote {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.15rem, 2.4vw, 1.65rem);
-      font-style: italic; color: var(--cream);
-      max-width: 540px; margin: 0 auto 0.8rem; line-height: 1.5;
-    }
-    .closing-attr {
-      font-size: 0.58rem; letter-spacing: 0.26em;
-      text-transform: uppercase; color: var(--gold); opacity: 0.55;
-      margin-bottom: 3rem;
-    }
-    .back-btn {
-      display: inline-block;
-      padding: 0.8rem 2.2rem;
-      border: 1px solid var(--rule);
-      font-family: 'Cinzel', serif;
-      font-size: 0.58rem; letter-spacing: 0.26em;
-      text-transform: uppercase; color: var(--warm-grey);
-      text-decoration: none; transition: all 0.3s;
-    }
-    .back-btn:hover { border-color: var(--gold); color: var(--gold-light); }
-
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--rule);
-      padding: 1.8rem 1.5rem; text-align: center;
-      position: relative; z-index: 1;
-    }
-    .footer-logo { font-family: 'Cinzel', serif; font-size: 0.78rem; letter-spacing: 0.22em; color: var(--gold-light); }
-    .footer-copy { font-size: 0.56rem; color: var(--warm-grey); margin-top: 0.4rem; }
-
-    /* ── KEYFRAMES ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes scaleIn {
-      from { transform: scaleX(0); }
-      to   { transform: scaleX(1); }
-    }
-
-    @media (max-width: 500px) {
-      .belief { grid-template-columns: 1fr; gap: 0.4rem; }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#05070d" />
+<meta name="description" content="Ruhan Tahlil Islam Britto — front-end web developer portfolio, a 3D desk scene at night." />
+<title>Ruhan Tahlil Islam Britto — Front-End Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="ruhan.css" />
 </head>
 <body>
 
-  <nav>
-    <a href="https://taqenscollection.netlify.app/" class="nav-logo">TAQEN</a>
-    <a href="about.html" class="nav-back">← Back to About</a>
-  </nav>
+  <a class="skip-link" href="#hero">Skip to content</a>
+  <canvas id="scene-canvas" aria-hidden="true"></canvas>
+  <div id="fallback-bg" aria-hidden="true"></div>
 
-  <!-- HERO -->
-  <header class="hero">
-    <div class="photo-wrap">
-      <div class="photo-circle">
-        <!-- PHOTO: swap by replacing images/ruhan-photo.jpg in your images/ folder -->
-        <img src="images/ruhan-photo.jpg" alt="Ruhan Tahlil Islam Britto">
-      </div>
-      <div class="photo-ring-outer"></div>
-    </div>
-
-    <p class="hero-eyebrow">Co-Founder · Taqen</p>
-    <h1 class="hero-name">Ruhan Tahlil<br><em>Islam Britto</em></h1>
-    <div class="hero-rule"></div>
-    <div class="hero-titles">
-      <span class="hero-title-pill">Co-Founder</span>
-      <span class="hero-title-pill">CEO</span>
-      <span class="hero-title-pill">Creative Director</span>
-    </div>
-    <p class="hero-tagline">"I think things others don't bother to think. Then I build them."</p>
+  <header class="site-header">
+    <a class="brand" id="brand-name" href="#hero">Loading…</a>
+    <nav class="site-nav" aria-label="Section links">
+      <a href="#projects" class="nav-primary">Projects</a>
+      <a href="#contact" class="nav-primary">Contact</a>
+      <button id="skip3d-btn" type="button" aria-pressed="false">Skip 3D</button>
+    </nav>
   </header>
 
-  <main>
-    <div class="container">
+  <main id="main">
 
-      <!-- WHO HE IS -->
-      <section>
-        <div class="divider"><span>◆ ◆ ◆</span></div>
-        <p class="label">Who He Is</p>
-        <h2 class="heading">Innovative. Restless.<br><em>Quietly Loud.</em></h2>
-
-        <!-- Traits: inline dot-separated, not boxy pills -->
-        <div class="traits-row">
-          <span class="trait-word">Innovative</span>
-          <span class="trait-dot">◆</span>
-          <span class="trait-word">Ambivert</span>
-          <span class="trait-dot">◆</span>
-          <span class="trait-word">Night Owl</span>
-          <span class="trait-dot">◆</span>
-          <span class="trait-word">Builder</span>
-          <span class="trait-dot">◆</span>
-          <span class="trait-word">Learner</span>
-          <span class="trait-dot">◆</span>
-          <span class="trait-word">Procrastinator</span>
+    <section id="hero" class="stop" tabindex="-1">
+      <div class="panel">
+        <h1 class="hero-name" id="hero-name"></h1>
+        <p class="hero-title" id="hero-title"></p>
+        <p class="hero-line" id="hero-line"></p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#projects">See projects</a>
+          <a class="btn" href="#contact">Get in touch</a>
         </div>
+      </div>
+    </section>
 
-        <div class="prose">
-          <p>Ruhan is 17 years old, from Rangpur — a divisional city in northern Bangladesh that doesn't appear in many startup stories. He is, by his own honest admission, a contradiction: innovative and easily distracted, introverted in presence but reportedly louder in person than anyone would expect. He figures things out on his own. He thinks differently from the people around him.</p>
-          <p>He enjoys learning for the sake of it — science and Islam, in particular, have shaped how he sees the world. Not as separate disciplines, but as part of the same search for truth. He builds between study sessions, from a phone, carrying the weight of an idea that his family doesn't even know about yet.</p>
-        </div>
+    <section id="about" class="stop">
+      <div class="panel">
+        <span class="tag-label">about</span>
+        <h2>About</h2>
+        <p id="about-text"></p>
+      </div>
+    </section>
 
-        <!-- 2 clean facts, no broken grid -->
-        <div class="facts-strip">
-          <div class="fact">
-            <div class="fact-val">17</div>
-            <div class="fact-label">Years Old</div>
-          </div>
-          <div class="fact">
-            <div class="fact-val">Rangpur</div>
-            <div class="fact-label">Bangladesh</div>
-          </div>
-        </div>
-      </section>
+    <section id="skills" class="stop">
+      <div class="panel">
+        <span class="tag-label">skills</span>
+        <h2>Skills</h2>
+        <ul class="skills-list" id="skills-list"></ul>
+      </div>
+    </section>
 
-      <!-- FAITH -->
-      <section>
-        <div class="divider"><span>◆ ◆ ◆</span></div>
-        <p class="label">Faith &amp; Character</p>
-        <h2 class="heading">Tangled in <em>Faith.</em><br>Honest About It.</h2>
+    <section id="projects" class="stop">
+      <div class="panel">
+        <span class="tag-label">projects</span>
+        <h2>Projects</h2>
+        <div class="projects-list" id="projects-list"></div>
+      </div>
+    </section>
 
-        <div class="prose">
-          <p>Ruhan's relationship with Islam is personal — not performative, not surface-level, but also not without its tensions. He describes himself as quite tangled in it. That honesty is rare. Faith, for him, is not a fixed destination but something lived, wrestled with, and genuinely believed.</p>
-          <p>He hates injustice, wasted potential, and people who dismiss ideas before they've tried them. He overthinks. He struggles to ask for help. He goes quiet when stressed, then retreats into something creative. These aren't flaws he hides — he names them directly, which is its own form of character.</p>
-        </div>
+    <section id="contact" class="stop">
+      <div class="panel">
+        <span class="tag-label">contact</span>
+        <h2>Contact</h2>
+        <ul class="contact-list" id="contact-list"></ul>
+      </div>
+    </section>
 
-        <div class="pull-quote">
-          <p>"Indeed, Allah will not change the condition of a people until they change what is in themselves."</p>
-          <cite>Surah Ar-Ra'd 13:11 · Ruhan's Guiding Ayah</cite>
-        </div>
-
-        <p class="label" style="margin-top: 2rem; margin-bottom: 1rem;">Role Models</p>
-
-        <!-- Editorial list — no heavy boxes -->
-        <div class="role-model">
-          <div class="rm-number">1</div>
-          <div class="rm-content">
-            <div class="rm-name">The Prophet ﷺ</div>
-            <div class="rm-sub">Ultimate Example</div>
-            <p class="rm-note">As with every sincere Muslim, the Prophet ﷺ comes first — not as an abstract ideal, but as a living proof that character, patience, and purpose can change the world.</p>
-          </div>
-        </div>
-
-        <div class="role-model">
-          <div class="rm-number">2</div>
-          <div class="rm-content">
-            <div class="rm-name">Umar ibn Al-Khattab ؓ</div>
-            <div class="rm-sub">Second Caliph · Justice &amp; Decisiveness</div>
-            <p class="rm-note">Known for his fierce commitment to justice, his directness, and his willingness to hold himself to the same standards he held others — a model for anyone who leads.</p>
-          </div>
-        </div>
-
-        <div class="role-model">
-          <div class="rm-number">3</div>
-          <div class="rm-content">
-            <div class="rm-name">Uthman ibn Affan ؓ</div>
-            <div class="rm-sub">Third Caliph · Generosity &amp; Quiet Strength</div>
-            <p class="rm-note">A man of extraordinary generosity and patience who showed that strength doesn't always announce itself — sometimes it simply endures.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAQEN -->
-      <section>
-        <div class="divider"><span>◆ ◆ ◆</span></div>
-        <p class="label">His Vision for Taqen</p>
-        <h2 class="heading">Not Just a Brand.<br><em>A Reminder.</em></h2>
-
-        <div class="prose">
-          <p>Taqen came to Ruhan in early Ramadan 2026 — and the name itself reveals the intention. <em>Taqen</em> is derived from <em>taqwa</em>: God-consciousness, the quiet discipline of a life lived with purpose. He didn't just pick a name — he embedded a value into the brand's identity before it had a single product.</p>
-          <p>What he saw missing in Islamic fashion wasn't just better design — it was depth. He wanted clothing and art that taught something. That made the person wearing it curious about Islamic history, connected to its legacy, and proud of what it represents.</p>
-        </div>
-
-        <div class="beliefs">
-          <div class="belief">
-            <div class="belief-title">What Drives Him</div>
-            <p class="belief-body">Financial freedom — not as an end in itself, but as the foundation that lets him keep building without compromise.</p>
-          </div>
-          <div class="belief">
-            <div class="belief-title">What He'll Never Do</div>
-            <p class="belief-body">Immoral or deceptive acts — regardless of how profitable they might be. The line is clear and it doesn't move.</p>
-          </div>
-          <div class="belief">
-            <div class="belief-title">The 3-Year Vision</div>
-            <p class="belief-body">A moderately sized, globally recognised brand doing 100–300 sales a month — built honestly, from Rangpur.</p>
-          </div>
-          <div class="belief">
-            <div class="belief-title">The Deeper Hope</div>
-            <p class="belief-body">To one day use Taqen's success to support the helpless. The business is the vehicle. The cause is the destination.</p>
-          </div>
-        </div>
-
-        <p class="label" style="margin-top: 2.5rem; margin-bottom: 0.8rem;">Favourite Design</p>
-        <div class="featured-design">
-          <div class="design-image-area">
-            <!-- DESIGN IMAGE: swap by replacing images/nights-journey.png in your images/ folder -->
-            <img src="images/nights-journey.png" alt="The Night's Journey — Taqen Design">
-          </div>
-          <div class="design-text">
-            <div class="design-label">Personal Favourite · Taqen Collection</div>
-            <div class="design-name">The Night's Journey</div>
-            <p class="design-body">Al-Isra' wal-Mi'raj — the miraculous night journey of the Prophet ﷺ from Makkah to Jerusalem and then through the heavens. A story that begins in darkness and ends beyond the sky. It is, in a way, the spirit of Taqen itself.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- HOW HE THINKS -->
-      <section>
-        <div class="divider"><span>◆ ◆ ◆</span></div>
-        <p class="label">How He Thinks</p>
-        <h2 class="heading">Process of a <em>Builder</em></h2>
-
-        <div class="prose">
-          <p>Ruhan's design process starts not with software, but with sitting down and thinking. He searches for a concept — something from the Rashidun Caliphate or the Ottoman era, the two periods of Islamic history he is most drawn to. He researches it. He lets it settle. Then he builds digitally, conceptually, from the inside out.</p>
-          <p>His aesthetic inspirations are nature and calligraphy. His palette begins with black and white. He doesn't sketch — he conceptualises. The result is clothing and art that carry real intellectual weight, because they began with real intellectual effort.</p>
-          <p>Being 17 and building from a phone with no PC is sometimes a drawback — he knows it. But he also knows something a lot of older founders don't: he has time. Being young isn't a disadvantage. It's compounding interest on every lesson learned now.</p>
-        </div>
-
-        <div class="pull-quote">
-          <p>"Go wild. Take chances. You have time to grow — that is the blessing of starting young."</p>
-          <cite>What Ruhan Would Tell His 15-Year-Old Self</cite>
-        </div>
-      </section>
-
-      <!-- CLOSING -->
-      <section class="closing">
-        <div class="divider"><span>◆ ◆ ◆</span></div>
-
-        <!-- Taqwa word — clearly labelled as a word, not an ayah -->
-        <div class="taqwa-block">
-          <div class="taqwa-arabic">التقوى</div>
-          <div class="taqwa-meaning">Taqwa · God-Consciousness · The Root of Taqen</div>
-        </div>
-
-        <!-- Visual separator before the separate ayah -->
-        <div class="closing-sep"></div>
-
-        <p class="closing-quote">"There is ease after hardship. He believes this. He is living it."</p>
-        <p class="closing-attr">Surah Ash-Sharh 94:6 · The Belief Ruhan Carries</p>
-
-        <a href="about.html" class="back-btn">← Meet the Full Team</a>
-      </section>
-
-    </div>
   </main>
 
-  <footer>
-    <div class="footer-logo">TAQEN</div>
-    <div class="footer-copy">© Taqen · All rights reserved</div>
-  </footer>
+  <footer>Built by Ruhan — HTML, CSS, JavaScript, Three.js &amp; GSAP.</footer>
 
+  <p id="a11y-status" class="sr-only" role="status" aria-live="polite"></p>
+
+  <noscript>
+    <p style="padding:6rem 1.5rem;color:#eef1fb;font-family:sans-serif;position:relative;z-index:2;">
+      This portfolio needs JavaScript to show its content. Please enable JavaScript and reload.
+    </p>
+  </noscript>
+
+  <!
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" onerror="window.__portfolioLibFail=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" onerror="window.__portfolioLibFail=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" onerror="window.__portfolioLibFail=true"></script>
+
+<script src="ruhan.js"></script>
 </body>
 </html>
