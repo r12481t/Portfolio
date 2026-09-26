@@ -1,94 +1,116 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#05070d" />
-<meta name="description" content="Ruhan Tahlil Islam Britto — front-end web developer portfolio, a 3D desk scene at night." />
-<title>Ruhan Tahlil Islam Britto — Front-End Developer</title>
+<title>Ruhan Tahlil Islam Britto | Front-End Developer</title>
+<meta name="description" content="Ruhan Tahlil Islam Britto, front-end web developer based in Rangpur, Bangladesh." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%99%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="ruhan.css" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <a class="skip-link" href="#hero">Skip to content</a>
-  <canvas id="scene-canvas" aria-hidden="true"></canvas>
-  <div id="fallback-bg" aria-hidden="true"></div>
+<a href="#main" class="skip-link">Skip to content</a>
 
-  <header class="site-header">
-    <a class="brand" id="brand-name" href="#hero">Loading…</a>
-    <nav class="site-nav" aria-label="Section links">
-      <a href="#projects" class="nav-primary">Projects</a>
-      <a href="#contact" class="nav-primary">Contact</a>
-      <button id="skip3d-btn" type="button" aria-pressed="false">Skip 3D</button>
-    </nav>
-  </header>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="scene-fallback" aria-hidden="true"></div>
 
-  <main id="main">
+<nav aria-label="Primary">
+  <a href="#hero" class="brand">Ruhan</a>
+  <div class="nav-links">
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
 
-    <section id="hero" class="stop" tabindex="-1">
-      <div class="panel">
-        <h1 class="hero-name" id="hero-name"></h1>
-        <p class="hero-title" id="hero-title"></p>
-        <p class="hero-line" id="hero-line"></p>
-        <div class="hero-actions">
-          <a class="btn primary" href="#projects">See projects</a>
-          <a class="btn" href="#contact">Get in touch</a>
+<header id="hero" class="hero">
+  <div class="hero-copy">
+    <h1>Ruhan Tahlil Islam Britto</h1>
+    <p class="role">Front-end developer. Rangpur, Bangladesh.</p>
+    <p class="hero-body">I taught myself to code, mostly from my phone, mostly at night. Right now I take on freelance work through Fiverr, and I'm looking for more.</p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn btn-primary">See projects</a>
+      <a href="mailto:ruhantahlil25@gmail.com" class="btn btn-ghost">Get in touch</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section id="about">
+    <div class="section-inner">
+      <h2>About</h2>
+      <p class="lede">
+        17, from Rangpur. Self-taught. I started coding because I like the feeling of creating something and watching it work.
+      </p>
+      <p class="lede">
+        I even tried building a clothing brand once, with a couple of friends (TAQEN Collection). Didn't succeed. Not enough resources.
+      </p>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-inner">
+      <h2>Skills</h2>
+      <p class="lede">What I actually use, nothing padded out.</p>
+      <div class="skill-groups">
+        <div class="skill-group">
+          <h3>Building with</h3>
+          <ul>
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>Git &amp; GitHub</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Learning</h3>
+          <ul>
+            <li>JavaScript</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Also picked up</h3>
+          <ul>
+            <li>Landing page design (Fiverr)</li>
+            <li>E-commerce operations</li>
+          </ul>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="about" class="stop">
-      <div class="panel">
-        <span class="tag-label">about</span>
-        <h2>About</h2>
-        <p id="about-text"></p>
+  <section id="projects">
+    <div class="section-inner">
+      <h2>Projects</h2>
+
+      <div class="project">
+        <h3>TAQEN Collection</h3>
+        <p>A clothing brand I started with friends. I built and ran the storefront for about a year, with no big budget and no team beyond us. It never got real traction, so we shut it down in 2026. Still the closest thing I've had to running a real product.</p>
       </div>
-    </section>
 
-    <section id="skills" class="stop">
-      <div class="panel">
-        <span class="tag-label">skills</span>
-        <h2>Skills</h2>
-        <ul class="skills-list" id="skills-list"></ul>
+      <!-- TODO(Ruhan): replace this placeholder with your next real project — name, one-line description, and a link. -->
+      <div class="project empty">
+        <h3>More to come</h3>
+        <p>This space is for the next thing I ship.</p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="projects" class="stop">
-      <div class="panel">
-        <span class="tag-label">projects</span>
-        <h2>Projects</h2>
-        <div class="projects-list" id="projects-list"></div>
-      </div>
-    </section>
+  <section id="contact">
+    <div class="section-inner">
+      <h2>Contact</h2>
+      <p class="lede">Want to work together, or just say hello?</p>
+      <a class="contact-email" href="mailto:ruhantahlil25@gmail.com">ruhantahlil25@gmail.com</a>
+    </div>
+  </section>
+</main>
 
-    <section id="contact" class="stop">
-      <div class="panel">
-        <span class="tag-label">contact</span>
-        <h2>Contact</h2>
-        <ul class="contact-list" id="contact-list"></ul>
-      </div>
-    </section>
+<footer>
+  <p class="mono">Built at night, mostly. HTML, CSS, JavaScript, Three.js.</p>
+</footer>
 
-  </main>
-
-  <footer>Built by Ruhan — HTML, CSS, JavaScript, Three.js &amp; GSAP.</footer>
-
-  <p id="a11y-status" class="sr-only" role="status" aria-live="polite"></p>
-
-  <noscript>
-    <p style="padding:6rem 1.5rem;color:#eef1fb;font-family:sans-serif;position:relative;z-index:2;">
-      This portfolio needs JavaScript to show its content. Please enable JavaScript and reload.
-    </p>
-  </noscript>
-
-  <!
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" onerror="window.__portfolioLibFail=true"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" onerror="window.__portfolioLibFail=true"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" onerror="window.__portfolioLibFail=true"></script>
-
-<script src="ruhan.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>
