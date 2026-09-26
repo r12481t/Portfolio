@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Classly — a portfolio concept for language-center admin software: registration, class tracking, and analytics in one place. Interactive demo, no account needed.">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMUUzODVEIi8+PHBhdGggZD0iTTUwIDMwIEMzNiAzMCAyNiA0MCAyNiA1MiBDMjYgNjIgMzQgNzAgNDYgNzEuOCBDNDggNzIuMiA0OSA3MC4zIDQ3LjIgNjkuMiBDMzkgNjQuNCAzNCA1OC41IDM0IDUyIEMzNCA0My4yIDQxLjIgMzYgNTAgMzYgWiIgZmlsbD0iI0Y3NUI2OSIvPjxwYXRoIGQ9Ik01MCAzMCBDNjQgMzAgNzQgNDAgNzQgNTIgQzc0IDYyIDY2IDcwIDU0IDcxLjggQzUyIDcyLjIgNTEgNzAuMyA1Mi44IDY5LjIgQzYxIDY0LjQgNjYgNTguNSA2NiA1MiBDNjYgNDMuMiA1OC44IDM2IDUwIDM2IFoiIGZpbGw9IiNGRUZFRkUiIGZpbGwtb3BhY2l0eT0iMC45NCIvPjwvc3ZnPg==">
+<title>Classly — Portal</title>
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/classly-styles.css">
+</head>
+</head>
+<body>
+<div id="login-view">
+  <div class="login-brand">
+    <img class="brand-logo" id="primary-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMUUzODVEIi8+PHBhdGggZD0iTTUwIDMwIEMzNiAzMCAyNiA0MCAyNiA1MiBDMjYgNjIgMzQgNzAgNDYgNzEuOCBDNDggNzIuMiA0OSA3MC4zIDQ3LjIgNjkuMiBDMzkgNjQuNCAzNCA1OC41IDM0IDUyIEMzNCA0My4yIDQxLjIgMzYgNTAgMzYgWiIgZmlsbD0iI0Y3NUI2OSIvPjxwYXRoIGQ9Ik01MCAzMCBDNjQgMzAgNzQgNDAgNzQgNTIgQzc0IDYyIDY2IDcwIDU0IDcxLjggQzUyIDcyLjIgNTEgNzAuMyA1Mi44IDY5LjIgQzYxIDY0LjQgNjYgNTguNSA2NiA1MiBDNjYgNDMuMiA1OC44IDM2IDUwIDM2IFoiIGZpbGw9IiNGRUZFRkUiIGZpbGwtb3BhY2l0eT0iMC45NCIvPjwvc3ZnPg==" alt="Classly logo">
+    <h1 class="brand-name">Classly</h1>
+    <p class="brand-tagline">Run your language center, simply.</p>
+    <p class="brand-sub">Sign in to manage registrations, classes, and analytics.</p>
+  </div>
+
+  <div class="login-panel">
+    <div class="login-card">
+      <h2>Sign in</h2>
+      <p class="lede">Enter your ID and password to continue.</p>
+
+      <form id="login-form" novalidate>
+        <div class="field" id="field-id">
+          <label for="input-id">ID or email</label>
+          <input type="text" id="input-id" name="id" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="e.g. rima@classly.test" aria-describedby="err-id">
+          <div class="field-error" id="err-id">Enter your ID or email.</div>
+        </div>
+
+        <div class="field" id="field-password">
+          <label for="input-password">Password</label>
+          <div class="field-input-wrap">
+            <input type="password" id="input-password" name="password" autocomplete="current-password" aria-describedby="err-password">
+            <button type="button" class="toggle-visibility" id="toggle-password" aria-label="Show password">
+              <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+            </button>
+          </div>
+          <div class="field-error" id="err-password">Enter your password.</div>
+        </div>
+
+        <div class="alert alert-danger" id="login-error" role="alert" hidden>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v5.5M12 16.5v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <div class="alert-body"><strong>ID or password is incorrect.</strong><span>Check both and try again.</span></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="login-submit">
+          <span class="spinner"></span>
+          <span class="btn-label">Sign in</span>
+        </button>
+      </form>
+
+      <details class="demo-accounts" open>
+        <summary>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Try it as…
+        </summary>
+        <p class="demo-note">A portfolio piece — pick any account below to explore. Nothing here is a real product or sends data anywhere; whatever you do is saved only in this browser, so it's still there next time you open the page.</p>
+        <div id="demo-list"></div>
+        <button type="button" class="demo-reset-link" id="demo-reset-login">Reset demo data</button>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     APP SHELL
+     Nav items are rendered per role from NAV_CONFIG in the script
+     below. Sidebar on desktop, bottom bar (+ "More" sheet) on mobile.
+     ================================================================ -->
+<div id="app-shell">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <nav class="sidebar" aria-label="Main">
+    <div class="sidebar-brand">
+      <img class="js-logo" alt="">
+      <span>Classly</span>
+    </div>
+    <ul class="nav-list" id="sidebar-nav"></ul>
+    <div class="sidebar-foot">
+      <div class="user-chip">
+        <div class="user-avatar" id="sidebar-avatar"></div>
+        <div class="user-meta">
+          <div class="user-name" id="sidebar-username"></div>
+          <span class="role-pill" id="sidebar-role"></span>
+        </div>
+      </div>
+      <button class="logout-btn" id="logout-btn-desktop">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 17l5-5-5-5M20 12H9M12 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Log out
+      </button>
+      <button class="reset-demo-btn" id="reset-demo-desktop" type="button">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 1 3 6.7M3 12v6m0-6h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Reset demo data
+      </button>
+      <p class="demo-footnote">Portfolio demo — nothing leaves your browser.</p>
+    </div>
+  </nav>
+
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-title" id="topbar-title" aria-hidden="true">Home</div>
+      <div class="topbar-brand-mobile">
+        <img class="js-logo" alt="">
+        <span>Classly</span>
+      </div>
+      <div class="topbar-right">
+        <button type="button" class="avatar-btn" id="topbar-avatar-btn" aria-label="Account menu">
+          <div class="user-avatar" id="topbar-avatar"></div>
+        </button>
+      </div>
+    </header>
+
+    <main class="content" id="main-content" tabindex="-1">
+
+      <section class="section" data-section="home">
+        <div class="greeting-card">
+          <h1 id="home-greeting">Welcome back</h1>
+          <p id="home-date"></p>
+          <span class="greeting-role" id="home-role-pill"></span>
+        </div>
+        <section class="card home-attn" aria-labelledby="home-h-attn">
+          <div class="card-head"><h2 id="home-h-attn">Needs your attention</h2></div>
+          <ul class="attn-list" id="home-attn-list"></ul>
+        </section>
+        <div class="quick-grid" id="home-quick-grid"></div>
+      </section>
+
+      <section class="section" data-section="registration">
+        <div class="page-head">
+          <h1>Course Registration</h1>
+        </div>
+
+        <div class="alert alert-success" id="reg-success" role="status" hidden>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="alert-body">
+            <strong id="reg-success-title"></strong>
+            <span id="reg-success-detail"></span>
+          </div>
+          <button type="button" class="alert-close" id="reg-success-close" aria-label="Dismiss message">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <!-- PHASE 2 TODO: on submit, POST /api/registrations. The server must take "registered by"
+             from the authenticated session (never from the client) so referral credit can't be spoofed. -->
+        <form id="reg-form" novalidate autocomplete="off">
+          <div class="alert alert-danger" id="reg-error" role="alert" tabindex="-1" hidden>
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v5.5M12 16.5v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <div class="alert-body">
+              <strong id="reg-error-title"></strong>
+              <span class="err-hint" id="reg-error-hint">Tap an item to jump to it.</span>
+              <ul class="err-list" id="reg-error-list"></ul>
+            </div>
+          </div>
+
+          <div class="reg-layout">
+            <div class="reg-main">
+
+              <section class="card" aria-labelledby="reg-h-student">
+                <div class="card-head"><span class="card-step">1</span><h2 id="reg-h-student">Student details</h2></div>
+                <div class="form-grid">
+                  <div class="field span-2" id="f-name">
+                    <label for="reg-name">Student's full name<span class="req" aria-hidden="true">*</span></label>
+                    <input type="text" id="reg-name" required placeholder="e.g. Tanvir Ahmed">
+                    <div class="field-error"></div>
+                  </div>
+                  <div class="field" id="f-father">
+                    <label for="reg-father">Father's name<span class="req" aria-hidden="true">*</span></label>
+                    <input type="text" id="reg-father" required>
+                    <div class="field-error"></div>
+                  </div>
+                  <div class="field" id="f-mother">
+                    <label for="reg-mother">Mother's name<span class="req" aria-hidden="true">*</span></label>
+                    <input type="text" id="reg-mother" required>
+                    <div class="field-error"></div>
+                  </div>
+                  <div class="field" id="f-mobile">
+                    <label for="reg-mobile">Mobile number<span class="req" aria-hidden="true">*</span></label>
+                    <input type="tel" inputmode="tel" id="reg-mobile" required placeholder="01XXXXXXXXX">
+                    <div class="field-error"></div>
+                  </div>
+                  <div class="field" id="f-email">
+                    <label for="reg-email">Email address <span style="font-weight:500; color:var(--color-slate-soft)">(optional)</span></label>
+                    <input type="email" inputmode="email" id="reg-email" placeholder="name@example.com">
+                    <div class="field-error"></div>
+                  </div>
+
+                  <label class="check-row span-2">
+                    <input type="checkbox" id="reg-wa-diff" aria-controls="f-wa">
+                    <span>WhatsApp number is different from the mobile number</span>
+                  </label>
+                  <div class="field span-2 reveal" id="f-wa">
+                    <label for="reg-wa">WhatsApp number<span class="req" aria-hidden="true">*</span></label>
+                    <input type="tel" inputmode="tel" id="reg-wa" placeholder="01XXXXXXXXX">
+                    <div class="field-error"></div>
+                  </div>
+
+                  <div class="span-2 addr-wrap">
+                    <p class="group-label">Present address</p>
+                    <div class="form-grid" id="addr-present"></div>
+                  </div>
+
+                  <label class="check-row span-2">
+                    <input type="checkbox" id="reg-same-addr" checked aria-controls="addr-perm-wrap">
+                    <span>Permanent address is the same as present address</span>
+                  </label>
+                  <div class="span-2 addr-wrap reveal" id="addr-perm-wrap">
+                    <p class="group-label">Permanent address</p>
+                    <div class="form-grid" id="addr-perm"></div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="card" id="reg-courses-card" aria-labelledby="reg-h-courses">
+                <div class="card-head"><span class="card-step">2</span><h2 id="reg-h-courses">Courses</h2></div>
+                <div class="inline-alert" id="reg-course-error" role="alert" hidden>
+                  <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v5.5M12 16.5v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <span>No course chosen yet. Tick at least one course or package below.</span>
+                </div>
+                <p class="group-label" id="lbl-courses">Individual courses</p>
+                <div class="option-list" id="reg-course-list" role="group" aria-labelledby="lbl-courses"></div>
+                <p class="group-label" id="lbl-packages">Package deals</p>
+                <div class="option-list" id="reg-package-list" role="group" aria-labelledby="lbl-packages"></div>
+              </section>
+
+            </div>
+
+            <aside class="card reg-summary" id="reg-summary" aria-labelledby="reg-h-summary">
+              <div class="card-head"><span class="card-step">3</span><h2 id="reg-h-summary">Fees &amp; payment</h2></div>
+              <p class="sum-empty" id="sum-empty">Pick a course or package to see the fees.</p>
+              <ul class="sum-lines" id="sum-lines"></ul>
+
+              <div class="sum-totals">
+                <div class="sum-row total"><span>Total fees</span><strong id="sum-total">৳0</strong></div>
+
+                <div class="field" id="f-paid">
+                  <label for="reg-paid">Amount paid now</label>
+                  <div class="money-input">
+                    <span class="prefix" aria-hidden="true">৳</span>
+                    <input type="text" inputmode="numeric" id="reg-paid" placeholder="0">
+                  </div>
+                  <div class="field-error"></div>
+                  <div class="field-hint" id="paid-hint">Leave empty if nothing has been paid yet.</div>
+                </div>
+                <button type="button" class="link-btn" id="sum-pay-full" disabled>Mark as paid in full</button>
+
+                <div class="sum-row due" id="sum-due-row"><span>Due</span><strong id="sum-due">৳0</strong></div>
+                <div aria-live="polite"><span class="pill pill-muted" id="sum-status">No course selected</span></div>
+              </div>
+
+              <div class="by-chip">
+                <div class="user-avatar" id="by-avatar"></div>
+                <div>
+                  <div class="by-label">Registered by</div>
+                  <div class="by-name" id="by-name"></div>
+                  <div class="by-note">Referral credit goes to this account.</div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" id="reg-submit">
+                <span class="spinner"></span>
+                <span class="btn-label">Register student</span>
+              </button>
+            </aside>
+          </div>
+
+          <div class="mobile-total-bar is-off" id="reg-mobile-bar">
+            <div><span class="mtb-label">Total</span><strong id="mtb-total">৳0</strong></div>
+            <div><span class="mtb-label">Due</span><strong id="mtb-due">৳0</strong></div>
+            <button type="button" class="btn btn-primary" id="mtb-go">Review</button>
+          </div>
+        </form>
+
+        <section class="card recent" id="reg-recent" aria-labelledby="reg-h-recent" hidden>
+          <div class="card-head"><h2 id="reg-h-recent">Recent registrations</h2></div>
+          <ul class="recent-list" id="reg-recent-list"></ul>
+        </section>
+      </section>
+
+
+      <section class="section" data-section="classcounter">
+        <div class="page-head">
+          <h1>Class Counter</h1>
+        </div>
+
+        <div id="cc-root">
+          <div class="segmented" id="cc-tabs" role="tablist" aria-label="Class counter views" hidden>
+            <button type="button" role="tab" class="seg-btn" id="cc-tab-mine" aria-controls="cc-panel-mine" data-cc-tab="mine" aria-selected="true">My classes</button>
+            <button type="button" role="tab" class="seg-btn" id="cc-tab-queue" aria-controls="cc-panel-queue" data-cc-tab="queue" aria-selected="false">To confirm <span class="count-pill" id="cc-queue-count" hidden>0</span></button>
+            <button type="button" role="tab" class="seg-btn" id="cc-tab-all" aria-controls="cc-panel-all" data-cc-tab="all" aria-selected="false">All courses</button>
+          </div>
+
+          <div id="cc-panel-mine">
+            <div class="cc-day"><span class="group-label">Today</span><strong id="cc-today"></strong></div>
+            <div class="cc-grid" id="cc-mine-grid"></div>
+            <section class="card recent" id="cc-activity-card" aria-labelledby="cc-h-activity">
+              <div class="card-head"><h2 id="cc-h-activity">Your recent ticks</h2></div>
+              <ul class="recent-list" id="cc-activity-list"></ul>
+            </section>
+          </div>
+          <div id="cc-panel-queue" hidden></div>
+          <div id="cc-panel-all" hidden></div>
+        </div>
+      </section>
+
+      <section class="section" data-section="courses">
+        <div class="page-head">
+          <h1>Courses &amp; Pricing</h1>
+        </div>
+        <div id="cp-root"></div>
+      </section>
+
+      <section class="section" data-section="staffaccounts">
+        <div class="page-head">
+          <h1>Staff Accounts</h1>
+        </div>
+        <div id="sa-root"></div>
+      </section>
+
+      <section class="section" data-section="analytics">
+        <div class="page-head">
+          <h1 id="analytics-title">Analytics</h1>
+        </div>
+        <div id="an-root"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <nav class="bottom-nav" id="bottom-nav" aria-label="Main"></nav>
+  <div class="more-sheet-backdrop" id="more-sheet-backdrop">
+    <div class="more-sheet" id="more-sheet" role="dialog" aria-modal="true" aria-label="Account and more" tabindex="-1">
+      <div class="more-sheet-handle"></div>
+      <div class="sheet-account">
+        <div class="user-avatar" id="sheet-avatar"></div>
+        <div><strong id="sheet-name"></strong><span id="sheet-role"></span></div>
+      </div>
+      <ul class="nav-list" id="more-sheet-nav"></ul>
+      <button class="logout-btn" id="logout-btn-mobile">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M15 17l5-5-5-5M20 12H9M12 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Log out
+      </button>
+      <button class="reset-demo-btn" id="reset-demo-mobile" type="button">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 1 3 6.7M3 12v6m0-6h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Reset demo data
+      </button>
+      <p class="demo-footnote">Portfolio demo — nothing leaves your browser.</p>
+    </div>
+  </div>
+  <div class="drawer-backdrop" id="drawer-backdrop">
+    <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+      <div class="drawer-grip" aria-hidden="true"></div>
+      <div class="drawer-head">
+        <div>
+          <h2 id="drawer-title"></h2>
+          <p id="drawer-sub" hidden></p>
+        </div>
+        <button type="button" class="alert-close drawer-close" id="drawer-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="drawer-search" id="drawer-search-wrap" hidden>
+        <input type="search" id="drawer-search" placeholder="Search" autocomplete="off" aria-label="Search options">
+      </div>
+      <ul class="drawer-list" id="drawer-list" role="listbox"></ul>
+      <div class="drawer-foot" id="drawer-foot" hidden><button type="button" class="btn btn-primary" id="drawer-done">Done</button></div>
+    </div>
+  </div>
+  <div class="editor-backdrop" id="editor-backdrop">
+    <div class="editor" id="editor" role="dialog" aria-modal="true" aria-labelledby="editor-title" tabindex="-1">
+      <div class="editor-head">
+        <div>
+          <h2 id="editor-title"></h2>
+          <p id="editor-sub" hidden></p>
+        </div>
+        <button type="button" class="alert-close drawer-close" id="editor-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="editor-body-wrap" id="editor-body-wrap">
+        <div class="alert alert-danger editor-error" id="editor-error" role="alert" hidden></div>
+        <div class="editor-body" id="editor-body"></div>
+      </div>
+      <div class="editor-foot">
+        <button type="button" class="btn btn-ghost" id="editor-cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="editor-save"><span class="spinner"></span><span class="btn-label">Save</span></button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script src="js/classly-data.js"></script>
+<script src="js/classly-login.js"></script>
+<script src="js/classly-shell.js"></script>
+<script src="js/classly-home.js"></script>
+<script src="js/classly-registration.js"></script>
+<script src="js/classly-widgets.js"></script>
+<script src="js/classly-classcounter.js"></script>
+<script src="js/classly-analytics.js"></script>
+<script src="js/classly-courses.js"></script>
+<script src="js/classly-staffaccounts.js"></script>
+<script src="js/classly-main.js"></script>
+</body>
+</html>
