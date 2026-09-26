@@ -11,6 +11,7 @@ export function initScene() {
   const canvas = document.getElementById('scene');
   const isMobile = window.innerWidth < 780;
 
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
     renderer.setClearColor(0x0d0a08, 1);
     const pixelCap = isMobile ? 1.5 : 2;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelCap));
