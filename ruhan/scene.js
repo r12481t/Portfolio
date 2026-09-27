@@ -20,7 +20,7 @@ export function initScene() {
     renderer.setClearColor(0x14100c, 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.3;
     const pixelCap = isMobile ? 1.5 : 2;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelCap));
 
@@ -39,8 +39,8 @@ export function initScene() {
     window.addEventListener('resize', resize);
 
     // Brighter ambient/fill so the room reads clearly without losing the night mood
-    scene.add(new THREE.AmbientLight(0x2a3348, 1.0));
-    scene.add(new THREE.HemisphereLight(0x88a0c0, 0x1a140f, 0.45));
+    scene.add(new THREE.AmbientLight(0x323c52, 1.15));
+    scene.add(new THREE.HemisphereLight(0x8fb0d8, 0x1a140f, 0.55));
     const lampLight = new THREE.PointLight(0xffb066, 6, 6, 2);
     lampLight.position.set(-1.5, 1.1, 0.6);
     scene.add(lampLight);
@@ -109,12 +109,14 @@ export function initScene() {
       "",
     ];
     let codeScrollIndex = 0;
+    let cursorVisible = true;
 
     function drawCode() {
       codeCtx.fillStyle = '#0b1018';
       codeCtx.fillRect(0, 0, codeCanvas.width, codeCanvas.height);
       codeCtx.font = codeFont;
       codeCtx.textBaseline = 'top';
+      let cursorX = 10, cursorY = 10;
       for (let i = 0; i < linesPerScreen; i++) {
         const line = codeSource[(codeScrollIndex + i) % codeSource.length];
         const y = 10 + i * codeLineHeight;
@@ -125,6 +127,11 @@ export function initScene() {
           codeCtx.fillText(tok, x, y);
           x += codeCtx.measureText(tok).width;
         });
+        if (line.trim().length > 0) { cursorX = x + 2; cursorY = y; }
+      }
+      if (cursorVisible) {
+        codeCtx.fillStyle = codeFG;
+        codeCtx.fillRect(cursorX, cursorY + 1, 6, codeLineHeight - 4);
       }
       codeTexture.needsUpdate = true;
     }
@@ -158,6 +165,11 @@ export function initScene() {
     );
     monitorScreen.position.set(-0.4, 0.72, -0.31);
     scene.add(monitorScreen);
+
+    // Bounce light off the screen so it actually lights the desk below it
+    const screenGlow = new THREE.PointLight(0x6fa8ff, 1.3, 2.4, 2);
+    screenGlow.position.set(-0.4, 0.55, 0.05);
+    scene.add(screenGlow);
 
     const keyboard = new THREE.Mesh(
       new THREE.BoxGeometry(0.5, 0.02, 0.18),
@@ -194,6 +206,43 @@ export function initScene() {
     );
     cpuAccent.position.set(1.0, 0.3, -0.019);
     scene.add(cpuAccent);
+
+    /* ---------- Cable clutter ---------- */
+    const cableMat = new THREE.MeshStandardMaterial({ color: 0x0c0c0c, roughness: 0.85 });
+    function makeCable(p0, p1, p2, radius) {
+      const curve = new THREE.QuadraticBezierCurve3(
+        new THREE.Vector3(...p0), new THREE.Vector3(...p1), new THREE.Vector3(...p2)
+      );
+      const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, radius || 0.007, 6, false), cableMat);
+      scene.add(tube);
+      return tube;
+    }
+    // monitor power cable, sagging back to the tower
+    makeCable([-0.4, 0.075, -0.42], [0.3, 0.06, -0.55], [1.0, 0.12, -0.36]);
+    // tower cable dangling off the desk's back-right edge
+    makeCable([1.0, 0.06, -0.15], [1.15, -0.08, -0.05], [1.3, -0.32, 0.05], 0.008);
+    // keyboard cable running back to the monitor stand
+    makeCable([-0.55, 0.075, 0.16], [-0.5, 0.07, -0.05], [-0.42, 0.065, -0.3], 0.005);
+
+    const phoneBody = new THREE.Mesh(
+      new THREE.BoxGeometry(0.09, 0.006, 0.18),
+      new THREE.MeshStandardMaterial({ color: 0x0d0d0d, roughness: 0.4 })
+    );
+    phoneBody.position.set(0.12, 0.063, 0.35);
+    phoneBody.rotation.y = 0.3;
+    scene.add(phoneBody);
+
+    const phoneScreen = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.075, 0.155),
+      new THREE.MeshBasicMaterial({ color: 0x1a2f4a, transparent: true, opacity: 0.92 })
+    );
+    phoneScreen.rotation.set(-Math.PI / 2, 0, 0.3);
+    phoneScreen.position.set(0.12, 0.067, 0.35);
+    scene.add(phoneScreen);
+
+    const phoneGlow = new THREE.PointLight(0x5f8fd6, 0.5, 0.7, 2);
+    phoneGlow.position.set(0.12, 0.13, 0.35);
+    scene.add(phoneGlow);
 
     const mugBody = new THREE.Mesh(
       new THREE.CylinderGeometry(0.055, 0.05, 0.09, 24),
@@ -272,6 +321,37 @@ export function initScene() {
     windowFrame.position.set(1.5, 2.0, -2.22);
     scene.add(windowFrame);
 
+    /* ---------- Wall clock ---------- */
+    const clockGroup = new THREE.Group();
+    clockGroup.position.set(0.4, 2.3, -2.19);
+    scene.add(clockGroup);
+    clockGroup.add(new THREE.Mesh(
+      new THREE.CircleGeometry(0.16, 32),
+      new THREE.MeshStandardMaterial({ color: 0x18120d, roughness: 0.6 })
+    ));
+    const clockRim = new THREE.Mesh(
+      new THREE.RingGeometry(0.155, 0.175, 32),
+      new THREE.MeshStandardMaterial({ color: 0x3a2c1f, roughness: 0.5 })
+    );
+    clockRim.position.z = 0.001;
+    clockGroup.add(clockRim);
+    function makeClockHand(length, width) {
+      const hand = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, length),
+        new THREE.MeshBasicMaterial({ color: 0xd8c9a8 })
+      );
+      hand.position.set(0, length / 2, 0.002);
+      const pivot = new THREE.Group();
+      pivot.add(hand);
+      return pivot;
+    }
+    const hourHand = makeClockHand(0.08, 0.014);
+    hourHand.rotation.z = -(10 / 12) * Math.PI * 2;
+    clockGroup.add(hourHand);
+    const minuteHand = makeClockHand(0.12, 0.009);
+    minuteHand.rotation.z = -(42 / 60) * Math.PI * 2;
+    clockGroup.add(minuteHand);
+
     const cityLights = [];
     const cityCount = isMobile ? 10 : 18;
     for (let i = 0; i < cityCount; i++) {
@@ -297,16 +377,69 @@ export function initScene() {
     const stars = new THREE.Points(starGeo, starMat);
     scene.add(stars);
 
+    // Dust motes drifting through the lamp light, for atmosphere
+    const moteCount = isMobile ? 18 : 36;
+    const moteGeo = new THREE.BufferGeometry();
+    const motePos = new Float32Array(moteCount * 3);
+    for (let i = 0; i < moteCount; i++) {
+      motePos[i * 3] = -1.7 + Math.random() * 2.4;
+      motePos[i * 3 + 1] = 0.15 + Math.random() * 1.1;
+      motePos[i * 3 + 2] = -0.3 + Math.random() * 1.0;
+    }
+    moteGeo.setAttribute('position', new THREE.BufferAttribute(motePos, 3));
+    const moteMat = new THREE.PointsMaterial({ color: 0xffcf9e, size: 0.012, transparent: true, opacity: 0.5 });
+    const motes = new THREE.Points(moteGeo, moteMat);
+    scene.add(motes);
+
+    /* ---------- Vignette (screen-space overlay, always fills the frame) ---------- */
+    const vignetteCanvas = document.createElement('canvas');
+    vignetteCanvas.width = 512; vignetteCanvas.height = 512;
+    const vCtx = vignetteCanvas.getContext('2d');
+    const vGrad = vCtx.createRadialGradient(256, 256, 130, 256, 256, 360);
+    vGrad.addColorStop(0, 'rgba(0,0,0,0)');
+    vGrad.addColorStop(1, 'rgba(0,0,0,0.55)');
+    vCtx.fillStyle = vGrad;
+    vCtx.fillRect(0, 0, 512, 512);
+    const vignetteMat = new THREE.MeshBasicMaterial({
+      map: new THREE.CanvasTexture(vignetteCanvas),
+      transparent: true, depthTest: false, depthWrite: false,
+    });
+    const vignetteDist = 1;
+    const vignettePlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), vignetteMat);
+    vignettePlane.position.set(0, 0, -vignetteDist);
+    vignettePlane.renderOrder = 999;
+    camera.add(vignettePlane);
+    scene.add(camera);
+    function resizeVignette() {
+      const h = 2 * Math.tan((camera.fov * Math.PI / 180) / 2) * vignetteDist;
+      const w = h * camera.aspect;
+      vignettePlane.geometry.dispose();
+      vignettePlane.geometry = new THREE.PlaneGeometry(w, h);
+    }
+    resizeVignette();
+    window.addEventListener('resize', resizeVignette);
+
     const clock = new THREE.Clock();
     let codeTimer = 0;
+    let cursorTimer = 0;
+    let nextFlickerAt = 4 + Math.random() * 5;
+    let flickerEndAt = 0;
     let running = true;
     document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) loop(); });
 
     function loop() {
       if (!running) return;
-      const t = clock.getElapsedTime();
+      const dt = clock.getDelta();
+      const t = clock.elapsedTime;
 
-      lampLight.intensity = 6.6 + Math.sin(t * 3) * 0.4;
+      if (t > nextFlickerAt && t > flickerEndAt) {
+        flickerEndAt = t + 0.12 + Math.random() * 0.1;
+        nextFlickerAt = flickerEndAt + 5 + Math.random() * 7;
+      }
+      const flickerMul = t < flickerEndAt ? 0.3 + Math.random() * 0.4 : 1;
+      lampLight.intensity = (6.6 + Math.sin(t * 3) * 0.4) * flickerMul;
+      screenGlow.intensity = 1.2 + Math.sin(t * 5) * 0.1;
+      phoneGlow.intensity = 0.45 + Math.sin(t * 2.2) * 0.08;
       starMat.opacity = 0.65 + Math.sin(t * 0.6) * 0.15;
       cityLights.forEach((l, i) => { l.material.opacity = 0.5 + Math.sin(t * 0.8 + i) * 0.3; });
       steamWisps.forEach((w, i) => {
@@ -315,12 +448,28 @@ export function initScene() {
       });
       cpuAccent.material.opacity = 0.6 + Math.sin(t * 2.4) * 0.25;
 
-      codeTimer += clock.getDelta();
+      const motePositions = motes.geometry.attributes.position.array;
+      for (let i = 0; i < moteCount; i++) {
+        motePositions[i * 3 + 1] += dt * 0.03;
+        if (motePositions[i * 3 + 1] > 1.3) motePositions[i * 3 + 1] = 0.15;
+      }
+      motes.geometry.attributes.position.needsUpdate = true;
+      moteMat.opacity = 0.4 + Math.sin(t * 0.7) * 0.15;
+
+      let needsRedraw = false;
+      codeTimer += dt;
       if (codeTimer > 1.4) {
         codeTimer = 0;
         codeScrollIndex = (codeScrollIndex + 1) % codeSource.length;
-        drawCode();
+        needsRedraw = true;
       }
+      cursorTimer += dt;
+      if (cursorTimer > 0.5) {
+        cursorTimer = 0;
+        cursorVisible = !cursorVisible;
+        needsRedraw = true;
+      }
+      if (needsRedraw) drawCode();
 
       renderer.render(scene, camera);
       requestAnimationFrame(loop);
