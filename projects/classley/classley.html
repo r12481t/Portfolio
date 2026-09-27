@@ -14,6 +14,8 @@
 </head>
 </head>
 <body>
+
+
 <div id="login-view">
   <div class="login-brand">
     <img class="brand-logo" id="primary-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMUUzODVEIi8+PHBhdGggZD0iTTUwIDMwIEMzNiAzMCAyNiA0MCAyNiA1MiBDMjYgNjIgMzQgNzAgNDYgNzEuOCBDNDggNzIuMiA0OSA3MC4zIDQ3LjIgNjkuMiBDMzkgNjQuNCAzNCA1OC41IDM0IDUyIEMzNCA0My4yIDQxLjIgMzYgNTAgMzYgWiIgZmlsbD0iI0Y3NUI2OSIvPjxwYXRoIGQ9Ik01MCAzMCBDNjQgMzAgNzQgNDAgNzQgNTIgQzc0IDYyIDY2IDcwIDU0IDcxLjggQzUyIDcyLjIgNTEgNzAuMyA1Mi44IDY5LjIgQzYxIDY0LjQgNjYgNTguNSA2NiA1MiBDNjYgNDMuMiA1OC44IDM2IDUwIDM2IFoiIGZpbGw9IiNGRUZFRkUiIGZpbGwtb3BhY2l0eT0iMC45NCIvPjwvc3ZnPg==" alt="Classly logo">
@@ -69,11 +71,7 @@
   </div>
 </div>
 
-<!-- ================================================================
-     APP SHELL
-     Nav items are rendered per role from NAV_CONFIG in the script
-     below. Sidebar on desktop, bottom bar (+ "More" sheet) on mobile.
-     ================================================================ -->
+
 <div id="app-shell">
   <a class="skip-link" href="#main-content">Skip to content</a>
   <nav class="sidebar" aria-label="Main">
@@ -147,8 +145,7 @@
           </button>
         </div>
 
-        <!-- PHASE 2 TODO: on submit, POST /api/registrations. The server must take "registered by"
-             from the authenticated session (never from the client) so referral credit can't be spoofed. -->
+        
         <form id="reg-form" novalidate autocomplete="off">
           <div class="alert alert-danger" id="reg-error" role="alert" tabindex="-1" hidden>
             <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v5.5M12 16.5v.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
