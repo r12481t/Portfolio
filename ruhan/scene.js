@@ -11,7 +11,14 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.m
 
 export function initScene() {
   const canvas = document.getElementById('scene');
-  const isMobile = window.innerWidth < 780;
+  // "Desktop site" mode on a phone browser widens window.innerWidth past 780, which used to
+  // make the scene think it was running on a real desktop and switch to the heavier settings
+  // (more particles, higher pixel budget) — on the phone's actual GPU that's what caused the
+  // lag. Touch capability / a coarse pointer is a much more reliable signal of the real
+  // hardware than the spoofed viewport width, so it's checked first.
+  const isTouchDevice = (navigator.maxTouchPoints || 0) > 0 ||
+    (typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches);
+  const isMobile = isTouchDevice || window.innerWidth < 780;
 
     // Cap the actual rendered resolution to a fixed pixel budget instead of a flat device-class
     // guess. A desktop browser window is usually far larger in CSS pixels than a phone screen, so
@@ -1113,7 +1120,7 @@ export function initScene() {
       keyGlow.material.opacity = 0.45 + Math.sin(t * 1.5) * 0.15;
       stringGlowLight.intensity = 0.5 + Math.sin(t * 0.9) * 0.15;
       bulbMat.opacity = 0.75 + Math.sin(t * 1.3) * 0.1;
-      rainTexture.offset.y -= dt * 0.6;
+      rainTexture.offset.y += dt * 0.6;
       starMat.opacity = 0.65 + Math.sin(t * 0.6) * 0.15;
       cityLights.forEach((l, i) => { l.material.opacity = 0.5 + Math.sin(t * 0.8 + i) * 0.3; });
       steamWisps.forEach((w, i) => {
