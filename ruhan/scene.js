@@ -13,13 +13,27 @@ export function initScene() {
   const canvas = document.getElementById('scene');
   const isMobile = window.innerWidth < 780;
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    // Cap the actual rendered resolution to a fixed pixel budget instead of a flat device-class
+    // guess. A desktop browser window is usually far larger in CSS pixels than a phone screen, so
+    // the old "isMobile ? 1.5 : 2" cap could render several times more pixels on desktop even
+    // though desktop hardware (especially a laptop's integrated GPU) isn't necessarily faster.
+    // This keeps fill-rate roughly constant across screen sizes instead of ballooning on desktop.
+    const targetPixels = isMobile ? 1.6e6 : 2.3e6;
+    const cssArea = Math.max(window.innerWidth * window.innerHeight, 1);
+    const dpr = window.devicePixelRatio || 1;
+    const budgetRatio = Math.sqrt(targetPixels / cssArea);
+    const pixelRatio = Math.max(1, Math.min(dpr, isMobile ? 1.5 : 2, budgetRatio));
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas, alpha: false,
+      antialias: pixelRatio < 1.5,          // supersampling from a higher pixel ratio already smooths edges
+      powerPreference: 'high-performance',  // ask laptops to use the discrete GPU instead of the integrated one
+    });
     renderer.setClearColor(0x14100c, 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.3;
-    const pixelCap = isMobile ? 1.5 : 2;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, pixelCap));
+    renderer.setPixelRatio(pixelRatio);
 
     const scene = new THREE.Scene();
     scene.fog = new THREE.Fog(0x14100c, 6.5, 11); // fades the far left of the room, desk stays crisp
