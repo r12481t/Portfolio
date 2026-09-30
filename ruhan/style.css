@@ -52,6 +52,15 @@
   }
   body.no-3d #scene{ display:none }
   body.no-3d #scene-fallback{ display:block }
+  /* static tier: the pre-rendered poster sits on top of the gradient, which shows if the image is missing.
+     Files go next to this stylesheet; make them with ?capture and ?capture=mobile (see main.js). */
+  #scene-fallback::before{
+    content:''; position:absolute; inset:0;
+    background:url('scene-poster.webp') center / cover no-repeat;
+  }
+  @media (max-aspect-ratio:1/1){
+    #scene-fallback::before{ background-image:url('scene-poster-mobile.webp'); }
+  }
 
   /* ================= NAV ================= */
   nav{
@@ -105,7 +114,7 @@
   #skills{ padding-top:var(--space-5); padding-bottom:var(--space-6); }
   #projects{ padding-top:var(--space-7); padding-bottom:var(--space-7); }
   #contact{ padding-top:var(--space-6); padding-bottom:var(--space-7); }
-  footer{ position:relative; background:var(--scrim-page); }
+  footer{ position:relative; background:var(--scrim-page); padding-bottom:var(--space-7); }
   .section-inner{
     max-width:640px; margin:0 auto;
     background:var(--scrim-text); padding:var(--space-5) var(--space-4);
@@ -127,6 +136,14 @@
   .project:last-child{ border-bottom:1px solid var(--hair); }
   .project h3{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.25rem; }
   .project p{ color:var(--ash); max-width:58ch; line-height:1.6; }
+  .project-meta{ font-size:0.92rem; }
+  .project-link{
+    display:inline-flex; align-items:center; min-height:44px; justify-self:start;
+    color:var(--lamp); font-weight:500; text-decoration:none;
+    border-bottom:1px solid transparent;
+    transition:border-color var(--dur-fast) var(--ease-out);
+  }
+  .project-link:hover, .project-link:focus-visible{ border-bottom-color:var(--lamp); }
   .project.empty{ color:var(--ash); }
   .project.empty h3{ color:var(--ash); font-weight:500; }
 
@@ -144,3 +161,14 @@
     padding:var(--space-5) var(--space-4); text-align:center;
     color:var(--ash); font-size:0.75rem;
   }
+
+  /* 3D on/off switch, added by main.js */
+  .quality-toggle{
+    position:fixed; left:var(--space-3); bottom:var(--space-3); z-index:90;
+    min-height:44px; padding:0 var(--space-3);
+    font:inherit; font-size:0.85rem; color:var(--ash); cursor:pointer;
+    background:rgba(17,13,10,0.82); backdrop-filter:blur(14px);
+    border:1px solid var(--hair);
+    transition:color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+  }
+  .quality-toggle:hover, .quality-toggle:focus-visible{ color:var(--paper); border-color:var(--lamp); }
