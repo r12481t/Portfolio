@@ -9,6 +9,10 @@
    so repeat visits skip the guessing. Three.js and scene.js are
    only downloaded when the tier is full or lite.
 
+   Nothing sits on screen while 3D runs well. Only two things appear:
+     - when 3D is struggling (measured lag): a small "Turn 3D off" button, for 12 seconds
+     - when 3D is off: a "Try the 3D scene" link in the footer
+
    Test switches (add to the URL):
      ?tier=full | lite | static   force a tier, no monitoring, no caching
      ?capture                     full scene, downloads scene-poster.webp after 3s
@@ -79,21 +83,45 @@ let scene = null;
 let fromCache = false;
 const LOCKED = ['forced', 'capture', 'no-webgl', 'reduced-motion', 'save-data', 'software-gpu', 'load-error'];
 
-/* ---------- switch button (also the way out of a wrong cached choice) ---------- */
-let toggle = null;
-function renderToggle(reason) {
-  if (LOCKED.includes(reason)) { if (toggle) toggle.remove(); return; }
-  if (!toggle) {
-    toggle = document.createElement('button');
-    toggle.type = 'button';
-    toggle.className = 'quality-toggle';
-    toggle.addEventListener('click', () => {
-      if (tier === 'static') { cache.clear(); location.reload(); }
-      else goStatic('manual');
-    });
-    document.body.appendChild(toggle);
+/* ---------- quality controls ---------- */
+let offerEl = null;
+let offerTimer = 0;
+let onLink = null;
+
+function hideOffer() {
+  clearTimeout(offerTimer);
+  if (!offerEl) return;
+  const el = offerEl;
+  offerEl = null;
+  el.classList.remove('is-in');
+  setTimeout(() => el.remove(), 250);
+}
+
+// 3D is struggling: offer a way out, then get out of the way
+function offerOff() {
+  clearTimeout(offerTimer);
+  if (!offerEl) {
+    offerEl = document.createElement('button');
+    offerEl.type = 'button';
+    offerEl.className = 'quality-toggle';
+    offerEl.textContent = 'Running slowly? Turn 3D off';
+    offerEl.addEventListener('click', () => goStatic('manual'));
+    document.body.appendChild(offerEl);
+    requestAnimationFrame(() => offerEl && offerEl.classList.add('is-in'));
   }
-  toggle.textContent = tier === 'static' ? 'Try the 3D scene' : 'Turn 3D off';
+  offerTimer = setTimeout(hideOffer, 12000);
+}
+
+// 3D is off: the way back lives in the footer, out of the scene
+function offerOn() {
+  hideOffer();
+  if (onLink) return;
+  onLink = document.createElement('button');
+  onLink.type = 'button';
+  onLink.className = 'footer-link';
+  onLink.textContent = 'Try the 3D scene';
+  onLink.addEventListener('click', () => { cache.clear(); location.reload(); });
+  (document.querySelector('footer') || document.body).appendChild(onLink);
 }
 
 /* ---------- tier changes ---------- */
@@ -103,7 +131,7 @@ function goStatic(reason) {
   tier = 'static';
   document.body.classList.add('no-3d');
   if (reason === 'lag' || reason === 'manual') cache.write('static', reason);
-  renderToggle(reason);
+  if (!LOCKED.includes(reason)) offerOn();
 }
 
 function degrade() {
@@ -111,6 +139,7 @@ function degrade() {
     tier = 'lite';
     scene.setQuality('lite');
     cache.write('lite', 'lag');
+    offerOff();
   } else if (tier === 'lite') {
     goStatic('lag');
   }
@@ -162,7 +191,8 @@ async function start() {
     return;
   }
 
-  if (!pick.test) renderToggle(pick.reason);
+  // a device that already lagged on an earlier visit gets the same offer again
+  if (!pick.test && tier === 'lite' && pick.reason === 'lag') offerOff();
 
   if (params.has('capture')) {
     const name = params.get('capture') === 'mobile' ? 'scene-poster-mobile.webp' : 'scene-poster.webp';
