@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Classly | Two Desks</title>
+<meta name="description" content="Classly is admin software for a language center: student registration with fees, class tracking, course pricing, staff accounts and analytics. Built as a demo for an English language teaching agency. Try it live." />
+<meta name="theme-color" content="#0d0a08" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Classly | Two Desks" />
+<meta property="og:description" content="Admin software for a language center. Built as a demo for an English language teaching agency. Try it live, no signup." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%99%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/case-study.css" />
+</head>
+<!-- Project page for the Classly demo. No 3D scene here, so it opens fast.
+     The demo itself is classley.html, in this same folder. -->
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+<div class="backdrop" aria-hidden="true"></div>
+
+<nav aria-label="Primary">
+  <a href="../../index.html" class="brand">Two Desks</a>
+  <a class="nav-link" href="#try">Try it</a>
+</nav>
+
+<main id="main">
+
+  <section class="hero" aria-labelledby="title">
+    <div class="hero-copy">
+      <p class="label mono">Language center software</p>
+      <h1 id="title">Classly</h1>
+      <p class="lede">Sign students up, take fees, tick off classes, check the numbers.</p>
+      <div class="hero-action">
+        <a class="btn" href="classley.html" data-boot>Open the live demo</a>
+        <p class="note mono">No signup. Data stays in your browser.</p>
+      </div>
+    </div>
+
+    <!-- The screen lists the demo's real sections. To show a real screenshot instead, replace the
+         .screen-menu list and .screen-prompt with:
+         <img src="img/registration.webp" alt="..." width="1200" height="750" /> -->
+    <div class="monitor" aria-hidden="true">
+      <div class="monitor-bezel">
+        <div class="monitor-screen mono">
+          <p class="screen-title">classly <span>demo</span></p>
+          <ul class="screen-menu">
+            <li><span>1</span>Course Registration</li>
+            <li><span>2</span>Class Counter</li>
+            <li><span>3</span>Courses &amp; Pricing</li>
+            <li><span>4</span>Staff Accounts</li>
+            <li><span>5</span>Analytics</li>
+          </ul>
+          <p class="screen-prompt">sign in as any account_</p>
+        </div>
+      </div>
+      <div class="monitor-neck"></div>
+      <div class="monitor-base"></div>
+    </div>
+  </section>
+
+  <section class="facts-strip" aria-label="Project facts">
+    <dl class="facts">
+      <div>
+        <dt class="mono">Built for</dt>
+        <dd>An English language teaching agency</dd>
+      </div>
+      <div>
+        <dt class="mono">Outcome</dt>
+        <dd>A demo for the agency. It didn't lead to a sale.</dd>
+      </div>
+      <div>
+        <dt class="mono">Built by</dt>
+        <!-- Replace "a friend" with their name once we have it. -->
+        <dd>Ruhan and a friend</dd>
+      </div>
+      <div>
+        <dt class="mono">Built with</dt>
+        <dd>HTML, JavaScript, MySQL</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="what" aria-labelledby="what-title">
+    <h2 id="what-title">What it does</h2>
+    <!-- Screenshots, if we add them, go between the heading and the list:
+    <figure class="shot">
+      <img src="img/registration.webp" alt="The registration form, step 2, choosing courses" width="1200" height="750" loading="lazy" />
+      <figcaption>Registration, step 2.</figcaption>
+    </figure> -->
+    <div class="spec">
+      <div class="spec-row">
+        <h3>Course Registration</h3>
+        <p>A three-step form: student details, courses, then fees and payment. It takes individual courses and package deals, works out the total as you pick, and keeps track of what's paid and what's still due. It also records which account registered the student, so the referral credit goes to the right person.</p>
+      </div>
+      <div class="spec-row">
+        <h3>Class Counter</h3>
+        <p>Tick off classes as they happen. Today's classes sit in one place, and you can see your own recent ticks.</p>
+      </div>
+      <div class="spec-row">
+        <h3>Courses &amp; Pricing</h3>
+        <p>The list of courses and what each one costs, in one place you can edit.</p>
+      </div>
+      <div class="spec-row">
+        <h3>Staff Accounts</h3>
+        <p>Manage who can sign in.</p>
+      </div>
+      <div class="spec-row">
+        <h3>Analytics</h3>
+        <p>An overview of how the center is doing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="try" class="try" aria-labelledby="try-title">
+    <div class="try-copy">
+      <h2 id="try-title">Try it</h2>
+      <p class="lede">It's a working app, so you can use it yourself.</p>
+      <ol class="steps">
+        <li>Open the demo.</li>
+        <li>On the sign-in screen, pick any account under "Try it as". No signup.</li>
+        <li>Register a student, tick a class, look at the analytics.</li>
+      </ol>
+    </div>
+    <div class="try-action">
+      <a class="btn" href="classley.html" data-boot>Open the live demo</a>
+      <p class="note mono">Everything you do is saved only in your browser. The Reset demo data button puts it back the way it was.</p>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="Notes">
+    <div>
+      <h2>How it's built</h2>
+      <p>HTML and JavaScript, with MySQL as the database. The hosted demo saves to your browser instead, so anyone can try it without an account or a server.</p>
+    </div>
+    <div>
+      <h2>How it went</h2>
+      <p>Classly was built as a demo for an English language teaching agency. It didn't lead to a sale. The app still works from start to finish, so it lives here as a project you can try.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p class="mono">Part of <a href="../../index.html">Two Desks</a>.</p>
+</footer>
+
+<!-- Screen-boot transition, played by js/case-study.js when a demo button is pressed -->
+<div class="boot" aria-hidden="true">
+  <div class="boot-panel"></div>
+  <div class="boot-line"></div>
+  <p class="boot-text mono">&gt; classly</p>
+</div>
+
+<script src="js/case-study.js" defer></script>
+</body>
+</html>
