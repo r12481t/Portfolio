@@ -9,8 +9,11 @@
    ============================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
 
-export function initScene() {
+export function initScene(opts = {}) {
   const canvas = document.getElementById('scene');
+  // tier comes from main.js: 'full' or 'lite'. Lite drops the costly extras and renders at ~30 fps.
+  let lite = opts.tier === 'lite';
+  const onFrame = typeof opts.onFrame === 'function' ? opts.onFrame : null;
   // "Desktop site" mode on a phone browser widens window.innerWidth past 780, which used to
   // make the scene think it was running on a real desktop and switch to the heavier settings
   // (more particles, higher pixel budget) — on the phone's actual GPU that's what caused the
@@ -29,11 +32,12 @@ export function initScene() {
     const cssArea = Math.max(window.innerWidth * window.innerHeight, 1);
     const dpr = window.devicePixelRatio || 1;
     const budgetRatio = Math.sqrt(targetPixels / cssArea);
-    const pixelRatio = Math.max(1, Math.min(dpr, isMobile ? 1.5 : 2, budgetRatio));
+    const liteRatio = Math.max(0.6, Math.min(1, Math.sqrt(1.0e6 / cssArea)));
+    const pixelRatio = lite ? liteRatio : Math.max(1, Math.min(dpr, isMobile ? 1.5 : 2, budgetRatio));
 
     const renderer = new THREE.WebGLRenderer({
       canvas, alpha: false,
-      antialias: pixelRatio < 1.5,          // supersampling from a higher pixel ratio already smooths edges
+      antialias: pixelRatio < 1.5 && !lite,          // supersampling from a higher pixel ratio already smooths edges
       powerPreference: 'high-performance',  // ask laptops to use the discrete GPU instead of the integrated one
     });
     renderer.setClearColor(0x14100c, 1);
@@ -1056,6 +1060,7 @@ export function initScene() {
     let parallaxX = 0, parallaxY = 0;
     if (!isMobile) {
       window.addEventListener('mousemove', (e) => {
+        if (lite) return;
         parallaxTargetX = ((e.clientX / window.innerWidth) * 2 - 1) * 0.12;
         parallaxTargetY = -((e.clientY / window.innerHeight) * 2 - 1) * 0.06;
       });
@@ -1067,24 +1072,36 @@ export function initScene() {
     let nextFlickerAt = 4 + Math.random() * 5;
     let flickerEndAt = 0;
     let running = true;
+    let stopped = false;
     let rafId = 0;
+    let frameAcc = 0;
     // pause while the tab is hidden; cancel the queued frame first so switching apps never stacks extra loops
     document.addEventListener('visibilitychange', () => {
+      if (stopped) return;
       running = !document.hidden;
       cancelAnimationFrame(rafId);
-      if (running) { clock.getDelta(); loop(); }
+      if (running) { clock.getDelta(); frameAcc = 0; loop(); }
     });
 
     function loop() {
       if (!running) return;
-      const dt = Math.min(clock.getDelta(), 0.1);
+      frameAcc += clock.getDelta();
+      // lite tier renders at about 30 fps; skipped frames still keep the clock moving
+      if (lite && frameAcc < 0.032) { rafId = requestAnimationFrame(loop); return; }
+      const rawDt = frameAcc;
+      frameAcc = 0;
+      const dt = Math.min(rawDt, 0.1);
       const t = clock.elapsedTime;
+      if (onFrame) {
+        onFrame(rawDt);
+        if (!running) return; // main.js may have stopped the scene from inside the callback
+      }
 
       // idle camera breathing + mouse parallax + click-to-focus zoom
       parallaxX += (parallaxTargetX - parallaxX) * Math.min(dt * 3, 1);
       parallaxY += (parallaxTargetY - parallaxY) * Math.min(dt * 3, 1);
-      const breatheX = Math.sin(t * 0.18) * 0.018;
-      const breatheY = Math.cos(t * 0.13) * 0.01;
+      const breatheX = lite ? 0 : Math.sin(t * 0.18) * 0.018;
+      const breatheY = lite ? 0 : Math.cos(t * 0.13) * 0.01;
       const basePos = new THREE.Vector3(
         cameraBase.x + breatheX + parallaxX,
         cameraBase.y + breatheY + parallaxY,
@@ -1161,4 +1178,46 @@ export function initScene() {
       rafId = requestAnimationFrame(loop);
     }
     loop();
+
+    /* ---------- Controls handed back to main.js ---------- */
+    // Drop to the lite tier while running: hides the costly extras, lowers resolution, caps the frame rate.
+    function setQuality(level) {
+      if (level !== 'lite' || lite) return;
+      lite = true;
+      [rainPlane, cond1, cond2, stringBulbs, stringWire, motes, keyGlow, ...steamWisps]
+        .forEach((o) => { o.visible = false; });
+      [stringGlowLight, keyGlowLight, phoneGlow].forEach((l) => { l.visible = false; });
+      parallaxTargetX = 0;
+      parallaxTargetY = 0;
+      renderer.setPixelRatio(liteRatio);
+      resize();
+    }
+
+    // Shut the scene down for good and free the GPU (used when falling back to the static poster).
+    function stop() {
+      stopped = true;
+      running = false;
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', resizeVignette);
+      canvas.removeEventListener('click', onSceneClick);
+      renderer.dispose();
+      const lose = renderer.getContext().getExtension('WEBGL_lose_context');
+      if (lose) lose.loseContext();
+    }
+
+    // Poster maker: renders one frame and downloads it. Open the page with ?capture, see main.js.
+    function captureStill(name) {
+      renderer.render(scene, camera);
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name || 'scene-poster.webp';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      }, 'image/webp', 0.85);
+    }
+
+    return { setQuality, stop, captureStill };
 }
