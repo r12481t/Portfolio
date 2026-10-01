@@ -204,15 +204,21 @@ footer a:hover, footer a:focus-visible{ color:var(--paper); border-bottom-color:
    ~0.7s, transform and opacity only, no flashing. Reduced motion skips it (plain link). */
 .boot{ position:fixed; inset:0; z-index:500; visibility:hidden; pointer-events:none; }
 .is-booting .boot{ visibility:visible; pointer-events:auto; }
-.boot-panel{ position:absolute; inset:0; background:#17110b; opacity:0; transform:scaleY(0.004); }
+.boot-panel{
+  position:absolute; inset:0; opacity:0; transform:scaleY(0.004);
+  background:
+    repeating-linear-gradient(to bottom, rgba(245,239,230,0.045) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse 80% 60% at 50% 50%, #33230f 0%, #1c140c 60%, #120d08 100%);
+}
 .boot-line{
-  position:absolute; inset-inline:0; top:50%; height:2px; margin-top:-1px;
-  background:var(--lamp); box-shadow:0 0 24px 2px rgba(242,167,90,0.5);
+  position:absolute; inset-inline:0; top:50%; height:3px; margin-top:-1px;
+  background:var(--lamp); box-shadow:0 0 28px 4px rgba(242,167,90,0.55);
   opacity:0; transform:scaleX(0.15);
 }
 .boot-text{
   position:absolute; inset:0; margin:0; display:grid; place-items:center;
-  color:var(--lamp); font-size:1rem; opacity:0;
+  color:var(--lamp); font-size:1.125rem; opacity:0;
+  text-shadow:0 0 14px rgba(242,167,90,0.45);
 }
 .is-booting .boot-line{ animation:boot-line-in 200ms var(--ease-out) forwards, boot-line-out 180ms 320ms ease-in forwards; }
 .is-booting .boot-panel{ animation:boot-panel 340ms 180ms cubic-bezier(0.65,0,0.35,1) forwards; }
