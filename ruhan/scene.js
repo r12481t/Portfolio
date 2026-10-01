@@ -32,8 +32,11 @@ export function initScene(opts = {}) {
     const cssArea = Math.max(window.innerWidth * window.innerHeight, 1);
     const dpr = window.devicePixelRatio || 1;
     const budgetRatio = Math.sqrt(targetPixels / cssArea);
-    const liteRatio = Math.max(0.6, Math.min(1, Math.sqrt(1.0e6 / cssArea)));
-    const pixelRatio = lite ? liteRatio : Math.max(1, Math.min(dpr, isMobile ? 1.5 : 2, budgetRatio));
+    const fullRatio = Math.max(1, Math.min(dpr, isMobile ? 1.5 : 2, budgetRatio));
+    // Phones are already capped at 1.5, and going lower looks blocky on their dense screens, so lite keeps the
+    // same resolution there and saves work elsewhere (no rain/lights/steam, 30 fps). Desktops drop a quarter.
+    const liteRatio = isMobile ? fullRatio : Math.max(1, fullRatio * 0.75);
+    const pixelRatio = lite ? liteRatio : fullRatio;
 
     const renderer = new THREE.WebGLRenderer({
       canvas, alpha: false,
