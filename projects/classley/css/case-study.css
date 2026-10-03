@@ -1,18 +1,20 @@
 /* Classly project page. Styles for projects/classley/case-study.html only.
    Standalone on purpose: the demo (classley.html) and Ruhan's portfolio don't share this file.
    Concept: the page is the monitor at the night desk. Warm dark room, one lamp-amber accent,
-   mono type for anything that would be on a screen. */
+   mono type for anything that would be on a screen.
+   Brightness: the base is a lifted warm brown (not near-black) and the lamp glows behind the monitor, because
+   near-black reads as flat and dim on most PC screens. Secondary text is lighter to match. */
 
 /* ================= TOKENS ================= */
 :root{
-  --void:#0d0a08;
-  --paper:#f5efe6;
-  --ash:#b5a898;
+  --void:#1a1410;
+  --paper:#f7f1e8;
+  --ash:#d2c6b5;
   --lamp:#f2a75a;
   --lamp-hover:#f7b874;
-  --bezel:#15100c;
-  --hair:rgba(245,239,230,0.12);
-  --wash:rgba(245,239,230,0.03);
+  --bezel:#2a2018;
+  --hair:rgba(245,239,230,0.18);
+  --wash:rgba(245,239,230,0.06);
 
   --space-1:0.25rem; --space-2:0.5rem; --space-3:1rem; --space-4:1.5rem;
   --space-5:2rem; --space-6:3rem; --space-7:4rem;
@@ -56,8 +58,9 @@ a{ color:inherit; }
     radial-gradient(1px 1px at 63% 14%, #fff 100%, transparent),
     radial-gradient(1px 1px at 78% 24%, #fff 100%, transparent),
     radial-gradient(1px 1px at 88% 10%, #fff 100%, transparent),
-    radial-gradient(ellipse 50% 40% at 12% 100%, rgba(242,167,90,0.10) 0%, transparent 70%),
-    linear-gradient(180deg, #14100c 0%, var(--void) 60%);
+    radial-gradient(ellipse 55% 45% at 74% 24%, rgba(242,167,90,0.17) 0%, transparent 72%),
+    radial-gradient(ellipse 60% 45% at 10% 100%, rgba(242,167,90,0.12) 0%, transparent 70%),
+    linear-gradient(180deg, #251c15 0%, var(--void) 55%, #150f0c 100%);
 }
 
 /* ================= NAV ================= */
@@ -65,7 +68,7 @@ nav{
   position:fixed; top:0; left:0; width:100%; z-index:100;
   display:flex; align-items:center; justify-content:space-between;
   padding:var(--space-2) var(--gutter);
-  background:rgba(13,10,8,0.92); border-bottom:1px solid var(--hair);
+  background:rgba(26,20,16,0.92); border-bottom:1px solid var(--hair);
 }
 .brand{
   display:inline-flex; align-items:center; min-height:44px;
@@ -116,11 +119,12 @@ main > section, footer{ width:min(100% - 2 * var(--gutter), var(--measure)); mar
 .monitor-bezel{
   padding:var(--space-2); background:var(--bezel);
   border:1px solid var(--hair); border-radius:var(--radius);
-  box-shadow:0 32px 64px -32px rgba(0,0,0,0.8);
+  box-shadow:0 32px 64px -32px rgba(0,0,0,0.8), 0 0 100px -24px rgba(242,167,90,0.22);   /* lamp light on the desk */
 }
 .monitor-screen{
   position:relative; display:flex; flex-direction:column; justify-content:center;
-  padding:var(--space-5) var(--space-4); background:#0a0806; border-radius:2px; overflow:hidden;
+  padding:var(--space-5) var(--space-4); border-radius:2px; overflow:hidden;
+  background:linear-gradient(180deg, #221810 0%, #17110c 100%); box-shadow:inset 0 0 70px rgba(242,167,90,0.09);
   font-size:0.8125rem; line-height:1.9; color:var(--ash);
 }
 .monitor-screen::after{
@@ -201,14 +205,16 @@ footer a:hover, footer a:focus-visible{ color:var(--paper); border-bottom-color:
 
 /* ================= SCREEN-BOOT TRANSITION =================
    Plays when a [data-boot] button is pressed (js/case-study.js), then the demo opens.
-   ~0.7s, transform and opacity only, no flashing. Reduced motion skips it (plain link). */
+   boot-full: the ~0.7s power-on. transform and opacity only, no flashing.
+   boot-fade: a plain 0.25s fade to the same screen colour, for visitors whose system asks for reduced motion
+              (the design rule is to swap movement for a fade, not to drop the feedback). */
 .boot{ position:fixed; inset:0; z-index:500; visibility:hidden; pointer-events:none; }
 .is-booting .boot{ visibility:visible; pointer-events:auto; }
 .boot-panel{
   position:absolute; inset:0; opacity:0; transform:scaleY(0.004);
   background:
     repeating-linear-gradient(to bottom, rgba(245,239,230,0.045) 0 1px, transparent 1px 3px),
-    radial-gradient(ellipse 80% 60% at 50% 50%, #33230f 0%, #1c140c 60%, #120d08 100%);
+    radial-gradient(ellipse 80% 60% at 50% 50%, #4a3318 0%, #2a1d10 60%, #1a120a 100%);
 }
 .boot-line{
   position:absolute; inset-inline:0; top:50%; height:3px; margin-top:-1px;
@@ -220,10 +226,13 @@ footer a:hover, footer a:focus-visible{ color:var(--paper); border-bottom-color:
   color:var(--lamp); font-size:1.125rem; opacity:0;
   text-shadow:0 0 14px rgba(242,167,90,0.45);
 }
-.is-booting .boot-line{ animation:boot-line-in 200ms var(--ease-out) forwards, boot-line-out 180ms 320ms ease-in forwards; }
-.is-booting .boot-panel{ animation:boot-panel 340ms 180ms cubic-bezier(0.65,0,0.35,1) forwards; }
-.is-booting .boot-text{ animation:boot-text 160ms 480ms var(--ease-out) forwards; }
+.boot-full .boot-line{ animation:boot-line-in 200ms var(--ease-out) forwards, boot-line-out 180ms 320ms ease-in forwards; }
+.boot-full .boot-panel{ animation:boot-panel 340ms 180ms cubic-bezier(0.65,0,0.35,1) forwards; }
+.boot-full .boot-text{ animation:boot-text 160ms 480ms var(--ease-out) forwards; }
+.boot-fade .boot-panel{ transform:none; animation:boot-fade 220ms ease-out forwards; }
+.boot-fade .boot-text{ animation:boot-text 120ms 120ms ease-out forwards; }
 @keyframes boot-line-in{ from{ opacity:0; transform:scaleX(0.15); } to{ opacity:1; transform:scaleX(1); } }
 @keyframes boot-line-out{ from{ opacity:1; } to{ opacity:0; } }
 @keyframes boot-panel{ from{ opacity:1; transform:scaleY(0.004); } to{ opacity:1; transform:scaleY(1); } }
 @keyframes boot-text{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes boot-fade{ from{ opacity:0; } to{ opacity:1; } }
