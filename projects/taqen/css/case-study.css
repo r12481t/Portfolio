@@ -1,0 +1,213 @@
+/* TAQEN Collection project page. Styles for projects/taqen/case-study.html only.
+   Standalone on purpose: it shares tokens and components with the Classly page by copy, not by import,
+   so either page can change without touching the other. (If you change a token here, check the Classly copy.)
+   Concept: the same night-desk room, one lamp-amber accent, mono type for small labels.
+   Brightness: the base is a lifted warm brown (not near-black) and the lamp glows behind the monitor, because
+   near-black reads as flat and dim on most PC screens. Secondary text is lighter to match. */
+
+/* ================= TOKENS ================= */
+:root{
+  --void:#1a1410;
+  --paper:#f7f1e8;
+  --ash:#d2c6b5;
+  --lamp:#f2a75a;
+  --lamp-hover:#f7b874;
+  --bezel:#2a2018;
+  --hair:rgba(245,239,230,0.18);
+  --wash:rgba(245,239,230,0.06);
+
+  --space-1:0.25rem; --space-2:0.5rem; --space-3:1rem; --space-4:1.5rem;
+  --space-5:2rem; --space-6:3rem; --space-7:4rem;
+  --gutter:var(--space-4);
+  --measure:1120px;
+  --radius:4px;
+
+  --dur-fast:150ms; --dur-base:250ms;
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+}
+@media (min-width:900px){ :root{ --gutter:var(--space-6); } }
+
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; scroll-padding-top:var(--space-7); }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+body{
+  background:var(--void); color:var(--paper);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  font-size:1rem; line-height:1.55; overflow-x:hidden;
+}
+h1,h2,h3{ font-family:'Space Grotesk',system-ui,sans-serif; font-weight:600; color:var(--paper); }
+a{ color:inherit; }
+.mono{ font-family:'IBM Plex Mono',ui-monospace,monospace; }
+::selection{ background:var(--lamp); color:var(--void); }
+:focus-visible{ outline:2px solid var(--lamp); outline-offset:3px; }
+
+.skip-link{
+  position:absolute; left:-999px; top:auto; z-index:1000;
+  background:var(--lamp); color:var(--void); font-weight:600;
+  padding:var(--space-3) var(--space-4);
+}
+.skip-link:focus{ left:var(--space-3); top:var(--space-3); }
+
+/* Same night sky and lamp light as the 3D portfolio, without loading the scene */
+.backdrop{
+  position:fixed; inset:0; z-index:-1;
+  background:
+    radial-gradient(1px 1px at 12% 20%, #fff 100%, transparent),
+    radial-gradient(1px 1px at 26% 8%, #fff 100%, transparent),
+    radial-gradient(1px 1px at 41% 30%, #fff 100%, transparent),
+    radial-gradient(1px 1px at 63% 14%, #fff 100%, transparent),
+    radial-gradient(1px 1px at 78% 24%, #fff 100%, transparent),
+    radial-gradient(1px 1px at 88% 10%, #fff 100%, transparent),
+    radial-gradient(ellipse 55% 45% at 74% 24%, rgba(242,167,90,0.17) 0%, transparent 72%),
+    radial-gradient(ellipse 60% 45% at 10% 100%, rgba(242,167,90,0.12) 0%, transparent 70%),
+    linear-gradient(180deg, #251c15 0%, var(--void) 55%, #150f0c 100%);
+}
+
+/* ================= NAV ================= */
+nav{
+  position:fixed; top:0; left:0; width:100%; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:var(--space-2) var(--gutter);
+  background:rgba(26,20,16,0.92); border-bottom:1px solid var(--hair);
+}
+.brand{
+  display:inline-flex; align-items:center; min-height:44px;
+  font-family:'Space Grotesk',system-ui,sans-serif; font-weight:600; font-size:1.05rem;
+  color:var(--paper); text-decoration:none;
+}
+.nav-link{
+  display:inline-flex; align-items:center; min-height:44px;
+  color:var(--ash); font-size:0.95rem; text-decoration:none;
+  transition:color var(--dur-fast) var(--ease-out);
+}
+.nav-link:hover, .nav-link:focus-visible{ color:var(--paper); }
+
+/* ================= LAYOUT ================= */
+main > section, footer{ width:min(100% - 2 * var(--gutter), var(--measure)); margin-inline:auto; }
+
+.label{
+  display:flex; align-items:center; gap:var(--space-2);
+  color:var(--ash); font-size:0.8125rem; letter-spacing:0.04em;
+}
+.label::before{ content:''; width:var(--space-4); height:1px; background:var(--lamp); }
+.note{ color:var(--ash); font-size:0.8125rem; line-height:1.6; max-width:44ch; }
+
+.btn{
+  display:inline-flex; align-items:center; min-height:48px; padding:0 var(--space-5);
+  background:var(--lamp); color:var(--void); font-weight:600; text-decoration:none;
+  border-radius:var(--radius);
+  transition:background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.btn:hover{ background:var(--lamp-hover); }
+.btn:active{ transform:translateY(1px); }
+
+/* ================= HERO ================= */
+.hero{
+  display:grid; gap:var(--space-6); align-items:center;
+  padding-top:calc(var(--space-7) + var(--space-6)); padding-bottom:var(--space-7);
+}
+.hero-logo{ display:block; width:96px; height:96px; margin-bottom:var(--space-4); }   /* white version of the logo, for the dark page */
+.hero h1{
+  font-size:clamp(2.75rem, 8vw, 5.5rem); line-height:0.95; letter-spacing:-0.03em;
+  margin-top:var(--space-3); overflow-wrap:break-word;
+}
+.hero .lede{ margin-top:var(--space-4); font-size:1.25rem; line-height:1.5; max-width:34ch; }
+.hero-action{ margin-top:var(--space-5); }
+.hero-action .note{ margin-top:var(--space-3); }
+
+/* Three of the designs. Each tile links to its Pinterest pin. */
+.lookbook{ list-style:none; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:var(--space-3); align-items:start; }
+.lookbook figure{ display:grid; gap:var(--space-2); }
+.lookbook a{ display:block; border:1px solid var(--hair); border-radius:var(--radius); overflow:hidden; background:var(--wash);
+  transition:border-color var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
+.lookbook a:hover{ border-color:var(--lamp); transform:translateY(-3px); }
+.lookbook img{ display:block; width:100%; height:auto; aspect-ratio:1 / 1; object-fit:cover; }
+.lookbook figcaption{ color:var(--ash); font-size:0.8125rem; letter-spacing:0.02em; }
+@media (min-width:640px){ .lookbook li:nth-child(2){ margin-top:var(--space-6); } .lookbook{ gap:var(--space-4); } }
+@media (min-width:900px){
+  .hero{ grid-template-columns:minmax(0,1fr) minmax(0,1.1fr); gap:var(--space-7); padding-top:calc(var(--space-7) * 1.5); }
+}
+
+/* ================= FACTS ================= */
+.facts{ display:grid; gap:var(--space-4); }
+.facts div{ border-top:1px solid var(--hair); padding-top:var(--space-3); }
+.facts dt{ color:var(--ash); font-size:0.8125rem; letter-spacing:0.04em; }
+.facts dd{ margin-top:var(--space-1); }
+@media (min-width:640px){ .facts{ grid-template-columns:repeat(2, 1fr); gap:var(--space-5); } }
+@media (min-width:900px){ .facts{ grid-template-columns:repeat(4, 1fr); } }
+
+/* ================= WHAT IT DOES ================= */
+.what{ padding-top:var(--space-7); padding-bottom:var(--space-6); }
+h2{ font-size:clamp(1.75rem, 4vw, 2.5rem); line-height:1.1; letter-spacing:-0.02em; }
+.spec{ margin-top:var(--space-5); border-top:1px solid var(--hair); }
+.spec-row{ display:grid; gap:var(--space-2); padding:var(--space-4) 0; border-bottom:1px solid var(--hair); }
+.spec-row h3{ font-size:1.25rem; line-height:1.2; letter-spacing:-0.01em; }
+.spec-row p{ color:var(--ash); max-width:60ch; }
+@media (min-width:900px){
+  .spec-row{ grid-template-columns:5fr 7fr; gap:var(--space-6); padding:var(--space-5) 0; }
+}
+.shot{ margin-top:var(--space-5); }
+.shot img{ display:block; width:100%; height:auto; border:1px solid var(--hair); border-radius:var(--radius); }
+.shot figcaption{ margin-top:var(--space-2); color:var(--ash); font-size:0.8125rem; }
+
+
+/* ================= EXTRA COMPONENTS ================= */
+.what + .what{ padding-top:var(--space-5); }
+.spec-row > div > p{ color:var(--ash); max-width:60ch; }
+.spec-row > div > p + *, .spec-row > div > * + p{ margin-top:var(--space-3); }
+.spec-row ul.plain{ list-style:none; color:var(--ash); max-width:60ch; }
+.spec-row ul.plain li{ padding:var(--space-1) 0 var(--space-1) var(--space-4); position:relative; }
+.spec-row ul.plain li::before{ content:''; position:absolute; left:0; top:0.95em; width:var(--space-3); height:1px; background:var(--lamp); }
+.spec-row strong{ color:var(--paper); font-weight:600; }
+
+/* the team */
+.team{ list-style:none; display:grid; gap:var(--space-3); }
+.team li{ padding-top:var(--space-2); border-top:1px solid var(--hair); }
+.team .name{ display:block; color:var(--paper); font-weight:600; }
+.team .role{ display:block; margin-top:2px; color:var(--ash); font-size:0.9375rem; }
+@media (min-width:640px){ .team{ grid-template-columns:repeat(2, minmax(0, 1fr)); gap:var(--space-3) var(--space-5); } }
+
+/* numbered rows: what went wrong, lessons */
+.spec--numbered{ counter-reset:item; }
+.spec--flush{ margin-top:0; border-top:0; }
+.spec--numbered .spec-row h3::before{
+  counter-increment:item; content:counter(item, decimal-leading-zero);
+  display:block; margin-bottom:var(--space-1); color:var(--lamp);
+  font-family:'IBM Plex Mono',ui-monospace,monospace; font-weight:400; font-size:0.8125rem; letter-spacing:0.04em;
+}
+
+/* ================= LINKS ================= */
+.links{
+  display:grid; gap:var(--space-5); margin-block:var(--space-6);
+  padding:var(--space-5) var(--space-4);
+  background:var(--wash); border:1px solid var(--hair); border-radius:var(--radius);
+}
+.links .lede{ margin-top:var(--space-2); color:var(--ash); max-width:34ch; }
+.link-list{ list-style:none; border-top:1px solid var(--hair); }
+.link-list a{
+  display:flex; align-items:baseline; justify-content:space-between; gap:var(--space-3);
+  min-height:48px; padding:var(--space-3) 0; border-bottom:1px solid var(--hair); text-decoration:none;
+  transition:color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.link-list .where{ color:var(--paper); font-weight:500; }
+.link-list .what-url{ color:var(--ash); font-size:0.8125rem; overflow-wrap:anywhere; text-align:right; }
+.link-list a:hover .where, .link-list a:focus-visible .where{ color:var(--lamp); }
+.link-list a:hover, .link-list a:focus-visible{ border-bottom-color:var(--lamp); }
+@media (min-width:900px){ .links{ grid-template-columns:5fr 7fr; gap:var(--space-6); align-items:start; padding:var(--space-6); } }
+
+/* ================= FOOTER ================= */
+footer{ padding:var(--space-5) 0 var(--space-6); border-top:1px solid var(--hair); color:var(--ash); font-size:0.8125rem; }
+footer a{ text-decoration:none; border-bottom:1px solid var(--hair); transition:color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+footer a:hover, footer a:focus-visible{ color:var(--paper); border-bottom-color:var(--lamp); }
+
+/* ================= ENTRANCE (once, on load) ================= */
+@media (prefers-reduced-motion:no-preference){
+  .hero-copy > *, .lookbook{ animation:rise 400ms var(--ease-out) backwards; }
+  .hero-copy > :nth-child(2){ animation-delay:40ms; }
+  .hero-copy > :nth-child(3){ animation-delay:80ms; }
+  .hero-copy > :nth-child(4){ animation-delay:120ms; }
+  .hero-copy > :nth-child(5){ animation-delay:160ms; }
+  .lookbook{ animation-delay:120ms; }
+}
+@keyframes rise{ from{ opacity:0; transform:translateY(8px); } }
+@media (prefers-reduced-motion:reduce){ .lookbook a, .lookbook a:hover{ transition:none; transform:none; } }
