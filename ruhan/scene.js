@@ -1,19 +1,31 @@
 /* ============================================================
-   Night-desk scene. Camera stays fixed (only a tiny breathing
-   sway, desktop mouse parallax, and click-to-focus zoom).
+   Night-desk scene. The camera stays put (only a tiny breathing
+   sway, desktop mouse parallax, and click-to-focus zoom). What
+   changes per screen is the zoom and where the picture sits in
+   the canvas: camera-fit.js frames the desk on the part of the
+   screen the page text doesn't cover.
    Canvas is position:fixed to the viewport, so it renders as
    the backdrop for the entire page, not just the hero.
+   One quality level: full. main.js decides whether to run it
+   at all, and falls back to a still picture if it can't keep up.
 
    Room: the desk sits flush against the back wall. The window
    is on that wall to the left of the monitor, above the CPU.
    ============================================================ */
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
+import { POSE, WIDE_QUERY, computeFit } from './camera-fit.js?v=3';
 
 export function initScene(opts = {}) {
   const canvas = document.getElementById('scene');
-  // tier comes from main.js: 'full' or 'lite'. Lite drops the costly extras and renders at ~30 fps.
-  let lite = opts.tier === 'lite';
-  const onFrame = typeof opts.onFrame === 'function' ? opts.onFrame : null;
+  // Options from main.js:
+  //   calm           reduced-motion visitors get the same room without movement (no sway, parallax, rain, steam, flicker)
+  //   exposure       brightness override, for tuning with ?exposure=
+  //   onFrame(dt)    frame-rate monitor
+  //   onReady()      the first frames are on screen (main.js hides the loading screen)
+  //   onContextLost  the browser reset the GPU
+  const calm = !!opts.calm;
+  const fn = (f) => (typeof f === 'function' ? f : null);
+  const onFrame = fn(opts.onFrame), onReady = fn(opts.onReady), onContextLost = fn(opts.onContextLost);
   // "Desktop site" mode on a phone browser widens window.innerWidth past 780, which used to
   // make the scene think it was running on a real desktop and switch to the heavier settings
   // (more particles, higher pixel budget) — on the phone's actual GPU that's what caused the
@@ -23,48 +35,50 @@ export function initScene(opts = {}) {
     (typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches);
   const isMobile = isTouchDevice || window.innerWidth < 780;
 
-    // Cap the actual rendered resolution to a fixed pixel budget instead of a flat device-class
-    // guess. A desktop browser window is usually far larger in CSS pixels than a phone screen, so
-    // the old "isMobile ? 1.5 : 2" cap could render several times more pixels on desktop even
-    // though desktop hardware (especially a laptop's integrated GPU) isn't necessarily faster.
-    // This keeps fill-rate roughly constant across screen sizes instead of ballooning on desktop.
-    const targetPixels = isMobile ? 1.6e6 : 2.3e6;
-    const cssArea = Math.max(window.innerWidth * window.innerHeight, 1);
+    // Full quality, with a pixel budget so a huge window doesn't ask for more than a GPU can fill.
+    // The budget is roughly 4 million device pixels on desktop and 2.6 million on phones. main.js watches
+    // the frame rate and falls back to a still picture if a device still can't keep up.
+    const targetPixels = isMobile ? 2.6e6 : 4.2e6;
+    const cssArea = Math.max((canvas.clientWidth || window.innerWidth) * (canvas.clientHeight || window.innerHeight), 1);
     const dpr = window.devicePixelRatio || 1;
     const budgetRatio = Math.sqrt(targetPixels / cssArea);
-    const fullRatio = Math.max(1, Math.min(dpr, isMobile ? 1.5 : 2, budgetRatio));
-    // Phones are already capped at 1.5, and going lower looks blocky on their dense screens, so lite keeps the
-    // same resolution there and saves work elsewhere (no rain/lights/steam, 30 fps). Desktops drop a quarter.
-    const liteRatio = isMobile ? fullRatio : Math.max(1, fullRatio * 0.75);
-    const pixelRatio = lite ? liteRatio : fullRatio;
+    const pixelRatio = Math.max(1, Math.min(dpr, 2, budgetRatio));
 
     const renderer = new THREE.WebGLRenderer({
       canvas, alpha: false,
-      antialias: pixelRatio < 1.5 && !lite,          // supersampling from a higher pixel ratio already smooths edges
+      antialias: pixelRatio < 2,            // supersampling from a high pixel ratio already smooths edges
       powerPreference: 'high-performance',  // ask laptops to use the discrete GPU instead of the integrated one
     });
     renderer.setClearColor(0x14100c, 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.3;
+    renderer.toneMappingExposure = Number.isFinite(opts.exposure) ? opts.exposure : 1.55;
     renderer.setPixelRatio(pixelRatio);
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x14100c, 6.5, 11); // fades the far left of the room, desk stays crisp
+    scene.fog = new THREE.Fog(0x14100c, 8, 16); // fades the far left of the room, desk stays crisp
     const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 50);
-    camera.position.set(2.4, 1.5, 4.6);
-    camera.lookAt(-0.4, 0.4, 0);
-    const cameraBase = new THREE.Vector3(2.4, 1.5, 4.6);
-    const lookBase = new THREE.Vector3(-0.4, 0.4, 0);
+    camera.position.set(...POSE.position);
+    camera.lookAt(...POSE.target);
+    const cameraBase = new THREE.Vector3(...POSE.position);
+    const lookBase = new THREE.Vector3(...POSE.target);
 
+    // Frame the desk for this screen (see camera-fit.js). Sized from the canvas itself, which is 100svh,
+    // so a phone's collapsing address bar doesn't make the scene jump while scrolling.
+    const wideMq = window.matchMedia(WIDE_QUERY);
     function resize() {
-      const w = window.innerWidth, h = window.innerHeight;
+      const w = canvas.clientWidth || window.innerWidth;
+      const h = canvas.clientHeight || window.innerHeight;
+      const nav = document.querySelector('nav');
+      const fit = computeFit({ w, h, wide: wideMq.matches, navH: nav ? nav.offsetHeight : 76 });
       camera.aspect = w / h;
-      camera.updateProjectionMatrix();
+      camera.fov = fit.fov;
+      camera.setViewOffset(w, h, fit.offsetX, fit.offsetY, w, h); // also rebuilds the projection
       renderer.setSize(w, h, false);
     }
     resize();
-    window.addEventListener('resize', resize);
+    const resizeWatcher = typeof ResizeObserver === 'function' ? new ResizeObserver(resize) : null;
+    if (resizeWatcher) resizeWatcher.observe(canvas); else window.addEventListener('resize', resize);
 
     // sRGB-correct canvas textures (used for everything added in the room/tower/sky)
     function canvasTex(c) {
@@ -84,8 +98,8 @@ export function initScene(opts = {}) {
     const lampX = -0.95, lampZ = 0.6, lampTopX = lampX - 0.15;
 
     /* ---------- Lights ---------- */
-    scene.add(new THREE.AmbientLight(0x323c52, 1.15));
-    scene.add(new THREE.HemisphereLight(0x8fb0d8, 0x1a140f, 0.55));
+    scene.add(new THREE.AmbientLight(0x323c52, 1.35));
+    scene.add(new THREE.HemisphereLight(0x8fb0d8, 0x1a140f, 0.7));
     const lampLight = new THREE.PointLight(0xffb066, 6, 6, 2);
     lampLight.position.set(lampTopX, 0.86, lampZ);
     scene.add(lampLight);
@@ -996,34 +1010,6 @@ export function initScene(opts = {}) {
     const motes = new THREE.Points(moteGeo, moteMat);
     scene.add(motes);
 
-    /* ---------- Vignette (screen-space overlay, always fills the frame) ---------- */
-    const vignetteCanvas = document.createElement('canvas');
-    vignetteCanvas.width = 512; vignetteCanvas.height = 512;
-    const vCtx = vignetteCanvas.getContext('2d');
-    const vGrad = vCtx.createRadialGradient(256, 256, 130, 256, 256, 360);
-    vGrad.addColorStop(0, 'rgba(0,0,0,0)');
-    vGrad.addColorStop(1, 'rgba(0,0,0,0.55)');
-    vCtx.fillStyle = vGrad;
-    vCtx.fillRect(0, 0, 512, 512);
-    const vignetteMat = new THREE.MeshBasicMaterial({
-      map: new THREE.CanvasTexture(vignetteCanvas),
-      transparent: true, depthTest: false, depthWrite: false,
-    });
-    const vignetteDist = 1;
-    const vignettePlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), vignetteMat);
-    vignettePlane.position.set(0, 0, -vignetteDist);
-    vignettePlane.renderOrder = 999;
-    camera.add(vignettePlane);
-    scene.add(camera);
-    function resizeVignette() {
-      const h = 2 * Math.tan((camera.fov * Math.PI / 180) / 2) * vignetteDist;
-      const w = h * camera.aspect;
-      vignettePlane.geometry.dispose();
-      vignettePlane.geometry = new THREE.PlaneGeometry(w, h);
-    }
-    resizeVignette();
-    window.addEventListener('resize', resizeVignette);
-
     /* ---------- Interactivity: click the lamp, click an item to focus, mouse parallax ---------- */
     let lampOn = true;
     const raycaster = new THREE.Raycaster();
@@ -1061,13 +1047,11 @@ export function initScene(opts = {}) {
 
     let parallaxTargetX = 0, parallaxTargetY = 0;
     let parallaxX = 0, parallaxY = 0;
-    if (!isMobile) {
-      window.addEventListener('mousemove', (e) => {
-        if (lite) return;
-        parallaxTargetX = ((e.clientX / window.innerWidth) * 2 - 1) * 0.12;
-        parallaxTargetY = -((e.clientY / window.innerHeight) * 2 - 1) * 0.06;
-      });
+    function onMouseMove(e) {
+      parallaxTargetX = ((e.clientX / window.innerWidth) * 2 - 1) * 0.12;
+      parallaxTargetY = -((e.clientY / window.innerHeight) * 2 - 1) * 0.06;
     }
+    if (!isMobile && !calm) window.addEventListener('mousemove', onMouseMove);
 
     const clock = new THREE.Clock();
     let codeTimer = 0;
@@ -1089,8 +1073,6 @@ export function initScene(opts = {}) {
     function loop() {
       if (!running) return;
       frameAcc += clock.getDelta();
-      // lite tier renders at about 30 fps; skipped frames still keep the clock moving
-      if (lite && frameAcc < 0.032) { rafId = requestAnimationFrame(loop); return; }
       const rawDt = frameAcc;
       frameAcc = 0;
       const dt = Math.min(rawDt, 0.1);
@@ -1103,8 +1085,8 @@ export function initScene(opts = {}) {
       // idle camera breathing + mouse parallax + click-to-focus zoom
       parallaxX += (parallaxTargetX - parallaxX) * Math.min(dt * 3, 1);
       parallaxY += (parallaxTargetY - parallaxY) * Math.min(dt * 3, 1);
-      const breatheX = lite ? 0 : Math.sin(t * 0.18) * 0.018;
-      const breatheY = lite ? 0 : Math.cos(t * 0.13) * 0.01;
+      const breatheX = calm ? 0 : Math.sin(t * 0.18) * 0.018;
+      const breatheY = calm ? 0 : Math.cos(t * 0.13) * 0.01;
       const basePos = new THREE.Vector3(
         cameraBase.x + breatheX + parallaxX,
         cameraBase.y + breatheY + parallaxY,
@@ -1122,7 +1104,7 @@ export function initScene(opts = {}) {
         camera.lookAt(lookBase);
       }
 
-      if (t > nextFlickerAt && t > flickerEndAt) {
+      if (!calm && t > nextFlickerAt && t > flickerEndAt) {
         flickerEndAt = t + 0.12 + Math.random() * 0.1;
         nextFlickerAt = flickerEndAt + 5 + Math.random() * 7;
       }
@@ -1140,7 +1122,7 @@ export function initScene(opts = {}) {
       keyGlow.material.opacity = 0.45 + Math.sin(t * 1.5) * 0.15;
       stringGlowLight.intensity = 0.5 + Math.sin(t * 0.9) * 0.15;
       bulbMat.opacity = 0.75 + Math.sin(t * 1.3) * 0.1;
-      rainTexture.offset.y += dt * 0.6;
+      if (!calm) rainTexture.offset.y += dt * 0.6;
       starMat.opacity = 0.65 + Math.sin(t * 0.6) * 0.15;
       cityLights.forEach((l, i) => { l.material.opacity = 0.5 + Math.sin(t * 0.8 + i) * 0.3; });
       steamWisps.forEach((w, i) => {
@@ -1154,12 +1136,14 @@ export function initScene(opts = {}) {
       cpuAccent.material.opacity = 0.6 + Math.sin(t * 2.4) * 0.25;
       secondHand.rotation.z = -((t % 60) / 60) * Math.PI * 2;
 
-      const motePositions = motes.geometry.attributes.position.array;
-      for (let i = 0; i < moteCount; i++) {
-        motePositions[i * 3 + 1] += dt * 0.03;
-        if (motePositions[i * 3 + 1] > 1.3) motePositions[i * 3 + 1] = 0.15;
+      if (!calm) {
+        const motePositions = motes.geometry.attributes.position.array;
+        for (let i = 0; i < moteCount; i++) {
+          motePositions[i * 3 + 1] += dt * 0.03;
+          if (motePositions[i * 3 + 1] > 1.3) motePositions[i * 3 + 1] = 0.15;
+        }
+        motes.geometry.attributes.position.needsUpdate = true;
       }
-      motes.geometry.attributes.position.needsUpdate = true;
       moteMat.opacity = 0.4 + Math.sin(t * 0.7) * 0.15;
 
       let needsRedraw = false;
@@ -1178,32 +1162,28 @@ export function initScene(opts = {}) {
       if (needsRedraw) drawCode();
 
       renderer.render(scene, camera);
+      framesDrawn++;
+      if (framesDrawn === 3 && onReady) onReady();   // a few real frames are on screen: safe to drop the loading screen
       rafId = requestAnimationFrame(loop);
     }
+    if (calm) steamWisps.forEach((w) => { w.visible = false; });   // calm mode: no drifting steam
+    let framesDrawn = 0;
     loop();
 
     /* ---------- Controls handed back to main.js ---------- */
-    // Drop to the lite tier while running: hides the costly extras, lowers resolution, caps the frame rate.
-    function setQuality(level) {
-      if (level !== 'lite' || lite) return;
-      lite = true;
-      [rainPlane, cond1, cond2, stringBulbs, stringWire, motes, keyGlow, ...steamWisps]
-        .forEach((o) => { o.visible = false; });
-      [stringGlowLight, keyGlowLight, phoneGlow].forEach((l) => { l.visible = false; });
-      parallaxTargetX = 0;
-      parallaxTargetY = 0;
-      renderer.setPixelRatio(liteRatio);
-      resize();
-    }
+    // If the browser resets the GPU, tell main.js so it can fall back to the still picture and say why.
+    function onLost(e) { e.preventDefault(); if (!stopped && onContextLost) onContextLost(); }
+    canvas.addEventListener('webglcontextlost', onLost);
 
-    // Shut the scene down for good and free the GPU (used when falling back to the static poster).
+    // Shut the scene down for good and free the GPU (used when falling back to the still picture).
     function stop() {
       stopped = true;
       running = false;
       cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('resize', resizeVignette);
+      if (resizeWatcher) resizeWatcher.disconnect(); else window.removeEventListener('resize', resize);
+      window.removeEventListener('mousemove', onMouseMove);
       canvas.removeEventListener('click', onSceneClick);
+      canvas.removeEventListener('webglcontextlost', onLost);
       renderer.dispose();
       const lose = renderer.getContext().getExtension('WEBGL_lose_context');
       if (lose) lose.loseContext();
@@ -1222,5 +1202,5 @@ export function initScene(opts = {}) {
       }, 'image/webp', 0.85);
     }
 
-    return { setQuality, stop, captureStill };
+    return { stop, captureStill };
 }
