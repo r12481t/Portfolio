@@ -132,16 +132,18 @@ function pickStart() {
 }
 
 /* ---------- the card that explains a fallback ---------- */
+// Plain words only: what happened, and that a picture is shown instead. No technical terms on the card.
+// The technical details (graphics card name, error text) only show up with ?debug and in the console.
 const NOTICES = {
-  'slow-load':    (d) => `The 3D scene took more than ${Math.round(d.limitMs / 1000)} seconds to load, usually because of a slow connection. This is a still picture of it instead.`,
+  'slow-load':    () => "The 3D scene is taking too long to load, so here's a picture of it instead. This usually happens on a slow connection.",
   'low-fps':      (d) => d.cached
-                    ? 'Last time, this device ran the scene too slowly, so 3D is off for a few hours. This is a still picture instead.'
-                    : `Your device drew the scene at about ${d.fps} frames per second over ${d.seconds} seconds. That's too choppy to be pleasant, so this is a still picture instead.`,
-  'software-gpu': () => 'Your browser is drawing 3D on the processor instead of the graphics card, which is too slow for this scene. Turning on hardware acceleration in the browser settings usually fixes that. This is a still picture instead.',
-  'no-webgl':     () => "Your browser couldn't start WebGL, which the 3D scene needs. This is a still picture instead.",
-  'load-error':   () => 'The scene hit an error while starting, so this is a still picture instead.',
-  'context-lost': () => 'Your browser reset its graphics process and the 3D scene stopped. This is a still picture instead. Reloading the page usually brings it back.',
-  'save-data':    () => "Data Saver is on, so the 3D scene wasn't downloaded. This is a still picture instead.",
+                    ? "The 3D scene ran choppy on this device last time, so it's off for a few hours. Here's a picture of it instead."
+                    : "The 3D scene was running choppy on this device, so here's a picture of it instead.",
+  'software-gpu': () => "This browser can't run the 3D scene smoothly, so here's a picture of it instead. Switching on hardware acceleration in the browser's settings often fixes that.",
+  'no-webgl':     () => "This browser can't show the 3D scene, so here's a picture of it instead.",
+  'load-error':   () => "Something went wrong while loading the 3D scene, so here's a picture of it instead. Reloading the page may fix it.",
+  'context-lost': () => "The 3D scene stopped working, so here's a picture of it instead. Reloading the page usually brings it back.",
+  'save-data':    () => "Data Saver is on, so the 3D scene wasn't loaded. Here's a picture of it instead.",
 };
 const NO_RETRY = ['no-webgl'];
 
@@ -151,12 +153,14 @@ function showNotice(reason, detail) {
   try { if (sessionStorage.getItem(NOTICE_KEY) === reason) return; } catch (e) {}
   const card = el('aside', 'notice');
   card.setAttribute('role', 'status');
-  card.appendChild(el('p', 'notice-title', '3D scene switched off'));
+  card.appendChild(el('p', 'notice-title', 'Showing a picture instead'));
   card.appendChild(el('p', 'notice-body', make(detail)));
-  const meta = [];
-  if (detail.gpu) meta.push('graphics: ' + detail.gpu);
-  if (detail.message) meta.push(detail.message);
-  if (meta.length) card.appendChild(el('p', 'notice-meta mono', meta.join(' | ')));
+  if (params.has('debug')) {   // technical details stay out of sight unless you ask for them
+    const meta = [];
+    if (detail.gpu) meta.push('graphics: ' + detail.gpu);
+    if (detail.message) meta.push(detail.message);
+    if (meta.length) card.appendChild(el('p', 'notice-meta mono', meta.join(' | ')));
+  }
   const actions = el('div', 'notice-actions');
   if (!NO_RETRY.includes(reason)) {
     const retry = el('button', 'notice-btn notice-btn-primary', reason === 'software-gpu' ? 'Try 3D anyway' : 'Try 3D again');

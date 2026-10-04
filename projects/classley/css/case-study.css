@@ -68,7 +68,7 @@ nav{
   position:fixed; top:0; left:0; width:100%; z-index:100;
   display:flex; align-items:center; justify-content:space-between;
   padding:var(--space-2) var(--gutter);
-  background:rgba(26,20,16,0.92); border-bottom:1px solid var(--hair);
+  background:var(--void); border-bottom:1px solid var(--hair);   /* solid: text scrolling underneath must not show through */
 }
 .brand{
   display:inline-flex; align-items:center; min-height:44px;
@@ -89,7 +89,6 @@ main > section, footer{ width:min(100% - 2 * var(--gutter), var(--measure)); mar
   display:flex; align-items:center; gap:var(--space-2);
   color:var(--ash); font-size:0.8125rem; letter-spacing:0.04em;
 }
-.label::before{ content:''; width:var(--space-4); height:1px; background:var(--lamp); }
 .note{ color:var(--ash); font-size:0.8125rem; line-height:1.6; max-width:44ch; }
 
 .btn{

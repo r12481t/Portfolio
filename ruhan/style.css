@@ -95,14 +95,18 @@ section:focus{ outline:none }
 }
 body.no-3d #scene{ display:none }
 body.no-3d #scene-fallback{ display:block }
-/* Still picture shown when 3D is off. It sits on top of the gradient, which shows if the image is missing.
-   Files go next to this stylesheet; make them with ?capture and ?capture=mobile (see main.js). */
+/* Still picture shown when 3D is off: a real render of the scene, not a plain colour.
+   scene-poster.webp is the desktop picture (make it with ?capture in a normal PC window).
+   scene-poster-mobile.webp is the phone picture (?capture=mobile). If the desktop one isn't there yet,
+   the phone picture is used on desktop too, so there is always a picture. */
 #scene-fallback::before{
   content:''; position:absolute; inset:0;
-  background:url('scene-poster.webp') center / cover no-repeat;
+  background:
+    url('scene-poster.webp') center / cover no-repeat,
+    url('scene-poster-mobile.webp') center top / cover no-repeat;
 }
 @media (max-aspect-ratio:1/1){
-  #scene-fallback::before{ background-image:url('scene-poster-mobile.webp'); }
+  #scene-fallback::before{ background:url('scene-poster-mobile.webp') center top / cover no-repeat; }
 }
 
 /* A light shade over the scene so text stays readable without a panel behind it.
@@ -175,7 +179,7 @@ section + section{ border-top:1px solid var(--hair); }
 .skill-group h3{ font-size:0.95rem; font-weight:600; color:var(--paper); margin-bottom:var(--space-2); }
 .skill-group ul{ list-style:none; color:var(--ash); }
 .skill-group li{ padding:var(--space-1) 0; }
-.skill-group li::before{ content:'– '; color:var(--lamp); }
+.skill-group li::before{ content:''; display:inline-block; width:5px; height:5px; margin-right:0.75em; border-radius:50%; background:var(--lamp); vertical-align:middle; }
 
 /* projects: whole card is the link (one real link inside, stretched over the card) */
 .project-list{ display:grid; gap:var(--space-4); }

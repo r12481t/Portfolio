@@ -68,7 +68,7 @@ nav{
   position:fixed; top:0; left:0; width:100%; z-index:100;
   display:flex; align-items:center; justify-content:space-between;
   padding:var(--space-2) var(--gutter);
-  background:rgba(26,20,16,0.92); border-bottom:1px solid var(--hair);
+  background:var(--void); border-bottom:1px solid var(--hair);   /* solid: text scrolling underneath must not show through */
 }
 .brand{
   display:inline-flex; align-items:center; min-height:44px;
@@ -89,7 +89,6 @@ main > section, footer{ width:min(100% - 2 * var(--gutter), var(--measure)); mar
   display:flex; align-items:center; gap:var(--space-2);
   color:var(--ash); font-size:0.8125rem; letter-spacing:0.04em;
 }
-.label::before{ content:''; width:var(--space-4); height:1px; background:var(--lamp); }
 .note{ color:var(--ash); font-size:0.8125rem; line-height:1.6; max-width:44ch; }
 
 .btn{
@@ -157,7 +156,7 @@ h2{ font-size:clamp(1.75rem, 4vw, 2.5rem); line-height:1.1; letter-spacing:-0.02
 .spec-row > div > p + *, .spec-row > div > * + p{ margin-top:var(--space-3); }
 .spec-row ul.plain{ list-style:none; color:var(--ash); max-width:60ch; }
 .spec-row ul.plain li{ padding:var(--space-1) 0 var(--space-1) var(--space-4); position:relative; }
-.spec-row ul.plain li::before{ content:''; position:absolute; left:0; top:0.95em; width:var(--space-3); height:1px; background:var(--lamp); }
+.spec-row ul.plain li::before{ content:''; position:absolute; left:0; top:1.1em; width:6px; height:6px; border-radius:50%; background:var(--lamp); }
 .spec-row strong{ color:var(--paper); font-weight:600; }
 
 /* the team */
@@ -211,3 +210,68 @@ footer a:hover, footer a:focus-visible{ color:var(--paper); border-bottom-color:
 }
 @keyframes rise{ from{ opacity:0; transform:translateY(8px); } }
 @media (prefers-reduced-motion:reduce){ .lookbook a, .lookbook a:hover{ transition:none; transform:none; } }
+
+/* ================= PHONES (under 640px): swipeable designs, tiles, cards ================= */
+/* Everything below is phone-only, so the desktop and tablet layouts stay exactly as they are. */
+.avatar{ display:none; }
+@media (max-width:639px){
+  /* hero */
+  .hero{ gap:var(--space-5); padding-top:calc(var(--space-7) + var(--space-3)); padding-bottom:var(--space-6); }
+  .hero-logo{ width:88px; height:88px; margin-bottom:var(--space-3); }
+  .hero h1{ font-size:clamp(2.75rem, 14vw, 3.5rem); }
+  .hero .lede{ font-size:1.125rem; }
+  .hero-action .btn{ width:100%; justify-content:center; }
+
+  /* the three designs: a swipeable row that bleeds to the screen edges, the next one peeking in */
+  .lookbook{
+    display:flex; gap:var(--space-3); overflow-x:auto; overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory; scroll-padding-inline:var(--gutter);
+    margin-inline:calc(var(--gutter) * -1); padding:var(--space-2) var(--gutter) var(--space-4);
+    scrollbar-width:none;
+  }
+  .lookbook::-webkit-scrollbar{ display:none; }
+  .lookbook li{ flex:0 0 70%; scroll-snap-align:start; }
+  .lookbook li:nth-child(2){ margin-top:var(--space-5); }
+  .lookbook li:nth-child(3){ margin-top:var(--space-2); }
+  .lookbook li:last-child{ margin-right:var(--space-2); }
+  .lookbook a{ box-shadow:0 18px 36px -22px rgba(0, 0, 0, 0.9), 0 0 60px -30px rgba(242, 167, 90, 0.35); }
+  .lookbook figcaption{ font-size:0.75rem; }
+
+  /* facts: four tiles instead of a plain list */
+  .facts{ grid-template-columns:repeat(2, minmax(0, 1fr)); gap:var(--space-2); }
+  .facts div{ padding:var(--space-3); border:1px solid var(--hair); border-radius:var(--radius); background:var(--wash); }
+  .facts dt{ color:var(--lamp); }
+  .facts dd{ margin-top:var(--space-2); font-size:0.9375rem; line-height:1.4; }
+
+  /* sections: a small index number above each heading, rows become cards */
+  main{ counter-reset:sec; }
+  .what{ padding-top:var(--space-6); padding-bottom:var(--space-3); }
+  .what > h2::before{
+    counter-increment:sec; content:counter(sec, decimal-leading-zero);
+    display:block; margin-bottom:var(--space-2); color:var(--lamp);
+    font-family:'IBM Plex Mono', ui-monospace, monospace; font-weight:400; font-size:0.8125rem; letter-spacing:0.04em;
+  }
+  .spec{ display:grid; gap:var(--space-2); margin-top:var(--space-4); border-top:0; }
+  .spec--flush{ margin-top:var(--space-2); }
+  .spec-row{ padding:var(--space-4); border:1px solid var(--hair); border-radius:var(--radius); background:var(--wash); }
+  .spec-row h3{ font-size:1.1875rem; }
+  .spec--numbered .spec-row h3::before{ margin-bottom:var(--space-2); font-size:1.75rem; line-height:1; letter-spacing:0; }
+
+  /* team: initials badges */
+  .team{ gap:0; }
+  .team li{ display:grid; grid-template-columns:44px minmax(0, 1fr); column-gap:var(--space-3); align-items:center; padding:var(--space-3) 0; }
+  .team li:first-child{ border-top:0; padding-top:var(--space-1); }
+  .avatar{
+    display:grid; place-items:center; grid-row:1 / span 2; width:44px; height:44px;
+    border:1px solid var(--lamp); border-radius:50%; color:var(--lamp); font-size:0.8125rem; letter-spacing:0.04em;
+  }
+  .team .role{ font-size:0.875rem; }
+
+  /* links */
+  .links{ padding:var(--space-4); margin-block:var(--space-5); }
+  .link-list a{ min-height:56px; }
+  .link-list .where{ font-size:1.0625rem; }
+  .link-list a::after{ content:'\2197'; color:var(--lamp); font-size:1.125rem; margin-left:var(--space-2); }
+  .link-list a{ justify-content:flex-start; }
+  .link-list .what-url{ margin-left:auto; }
+}
