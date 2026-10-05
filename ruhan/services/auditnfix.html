@@ -3,80 +3,253 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Website audit and fix | Ruhan Tahlil Islam Britto</title>
-<meta name="description" content="A free report on what is wrong with your website, and a fix for $50 to $80.">
+<title>Website fixes from $50 | Ruhan Tahlil Islam Britto</title>
+<meta name="description" content="I test your website, send you a free list of what is broken or slow, and fix the problems you pick for $50 to $80.">
 <meta name="theme-color" content="#2b2018">
-<link rel="stylesheet" href="css/services.css?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --s1:.25rem;--s2:.5rem;--s3:1rem;--s4:1.5rem;--s5:2rem;--s6:3rem;--s7:4rem;
+  --font-display:"Space Grotesk",system-ui,sans-serif;
+  --font-text:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --text-sm:.875rem;--text-base:1rem;--text-lg:1.25rem;--text-xl:1.75rem;
+  --text-hero:clamp(2.5rem,1rem + 6vw,4.5rem);
+  --text-price:clamp(3.25rem,1.5rem + 9vw,7rem);
+  --measure:62ch;--radius:4px;
+  --dur:150ms;--ease:cubic-bezier(.16,1,.3,1);
+  --bg:#2b2018;--surface:#241a13;--text:#f5efe6;--muted:#c9bdac;--rule:#5a4535;
+  --accent:#f2a75a;--on-accent:#2b2018;--focus:#f2a75a;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(48rem 36rem at 82% -6%,rgba(242,167,90,.16),transparent 70%),var(--bg);color:var(--text);font:var(--text-base)/1.5 var(--font-text);text-shadow:0 1px 14px rgba(20,13,8,.55)}
+a{color:var(--accent);text-underline-offset:.2em}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:var(--radius)}
+.wrap{max-width:72rem;margin:0 auto;padding:0 var(--s3)}
+@media(min-width:48rem){.wrap{padding:0 var(--s5)}}
+.skip{position:absolute;left:var(--s3);top:-4rem;background:var(--accent);color:var(--on-accent);padding:var(--s2) var(--s3);border-radius:var(--radius)}
+.skip:focus{top:var(--s3)}
+h1,h2{font-family:var(--font-display);font-weight:600;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1{font-size:var(--text-hero);line-height:1.05;letter-spacing:-.02em}
+h2{font-size:var(--text-xl);line-height:1.2}
+p{margin:0 0 var(--s3);max-width:var(--measure)}
+.btn{text-shadow:none;display:inline-flex;align-items:center;min-height:3rem;padding:0 var(--s4);background:var(--accent);color:var(--on-accent);font:600 var(--text-base) var(--font-text);text-decoration:none;border-radius:var(--radius);transition:transform var(--dur) var(--ease)}
+.btn:hover{background:#ffbb70}
+.btn:active{transform:translateY(1px)}
+.note{font-size:var(--text-sm);color:var(--muted);margin:var(--s3) 0 0}
+
+header{padding:var(--s4) 0}
+header a{color:var(--text);font-weight:600;text-decoration:none}
+
+.hero{padding:var(--s6) 0 var(--s7);display:grid;gap:var(--s4)}
+.hero .lede{font-size:var(--text-lg);line-height:1.45;margin:0}
+@media(min-width:56rem){
+  .hero{grid-template-columns:repeat(12,1fr);column-gap:var(--s4);row-gap:var(--s5);padding-top:var(--s7)}
+  .hero h1{grid-column:1/11}
+  .hero .ask{grid-column:5/13}
+}
+
+section{padding:var(--s6) 0;border-top:1px solid var(--rule)}
+.split{display:grid;gap:var(--s4)}
+@media(min-width:56rem){.split{grid-template-columns:repeat(12,1fr);column-gap:var(--s4)}.split>h2{grid-column:1/5}.split>:not(h2){grid-column:5/13}}
+#test{padding-bottom:var(--s7)}
+.checks{margin:0}
+.checks div{display:grid;gap:var(--s1);padding:var(--s3) 0;border-bottom:1px solid var(--rule)}
+.checks div:first-child{padding-top:0}
+@media(min-width:40rem){.checks div{grid-template-columns:12rem 1fr;gap:var(--s4)}}
+.checks dt{font-weight:600}
+.checks dd{margin:0;color:var(--muted)}
+.checks+p{margin-top:var(--s4)}
+
+.steps{list-style:none;margin:0;padding:0;counter-reset:step}
+.steps li{counter-increment:step;display:grid;grid-template-columns:3rem 1fr;gap:var(--s3);padding:var(--s3) 0;border-bottom:1px solid var(--rule)}
+.steps li:first-child{padding-top:0}
+.steps li::before{content:counter(step);font:600 var(--text-xl)/1 var(--font-display);color:var(--accent)}
+.steps b{display:block;font-weight:600}
+.steps span{color:var(--muted)}
+
+.cost{background:rgba(26,18,12,.55);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:var(--s7) 0}
+.cost .wrap{display:grid;gap:var(--s5)}
+.price-main{padding-top:var(--s2)}
+.price-main .num{font:600 var(--text-price)/1 var(--font-display);letter-spacing:-.03em;color:var(--accent);font-variant-numeric:tabular-nums}
+.price-main p{margin:var(--s3) 0 0;color:var(--muted)}
+.price-main strong{color:var(--text);font-weight:600}
+.others{display:grid;gap:var(--s3);margin:0}
+@media(min-width:40rem){.others{grid-template-columns:1fr 1fr;gap:var(--s5)}}
+.others div{border-top:1px solid var(--rule);padding-top:var(--s3)}
+.others dt{font-weight:600}
+.others dd{margin:var(--s1) 0 0;color:var(--muted)}
+.others dd b{color:var(--text);font-weight:600}
+
+.final{padding:var(--s7) 0 var(--s6)}
+.final p{margin-bottom:var(--s4)}
+footer{padding:0 0 var(--s7);font-size:var(--text-sm);color:var(--muted)}
+footer a{color:var(--muted)}
+
+.sticky{position:fixed;left:0;right:0;bottom:0;padding:var(--s3) var(--s3) calc(var(--s3) + env(safe-area-inset-bottom,0px));background:rgba(43,32,24,.97);border-top:1px solid var(--rule);opacity:0;visibility:hidden;transform:translateY(100%);transition:opacity 200ms var(--ease),transform 200ms var(--ease),visibility 0s linear 200ms}
+.sticky.show{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.sticky .btn{width:100%;justify-content:center}
+@media(max-width:55.99rem){footer{padding-bottom:calc(var(--s7) + var(--s4))}}
+@media(min-width:56rem){.sticky{display:none}}
+#sky,#veil,#lamp{position:fixed;pointer-events:none;z-index:-1}
+#sky{inset:0;width:100%;height:100%}
+#veil{inset:0;background:linear-gradient(rgba(43,32,24,.35),rgba(43,32,24,.62))}
+#lamp{left:0;top:0;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(242,167,90,.2),rgba(242,167,90,.07) 40%,transparent 70%);transform:translate3d(calc(82vw - 320px),calc(12vh - 320px),0)}
+.js .rv{opacity:0;transform:translateY(16px);transition:opacity 400ms var(--ease),transform 400ms var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
-<div class="wrap">
+<script>document.documentElement.className="js"</script>
+<canvas id="sky" aria-hidden="true"></canvas><div id="veil" aria-hidden="true"></div><div id="lamp" aria-hidden="true"></div>
+<a class="skip" href="#main">Skip to content</a>
 
-<header class="top">
-  <a href="../ruhan/Ruhan-portfolio.html">Ruhan Tahlil Islam Britto</a>
-  <a href="../ruhan/Ruhan-portfolio.html">See my other work</a>
+<header>
+  <div class="wrap"><a href="../Ruhan-portfolio.html">Ruhan Tahlil Islam Britto</a></div>
 </header>
 
-<main>
-<div class="hero">
-  <div>
-    <h1>A free report on what is wrong with your website. A fix for $50 to $80.</h1>
-    <p class="lede">I test your site the way Google does, list every problem in plain language, and fix the ones you pick. The report costs nothing and you owe me nothing for reading it.</p>
-    <a class="btn" href="mailto:REPLACE-WITH-YOUR-EMAIL?subject=Fix%20my%20website">Email me about a fix</a>
-    <p class="note">Already got an audit from me? Just reply to that email and name the problems you want gone.</p>
+<main id="main">
+  <div class="wrap">
+    <div class="hero">
+      <h1>I fix what is wrong with your website for $50 to $80.</h1>
+      <div class="ask">
+        <p class="lede">I run your site through Google's PageSpeed test and send you a plain list of what is broken or slow. The list is free. If you want any of it fixed, I quote you a price first.</p>
+        <a class="btn" id="hero-cta" href="mailto:REPLACE-WITH-YOUR-EMAIL?subject=Fix%20my%20website">Email me what to fix</a>
+        <p class="note">Already got a list from me? Reply to that email instead.</p>
+      </div>
+    </div>
   </div>
 
-  <div class="report">
-    <h2>What your free report includes</h2>
-    <ul class="gets">
-      <li>A score out of 100 for speed, mobile usability, search basics and accessibility, from Google's own test.</li>
-      <li>Every problem found, written in plain language.</li>
-      <li>Which problems matter most.</li>
-    </ul>
-    <p class="fine">Every report shows your own site's real results.</p>
-  </div>
-</div>
+  <section id="test">
+    <div class="wrap split">
+      <h2>What the test looks at</h2>
+      <div>
+        <dl class="checks">
+          <div><dt>Speed</dt><dd>How long the page takes to appear on a phone and on a computer, and what slows it down.</dd></div>
+          <div><dt>Mobile layout</dt><dd>Whether text is readable and buttons are easy to tap on a small screen.</dd></div>
+          <div><dt>Broken links</dt><dd>Links and pages that end in "page not found".</dd></div>
+          <div><dt>Search basics</dt><dd>The page titles and descriptions Google reads when it lists your site.</dd></div>
+          <div><dt>Accessibility</dt><dd>Contrast, image descriptions and labels for visitors who use screen readers.</dd></div>
+        </dl>
+        <p>PageSpeed scores speed, accessibility and search basics out of 100. You get those scores for your own site, plus the list of problems behind them.</p>
+      </div>
+    </div>
+  </section>
 
-<section id="checks">
-  <h2>What the audit checks</h2>
-  <ul class="checks">
-    <li><h3>Speed</h3><p>How long the page takes to show up on a phone and on a computer, and what is slowing it down.</p></li>
-    <li><h3>Mobile usability</h3><p>Whether text is readable and buttons are easy to tap on a small screen.</p></li>
-    <li><h3>Broken links</h3><p>Links and pages that lead to "page not found".</p></li>
-    <li><h3>Search basics</h3><p>Page titles, descriptions and other things Google reads to decide how to list you.</p></li>
-    <li><h3>Accessibility basics</h3><p>Contrast, image descriptions and labels that help visitors who use screen readers.</p></li>
-    <li><h3>And the rest of Google's test</h3><p>Anything else the test flags that affects how visitors experience your site.</p></li>
-  </ul>
-</section>
+  <section id="how">
+    <div class="wrap split">
+      <h2>How a fix works</h2>
+      <ol class="steps">
+        <li><div><b>You reply</b><span>Say which problems from your list you want fixed. Not sure? Ask me which matter most.</span></div></li>
+        <li><div><b>I quote a price</b><span>Between $50 and $80, depending on how many problems and how big they are. You agree to the number before I start.</span></div></li>
+        <li><div><b>I fix it</b><span>I change your site and run the test again after each fix.</span></div></li>
+        <li><div><b>You see the difference</b><span>You get the new results next to the old ones.</span></div></li>
+      </ol>
+    </div>
+  </section>
 
-<section id="process">
-  <h2>How a fix works</h2>
-  <ol class="steps">
-    <li><b>You reply</b>Tell me which problems from your report you want fixed, or ask me which matter most.</li>
-    <li><b>I send a price</b>It sits between $50 and $80 and depends on how many problems you pick and how big they are. You see the exact number before I touch anything.</li>
-    <li><b>I make the fixes</b>I work on your site and test it again after each change.</li>
-    <li><b>You see the proof</b>You get the new test results next to the old ones, so you can see what changed.</li>
-  </ol>
-</section>
+  <section class="cost" id="cost">
+    <div class="wrap">
+      <h2>What it costs</h2>
+      <div class="price-main">
+        <div class="num">$50 to $80</div>
+        <p><strong>For a fix.</strong> The exact price is agreed before any work starts.</p>
+      </div>
+      <dl class="others">
+        <div><dt>The list of problems</dt><dd><b>Free.</b> No obligation to buy a fix.</dd></div>
+        <div><dt>Monthly check-ups</dt><dd><b>Not open yet.</b> Coming later.</dd></div>
+      </dl>
+    </div>
+  </section>
 
-<section id="pricing">
-  <h2>Pricing</h2>
-  <div class="prices">
-    <div class="price"><h3>Audit report</h3><div class="amt">Free</div><p>Your site tested, every problem listed in plain language.</p></div>
-    <div class="price main"><h3>Fix package</h3><div class="amt">$50 to $80</div><p>I fix the problems you choose from the report. Exact price agreed before work starts.</p></div>
-    <div class="price"><h3>Care plan</h3><div class="amt">Coming later</div><p>Ongoing checks and small fixes each month. Not open yet.</p></div>
-  </div>
-</section>
-
-<section id="start" class="cta">
-  <h2>Start with one email</h2>
-  <p>Reply to your audit email, or write to me below. Say which problems you want fixed. If you are not sure, ask and I will tell you which three matter most.</p>
-  <a class="btn" href="mailto:REPLACE-WITH-YOUR-EMAIL?subject=Fix%20my%20website">Email me about a fix</a>
-  <p class="note">Need a new site instead of repairs? Custom builds are coming soon.</p>
-</section>
+  <section class="final" id="start">
+    <div class="wrap split">
+      <h2>Send me the problems you want fixed</h2>
+      <div>
+        <p>Reply to your email, or write to me below. If you are not sure where to start, ask and I will name the three that matter most.</p>
+        <a class="btn" id="final-cta" href="mailto:REPLACE-WITH-YOUR-EMAIL?subject=Fix%20my%20website">Email me what to fix</a>
+        <p class="note">Need a new site instead of repairs? Custom builds are coming soon.</p>
+      </div>
+    </div>
+  </section>
 </main>
 
-<footer>Ruhan Tahlil Islam Britto. <a href="../ruhan/Ruhan-portfolio.html">Portfolio</a></footer>
+<footer>
+  <div class="wrap"><a href="../Ruhan-portfolio.html">See sites I have built</a></div>
+</footer>
 
-</div>
+<div class="sticky" id="sticky"><a class="btn" href="mailto:REPLACE-WITH-YOUR-EMAIL?subject=Fix%20my%20website">Email me what to fix</a></div>
+
+<script>
+(function(){
+  var cv=document.getElementById('sky'),cx=cv.getContext('2d'),lamp=document.getElementById('lamp');
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var lite=innerWidth<700||(navigator.hardwareConcurrency||8)<=4;
+  var dpr=Math.min(devicePixelRatio||1,lite?1:1.5),W,H,stars,lights,drops;
+  function rnd(a,b){return a+Math.random()*(b-a)}
+  var glow=document.createElement('canvas');glow.width=glow.height=32;
+  (function(){var g=glow.getContext('2d'),r=g.createRadialGradient(16,16,0,16,16,16);
+    r.addColorStop(0,'rgba(255,214,150,1)');r.addColorStop(.3,'rgba(242,167,90,.5)');r.addColorStop(1,'rgba(242,167,90,0)');
+    g.fillStyle=r;g.fillRect(0,0,32,32)})();
+  function drop(init){return{x:rnd(-60,W),y:init?rnd(0,H):-24,l:rnd(10,22),v:rnd(520,860)}}
+  function build(){
+    W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);
+    var i,ns=Math.min(lite?50:110,Math.round(W*H/9000));stars=[];lights=[];drops=[];
+    for(i=0;i<ns;i++)stars.push({x:rnd(0,W),y:rnd(0,H*.62),r:rnd(.5,1.2),p:rnd(0,6.3),s:rnd(.5,1.3)});
+    for(i=0;i<(lite?22:48);i++)lights.push({x:rnd(0,W),y:rnd(H*.82,H*.98),r:rnd(5,11),a:rnd(.25,.55),p:rnd(0,6.3)});
+    if(!still)for(i=0;i<(lite?30:70);i++)drops.push(drop(true));
+    frame(0,0)
+  }
+  function frame(t,dt){
+    var i,s,l,d;cx.clearRect(0,0,W,H);
+    for(i=0;i<stars.length;i++){s=stars[i];cx.fillStyle='rgba(245,239,230,'+(.22+.3*(.5+.5*Math.sin(t*s.s+s.p)))+')';cx.fillRect(s.x,s.y,s.r*2,s.r*2)}
+    for(i=0;i<lights.length;i++){l=lights[i];cx.globalAlpha=l.a*(.85+.15*Math.sin(t*.6+l.p));cx.drawImage(glow,l.x-l.r,l.y-l.r,l.r*2,l.r*2)}
+    cx.globalAlpha=1;
+    if(drops.length){
+      cx.beginPath();
+      for(i=0;i<drops.length;i++){d=drops[i];d.y+=d.v*dt;d.x+=d.v*.18*dt;
+        if(d.y>H+24){drops[i]=d=drop(false)}
+        cx.moveTo(d.x,d.y);cx.lineTo(d.x-d.l*.18,d.y-d.l)}
+      cx.strokeStyle='rgba(245,239,230,.15)';cx.lineWidth=1;cx.stroke()
+    }
+  }
+  build();
+  var rz;addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(build,200)});
+  if(still)return;
+
+  var fine=matchMedia('(pointer: fine)').matches,lx=W*.82,ly=H*.12,tx=lx,ty=ly,last=0,slow=0,n=0,run=true;
+  if(fine)addEventListener('pointermove',function(e){tx=e.clientX;ty=e.clientY},{passive:true});
+  function loop(now){
+    if(!run)return;
+    var dt=Math.min((now-last)/1000||.016,.05);last=now;
+    if(n++>30&&n<150){slow+=dt;if(n===149&&slow/119>.026)drops.length=0}
+    frame(now/1000,dt);
+    if(fine){lx+=(tx-lx)*.08;ly+=(ty-ly)*.08;lamp.style.transform='translate3d('+(lx-320)+'px,'+(ly-320)+'px,0)'}
+    requestAnimationFrame(loop)
+  }
+  requestAnimationFrame(loop);
+  document.addEventListener('visibilitychange',function(){run=!document.hidden;if(run){last=performance.now();requestAnimationFrame(loop)}})
+})();
+
+(function(){
+  var els=document.querySelectorAll('.hero h1,.hero .ask,.split>*,.cost .wrap>*,.final .split>*'),
+      still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  els.forEach(function(el,i){el.classList.add('rv');el.style.transitionDelay=(i%3)*70+'ms'});
+  if(still||!('IntersectionObserver' in window)){els.forEach(function(el){el.classList.add('in')});return}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(el){io.observe(el)})
+})();
+</script>
+<script>
+(function(){
+  var bar=document.getElementById('sticky'),past=false,end=false;
+  function set(){bar.classList.toggle('show',past&&!end)}
+  new IntersectionObserver(function(e){past=!e[0].isIntersecting&&e[0].boundingClientRect.top<0;set()}).observe(document.getElementById('hero-cta'));
+  new IntersectionObserver(function(e){end=e[0].isIntersecting;set()}).observe(document.getElementById('final-cta'));
+})();
+</script>
 </body>
 </html>
