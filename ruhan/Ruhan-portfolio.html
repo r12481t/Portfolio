@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css?v=4" />
+<link rel="stylesheet" href="style.css?v=5" />
 <!-- Loading screen switch. Runs before first paint so the page never flashes dark and then jumps.
      Two safety nets: with JS off the class is never added (the loader stays hidden), and if main.js
      never reports back, the loader lets go after 16 seconds anyway. It also starts downloading the
@@ -50,6 +50,7 @@
   <a href="#hero" class="brand">Ruhan</a>
   <div class="nav-links">
     <a href="#projects">Projects</a>
+    <a href="#services">Services</a>
     <a href="#contact">Contact</a>
   </div>
 </nav>
@@ -129,6 +130,30 @@
     </div>
   </section>
 
+  <section id="services" tabindex="-1">
+    <div class="section-inner">
+      <h2>Services</h2>
+      <p class="lede">For businesses whose website needs fixing, or building.</p>
+
+      <div class="project-list">
+        <article class="project-card">
+          <p class="project-tag mono">Free report, fixes $50 to $80</p>
+          <h3><a class="card-link" href="services/auditnfix.html">Audit and Fix</a></h3>
+          <p>I test your site with Google's PageSpeed tool and send you a plain list of what is slow or broken. The list is free. If you want any of it fixed, I quote you a price first.</p>
+          <p class="project-meta mono">Speed, mobile layout, broken links, search basics</p>
+          <p class="project-more" aria-hidden="true">See what it covers <span class="arrow">&rarr;</span></p>
+        </article>
+
+        <article class="project-card is-soon">
+          <p class="project-tag mono">Coming soon</p>
+          <h3>Custom Builds</h3>
+          <p>A landing page or online store built for your business. Packages and prices will be posted here.</p>
+          <p class="project-meta mono">Landing pages, e-commerce</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <section id="contact" tabindex="-1">
     <div class="section-inner">
       <h2>Contact</h2>
@@ -151,6 +176,7 @@
           <li><a href="#about">About</a></li>
           <li><a href="#skills">Skills</a></li>
           <li><a href="#projects">Projects</a></li>
+          <li><a href="#services">Services</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>

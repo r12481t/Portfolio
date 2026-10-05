@@ -167,6 +167,7 @@ section{ position:relative; padding:var(--space-3) var(--gutter); }
 #about{ padding-top:var(--space-7); padding-bottom:var(--space-5); }
 #skills{ padding-top:var(--space-5); padding-bottom:var(--space-6); }
 #projects{ padding-top:var(--space-7); padding-bottom:var(--space-7); }
+#services{ padding-top:var(--space-6); padding-bottom:var(--space-6); }
 #contact{ padding-top:var(--space-6); padding-bottom:var(--space-7); }
 .section-inner{ max-width:640px; margin:0 auto; padding:var(--space-4) 0; }
 h2{ font-size:clamp(1.5rem,3vw,2rem); margin-bottom:var(--space-4); }
@@ -201,6 +202,10 @@ section + section{ border-top:1px solid var(--hair); }
 .project-more{ display:flex; align-items:center; gap:var(--space-2); margin-top:var(--space-2); color:var(--lamp) !important; font-weight:500; }
 .arrow{ display:inline-block; transition:transform var(--dur-base) var(--ease-out); }
 .project-card:hover .arrow, .project-card:focus-within .arrow{ transform:translateX(4px); }
+
+/* a card that is not a link yet: same box, no hover lift */
+.project-card.is-soon{ background:rgba(13,10,8,0.5); }
+.project-card.is-soon:hover{ border-color:var(--hair); background:rgba(13,10,8,0.5); transform:none; }
 
 /* contact */
 .contact-email{
@@ -296,6 +301,8 @@ section + section{ border-top:1px solid var(--hair); }
 
 /* small phones: tighter buttons so both fit on one row */
 @media (max-width:480px){ .btn{ padding:0 var(--space-4); } }
+/* three nav links plus the name must fit on a 320px screen */
+@media (max-width:380px){ .nav-links{ gap:0; } .nav-links a{ padding:0 6px; } }
 
 /* ================= REDUCED MOTION ================= */
 @media (prefers-reduced-motion:reduce){
