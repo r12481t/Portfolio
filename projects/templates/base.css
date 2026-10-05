@@ -1,0 +1,40 @@
+/* Shared style for every template in this folder.
+   To rebrand a template for a client, change the variables in this first block and nothing else. */
+:root{
+  --font-display:"Bricolage Grotesque",system-ui,sans-serif;
+  --font-text:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --paper:#fbf9f4;      /* page background */
+  --surface:#f1ece0;    /* panels and alternate bands */
+  --ink:#1c2321;        /* text */
+  --muted:#55615c;      /* secondary text */
+  --rule:#dfd9cc;       /* hairlines */
+  --accent:#1f6b52;     /* buttons, links, highlights */
+  --accent-dark:#175240;
+  --on-accent:#ffffff;
+
+  --s1:.25rem;--s2:.5rem;--s3:1rem;--s4:1.5rem;--s5:2rem;--s6:3rem;--s7:4rem;--s8:6rem;
+  --text-sm:.875rem;--text-base:1.0625rem;--text-lg:1.25rem;--text-xl:1.75rem;
+  --text-hero:clamp(2.5rem,1rem + 6vw,4.75rem);
+  --measure:60ch;--radius:6px;--dur:150ms;--ease:cubic-bezier(.16,1,.3,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:5rem}
+body{margin:0;background:var(--paper);color:var(--ink);font:var(--text-base)/1.55 var(--font-text);-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;margin:0;line-height:1.15;letter-spacing:-.015em;text-wrap:balance}
+h1{font-size:var(--text-hero);line-height:1.04;letter-spacing:-.025em}
+h2{font-size:var(--text-xl)}
+h3{font-size:var(--text-lg)}
+p{margin:0 0 var(--s3);max-width:var(--measure)}
+a{color:var(--accent);text-underline-offset:.2em}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:var(--radius)}
+.wrap{max-width:72rem;margin:0 auto;padding:0 var(--s3)}
+@media(min-width:48rem){.wrap{padding:0 var(--s5)}}
+.skip{position:absolute;left:var(--s3);top:-4rem;z-index:100;background:var(--ink);color:var(--paper);padding:var(--s2) var(--s3);border-radius:var(--radius)}
+.skip:focus{top:var(--s3)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:3rem;padding:0 var(--s4);border-radius:var(--radius);border:2px solid var(--accent);background:var(--accent);color:var(--on-accent);font:600 var(--text-base) var(--font-text);text-decoration:none;transition:background var(--dur) var(--ease),transform var(--dur) var(--ease)}
+.btn:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.ghost:hover{background:var(--surface)}
+.btn.sm{min-height:2.5rem;padding:0 var(--s3);font-size:var(--text-sm)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
