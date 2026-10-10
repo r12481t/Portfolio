@@ -1,44 +1,45 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="page-builds">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Custom builds | Landing pages, small business sites and online stores</title>
   <meta name="description" content="Fixed starting prices for landing pages, small business sites and online stores, with a timeline for each package and add-ons you can pick from.">
-  <meta name="theme-color" content="#17524d">
+  <meta name="theme-color" content="#14100d">
+
+  <!-- The class="page-builds" on the <html> tag above is what builds.css and builds.js are scoped to. Keep it.
+       Do not link service.css or any other page's stylesheet here, and do not link builds.css from other pages. -->
+  <!-- This one line tells the stylesheet that JavaScript is working. With it, the cards start closed and open when
+       tapped. Without it, everything simply shows. -->
+  <script>document.documentElement.classList.add('js');</script>
 
   <!-- Cache busting: when you edit builds.css or builds.js, change the ?v= number so browsers fetch the new copy. -->
-  <link rel="stylesheet" href="builds.css?v=1">
-  <script src="builds.js?v=1" defer></script>
+  <link rel="stylesheet" href="builds.css?v=3">
+  <script src="builds.js?v=3" defer></script>
 
   <!--
     BEFORE THIS PAGE GOES LIVE, CHECK THESE:
-    1. Search this file for YOUR-EMAIL@example.com and replace every one with your real email address.
+    1. The email address is ruhan@taqensoftware.com. If that is not exactly right, search this file for it and change every one.
     2. Every link below is relative to the folder this file sits in. This file is written for a "services" folder
        at the top of the site. If yours is somewhere else, fix these four links:
          index.html                                    (back to the services page)
          ../ruhan/Ruhan-portfolio.html                 (your portfolio)
          ../projects/templates/landing-page.html       (generic template)
-         ../projects/templates/restaurant.html         (restaurant template)
-    3. Upload restaurant.html to projects/templates/ before you publish this page, so the link works.
+         ../projects/templates/restaurant/index.html   (restaurant template, a four-page site)
+    3. Upload the whole projects/templates/restaurant/ folder (4 pages, style.css and the img folder) before you publish this page, so the link works.
     No link on this page contains the repo name, so a change of host needs no edits here.
   -->
 </head>
 
 <body>
+  <!-- Warm glow and slow embers behind the page. Decoration only. -->
+  <div class="ambient" aria-hidden="true"></div>
   <a class="skip" href="#main">Skip to content</a>
 
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href="../ruhan/Ruhan-portfolio.html">Ruhan Tahlil</a>
-      <nav class="site-nav" aria-label="On this page">
-        <a href="#packages">Packages</a>
-        <a href="#addons">Add-ons</a>
-        <a href="#examples">Templates</a>
-        <a href="#process">How it works</a>
-        <a href="#questions">Questions</a>
-      </nav>
-      <a class="back-link" href="index.html">All services</a>
+      <a class="brand" href="../ruhan/Ruhan-portfolio.html">Ruhan Tahlil Islam Britto</a>
+      <a class="head-link" href="index.html">All services</a>
     </div>
   </header>
 
@@ -46,157 +47,186 @@
 
     <section class="hero">
       <div class="wrap">
-        <h1>Websites for local businesses and small shops.</h1>
-        <p>
-          Landing pages, small business sites and online stores for restaurants, dentists, trades and shops.
-          You get a starting price and a delivery date before any work begins.
-        </p>
-        <div class="btn-row">
-          <a class="btn" href="mailto:YOUR-EMAIL@example.com?subject=Website%20quote&amp;body=Business%20name%3A%0AWhat%20you%20do%3A%0AWhere%20you%20are%3A%0APackage%20you%20are%20interested%20in%3A%0ADate%20you%20want%20to%20be%20live%3A">Ask for a quote</a>
-          <a class="btn btn-quiet" href="#packages">See the packages</a>
+        <!-- The --d numbers set the order the first screen plays in: label, headline, text, button, note. -->
+        <p class="label rise" style="--d:0">Custom builds</p>
+        <h1 class="rise" style="--d:1">I build websites for local businesses and small shops.</h1>
+        <p class="lead rise" style="--d:2">Landing pages, small business sites and online stores for restaurants, dentists, trades and shops. You get a starting price and a delivery date before I begin.</p>
+        <div class="rise" style="--d:3">
+          <a class="btn" href="mailto:ruhan@taqensoftware.com?subject=Website%20quote&amp;body=Business%20name%3A%0AWhat%20you%20do%3A%0AWhere%20you%20are%3A%0APackage%20you%20are%20interested%20in%3A%0ADate%20you%20want%20to%20be%20live%3A">Email me about a build</a>
         </div>
-        <p class="fine">Prices are in US dollars. I work in English with clients anywhere. I am based in Bangladesh (UTC+6).</p>
+        <p class="label note rise" style="--d:4">Prices are in US dollars. I am in Bangladesh (UTC+6) and I work in English.</p>
       </div>
     </section>
 
     <section class="section" id="packages">
       <div class="wrap">
-        <h2>Packages</h2>
-        <p class="section-intro">
-          Each package has its own timeline. The days start counting once I have your text, photos and the first payment.
-          A starting price covers the package exactly as written. If your project needs more, I tell you the new price before I do any extra work.
+        <h2 class="reveal">Packages</h2>
+        <p class="section-intro reveal" style="--i:1">
+          Tap a package to see what is included and how the days go. The days start counting once I have your text, photos and the first payment.
+          A starting price covers the package as written. If your project needs more, I tell you the new price before I do any extra work.
         </p>
+        <div class="stack">
 
-        <div class="packages">
-
-          <!-- PACKAGE 1 -->
-          <article class="package" id="one-page">
-            <header class="package-head">
-              <h3 class="package-name">One-page site</h3>
-              <span class="leader" aria-hidden="true"></span>
-              <p class="package-price"><span class="from">from</span>$150</p>
-            </header>
-            <p class="package-meta"><strong>Ready in 5 working days.</strong> For a business that mainly needs to be found and called.</p>
-            <div class="package-body">
-              <div>
-                <h4>What you get</h4>
-                <ul>
+          <article class="pkg fold-card reveal" id="one-page" style="--i:0">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="one-page-panel">
+                <span class="pkg-top">
+                  <span class="pkg-name">One-page site</span>
+                  <span class="pkg-price"><span class="from">from</span>$<span data-count="150">150</span></span>
+                </span>
+                <span class="pkg-meta"><span class="chip">5 working days</span>For a business that mainly needs to be found and called.</span>
+                <span class="fold-hint"><span class="when-closed">See what is included and how the days go</span><span class="when-open">Hide the details</span></span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="one-page-panel">
+              <div class="fold-inner">
+                <div class="fold-body">
+                  <div class="pkg-cols">
+                    <div>
+                      <h4>What you get</h4>
+                      <ul class="ticks">
                   <li>One page that works well on phones and computers</li>
                   <li>Call and message buttons, your hours, address and a map link</li>
                   <li>Page title and description set for search engines</li>
                   <li>One round of changes after the preview</li>
                   <li>All the files handed over to you</li>
-                </ul>
-              </div>
-              <div>
-                <h4>How the days go</h4>
-                <ol class="days">
+                      </ul>
+                    </div>
+                    <div>
+                      <h4>How the days go</h4>
+                      <ol class="timeline">
                   <li><span class="when">Day 1</span><span>We agree the text, the photos and what the page should get people to do.</span></li>
                   <li><span class="when">Days 2 and 3</span><span>I design and build the page.</span></li>
                   <li><span class="when">Day 4</span><span>You get a preview link and send your changes.</span></li>
                   <li><span class="when">Day 5</span><span>I make the changes, test on a phone and a computer, and launch.</span></li>
-                </ol>
+                      </ol>
+                    </div>
+                  </div>
+                  <a class="text-link pkg-link" href="mailto:ruhan@taqensoftware.com?subject=Ask%20about%20the%20one-page%20site">Ask about the one-page site</a>
+                </div>
               </div>
             </div>
-            <p class="package-link"><a href="mailto:YOUR-EMAIL@example.com?subject=Website%20quote%3A%20One-page%20site">Ask about the one-page site</a></p>
           </article>
-
-          <!-- PACKAGE 2 -->
-          <article class="package" id="small-site">
-            <header class="package-head">
-              <h3 class="package-name">Small business site</h3>
-              <span class="leader" aria-hidden="true"></span>
-              <p class="package-price"><span class="from">from</span>$300</p>
-            </header>
-            <p class="package-meta"><strong>Ready in 10 working days.</strong> For a business with several things to explain, such as a dentist with different treatments.</p>
-            <div class="package-body">
-              <div>
-                <h4>What you get</h4>
-                <ul>
+          <article class="pkg fold-card reveal" id="small-site" style="--i:1">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="small-site-panel">
+                <span class="pkg-top">
+                  <span class="pkg-name">Small business site</span>
+                  <span class="pkg-price"><span class="from">from</span>$<span data-count="300">300</span></span>
+                </span>
+                <span class="pkg-meta"><span class="chip">10 working days</span>For a business with several things to explain, such as a dentist with different treatments.</span>
+                <span class="fold-hint"><span class="when-closed">See what is included and how the days go</span><span class="when-open">Hide the details</span></span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="small-site-panel">
+              <div class="fold-inner">
+                <div class="fold-body">
+                  <div class="pkg-cols">
+                    <div>
+                      <h4>What you get</h4>
+                      <ul class="ticks">
                   <li>Up to 4 pages, for example home, services or menu, about, and contact</li>
                   <li>Everything in the one-page site</li>
                   <li>The same look and menu on every page</li>
                   <li>Two rounds of changes after the preview</li>
                   <li>All the files handed over to you</li>
-                </ul>
-              </div>
-              <div>
-                <h4>How the days go</h4>
-                <ol class="days">
+                      </ul>
+                    </div>
+                    <div>
+                      <h4>How the days go</h4>
+                      <ol class="timeline">
                   <li><span class="when">Days 1 and 2</span><span>We list the pages and collect your text and photos.</span></li>
                   <li><span class="when">Days 3 to 6</span><span>I build the home page first, then the other pages.</span></li>
                   <li><span class="when">Day 7</span><span>You get a preview link for the whole site.</span></li>
                   <li><span class="when">Days 8 and 9</span><span>Two rounds of changes.</span></li>
                   <li><span class="when">Day 10</span><span>Final testing and launch.</span></li>
-                </ol>
+                      </ol>
+                    </div>
+                  </div>
+                  <a class="text-link pkg-link" href="mailto:ruhan@taqensoftware.com?subject=Ask%20about%20the%20small%20business%20site">Ask about the small business site</a>
+                </div>
               </div>
             </div>
-            <p class="package-link"><a href="mailto:YOUR-EMAIL@example.com?subject=Website%20quote%3A%20Small%20business%20site">Ask about the small business site</a></p>
           </article>
-
-          <!-- PACKAGE 3 -->
-          <article class="package" id="online-store">
-            <header class="package-head">
-              <h3 class="package-name">Online store</h3>
-              <span class="leader" aria-hidden="true"></span>
-              <p class="package-price"><span class="from">from</span>$600</p>
-            </header>
-            <p class="package-meta"><strong>Ready in 15 to 20 working days.</strong> For a shop with a small number of products that wants to take payments online.</p>
-            <div class="package-body">
-              <div>
-                <h4>What you get</h4>
-                <ul>
+          <article class="pkg fold-card reveal" id="online-store" style="--i:2">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="online-store-panel">
+                <span class="pkg-top">
+                  <span class="pkg-name">Online store</span>
+                  <span class="pkg-price"><span class="from">from</span>$<span data-count="600">600</span></span>
+                </span>
+                <span class="pkg-meta"><span class="chip">15 to 20 working days</span>For a shop with a small number of products that wants to take payments online.</span>
+                <span class="fold-hint"><span class="when-closed">See what is included and how the days go</span><span class="when-open">Hide the details</span></span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="online-store-panel">
+              <div class="fold-inner">
+                <div class="fold-body">
+                  <div class="pkg-cols">
+                    <div>
+                      <h4>What you get</h4>
+                      <ul class="ticks">
                   <li>Up to 20 products, each with its own photos, price and description</li>
                   <li>A Buy button on each product that opens a secure payment page from your payment provider</li>
                   <li>A shipping and returns page written from your details</li>
                   <li>A real test order before launch</li>
                   <li>Two rounds of changes after the preview</li>
                   <li>All the files handed over to you</li>
-                </ul>
-                <p class="package-meta">The money goes to your own payment account, never through me. A shopping cart for several items in one order is quoted separately.</p>
-              </div>
-              <div>
-                <h4>How the days go</h4>
-                <ol class="days">
-                  <li><span class="when">Days 1 to 4</span><span>We collect your product list, photos and prices, and you open your payment account with my help.</span></li>
+                      </ul>
+                <p class="pkg-note">Payments go straight to your own payment account, such as Stripe, PayPal or a local provider, and never through me. You create the payment links in your account and I add them to the site. A shopping cart for several items in one order is quoted separately.</p>
+                    </div>
+                    <div>
+                      <h4>How the days go</h4>
+                      <ol class="timeline">
+                  <li><span class="when">Days 1 to 4</span><span>We collect your product list, photos and prices, and you set up the payment account you will use.</span></li>
                   <li><span class="when">Days 5 to 12</span><span>I build the shop page, the product pages and the info pages.</span></li>
                   <li><span class="when">Days 13 and 14</span><span>You get a preview link and send your first round of changes.</span></li>
-                  <li><span class="when">Days 15 and 16</span><span>Second round of changes, then a test order.</span></li>
+                  <li><span class="when">Days 15 and 16</span><span>Second round of changes, then you place a test order through your payment account.</span></li>
                   <li><span class="when">Days 17 to 20</span><span>Launch. Payment accounts can take extra days to be approved, which can move this date.</span></li>
-                </ol>
+                      </ol>
+                    </div>
+                  </div>
+                  <a class="text-link pkg-link" href="mailto:ruhan@taqensoftware.com?subject=Ask%20about%20the%20online%20store">Ask about the online store</a>
+                </div>
               </div>
             </div>
-            <p class="package-link"><a href="mailto:YOUR-EMAIL@example.com?subject=Website%20quote%3A%20Online%20store">Ask about the online store</a></p>
           </article>
-
         </div>
       </div>
     </section>
 
-    <section class="section addons" id="addons">
+    <section class="section" id="addons">
       <div class="wrap">
-        <h2>Add-ons</h2>
-        <p class="section-intro">
-          Extras you can add to any package. The prices are starting prices, and the extra time is added to the package timeline.
+        <h2 class="reveal">Add-ons</h2>
+        <p class="section-intro reveal" style="--i:1">
+          Extras you can add to any package. Pick one to see the price, the extra time and what it includes.
         </p>
 
-        <!-- The picker is hidden until builds.js runs, because it needs JavaScript. -->
-        <div class="picker" id="picker" hidden>
-          <label for="addon-select">Choose an add-on</label>
-          <select id="addon-select">
-            <option value="" selected>Choose an add-on</option>
-            <option value="form" data-price="$30" data-time="adds 1 working day" data-text="A form on the page that sends each message to your email. It uses a form service, which may have a free monthly limit.">Contact form that emails you</option>
-            <option value="booking" data-price="$30" data-time="adds 1 working day" data-text="A Book now button that opens your own booking tool, such as Calendly. You keep the account.">Booking link</option>
-            <option value="page" data-price="$40 per page" data-time="adds 1 to 2 working days" data-text="One more page in the same style as the rest of the site.">Extra page</option>
-            <option value="gallery" data-price="$40" data-time="adds 1 working day" data-text="A photo gallery with up to 12 photos, sized so the page stays fast.">Photo gallery</option>
-            <option value="language" data-price="$60 per language" data-time="adds 2 working days" data-text="A copy of every page in a second language. You give me the translation, or one that a fluent speaker has checked.">Extra language</option>
-            <option value="copy" data-price="$50" data-time="adds 2 working days" data-text="You send me notes about the business. I write the page text in plain English and you approve it.">Text written for you</option>
-            <option value="visits" data-price="$20" data-time="adds no time" data-text="Visitor counts through a privacy-friendly analytics tool, so you can see how many people visit.">Visitor counts</option>
-            <option value="changes" data-price="$40" data-time="starts after launch" data-text="Up to 5 small edits in the 30 days after launch, such as new opening hours, a changed price or a new photo.">30 days of small changes</option>
-          </select>
+        <!-- The dropdown is hidden until builds.js runs, because it needs JavaScript. -->
+        <div class="addon reveal" id="addon" style="--i:2" hidden>
+          <span class="label" id="addon-label">Choose an add-on</span>
+          <div class="dd" id="dd">
+            <button class="dd-button" type="button" id="dd-button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="addon-label dd-value">
+              <span id="dd-value">Choose an add-on</span>
+              <span class="dd-caret" aria-hidden="true"></span>
+            </button>
+            <ul class="dd-list" id="dd-list" role="listbox" tabindex="-1" aria-labelledby="addon-label">
+              <li class="dd-option" role="option" id="opt-form" aria-selected="false" data-name="Contact form that emails you" data-price="$30" data-time="adds 1 working day" data-text="A form on the page that sends each message to your email. It uses a form service, which may have a free monthly limit."><span>Contact form that emails you</span><span class="dd-price">$30</span></li>
+              <li class="dd-option" role="option" id="opt-booking" aria-selected="false" data-name="Booking link" data-price="$30" data-time="adds 1 working day" data-text="A Book now button that opens your own booking tool, such as Calendly. You keep the account."><span>Booking link</span><span class="dd-price">$30</span></li>
+              <li class="dd-option" role="option" id="opt-page" aria-selected="false" data-name="Extra page" data-price="$40 per page" data-time="adds 1 to 2 working days" data-text="One more page in the same style as the rest of the site."><span>Extra page</span><span class="dd-price">$40 per page</span></li>
+              <li class="dd-option" role="option" id="opt-gallery" aria-selected="false" data-name="Photo gallery" data-price="$40" data-time="adds 1 working day" data-text="A photo gallery with up to 12 photos, sized so the page stays fast."><span>Photo gallery</span><span class="dd-price">$40</span></li>
+              <li class="dd-option" role="option" id="opt-language" aria-selected="false" data-name="Extra language" data-price="$60 per language" data-time="adds 2 working days" data-text="A copy of every page in a second language. You give me the translation, or one that a fluent speaker has checked."><span>Extra language</span><span class="dd-price">$60 per language</span></li>
+              <li class="dd-option" role="option" id="opt-copy" aria-selected="false" data-name="Text written for you" data-price="$50" data-time="adds 2 working days" data-text="You send me notes about the business. I write the page text in plain English and you approve it."><span>Text written for you</span><span class="dd-price">$50</span></li>
+              <li class="dd-option" role="option" id="opt-visits" aria-selected="false" data-name="Visitor counts" data-price="$20" data-time="adds no time" data-text="Visitor counts through a privacy-friendly analytics tool, so you can see how many people visit."><span>Visitor counts</span><span class="dd-price">$20</span></li>
+              <li class="dd-option" role="option" id="opt-changes" aria-selected="false" data-name="30 days of small changes" data-price="$40" data-time="starts after launch" data-text="Up to 5 small edits in the 30 days after launch, such as new opening hours, a changed price or a new photo."><span>30 days of small changes</span><span class="dd-price">$40</span></li>
+            </ul>
+          </div>
           <div class="addon-panel" id="addon-panel" aria-live="polite">
             <!-- builds.js fills this box. The link below is the one it reuses, so the email stays in one place. -->
-            <a id="addon-link" href="mailto:YOUR-EMAIL@example.com?subject=Website%20quote">Ask about this add-on</a>
+            <a class="text-link" id="addon-link" href="mailto:ruhan@taqensoftware.com?subject=Website%20quote">Ask about this add-on</a>
           </div>
         </div>
 
@@ -208,11 +238,11 @@
               <tr><td>Contact form that emails you</td><td>$30</td><td>1 working day</td></tr>
               <tr><td>Booking link</td><td>$30</td><td>1 working day</td></tr>
               <tr><td>Extra page</td><td>$40 per page</td><td>1 to 2 working days</td></tr>
-              <tr><td>Photo gallery (up to 12 photos)</td><td>$40</td><td>1 working day</td></tr>
+              <tr><td>Photo gallery</td><td>$40</td><td>1 working day</td></tr>
               <tr><td>Extra language</td><td>$60 per language</td><td>2 working days</td></tr>
               <tr><td>Text written for you</td><td>$50</td><td>2 working days</td></tr>
               <tr><td>Visitor counts</td><td>$20</td><td>No extra time</td></tr>
-              <tr><td>30 days of small changes (up to 5 edits)</td><td>$40</td><td>Starts after launch</td></tr>
+              <tr><td>30 days of small changes</td><td>$40</td><td>Starts after launch</td></tr>
             </tbody>
           </table>
         </noscript>
@@ -221,27 +251,67 @@
 
     <section class="section" id="examples">
       <div class="wrap">
-        <h2>Templates and an example</h2>
-        <p class="section-intro">
-          The two templates have sample text, so you can see the layout and the way I write. They are starting points, not finished client sites.
+        <h2 class="reveal">Templates</h2>
+        <p class="section-intro reveal" style="--i:1">
+          Two starting points with sample text, so you can see the layout and the way I write. They are not finished client sites.
           I change the colours, the words and the photos for every business.
         </p>
+        <div class="stack two">
 
-        <div class="starts">
-          <article class="start">
-            <h3>Local service template</h3>
-            <p>A one-page layout for a trade or a clinic: call button, services with prices, how it works, and common questions.</p>
-            <a class="btn btn-quiet" href="../projects/templates/landing-page.html">Open the template</a>
+          <article class="tpl fold-card reveal" id="tpl-local" style="--i:0">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="tpl-local-panel">
+                <span class="tpl-title">Local service template</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+                <span class="tpl-line">One page for a trade or a clinic.</span>
+                <span class="fold-hint"><span class="when-closed">See what is inside</span><span class="when-open">Hide the details</span></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="tpl-local-panel">
+              <div class="fold-inner">
+                <div class="fold-body">
+                  <div class="term">
+                    <p class="term-title">local service <span>template</span></p>
+                    <ol>
+                        <li>Call button that stays on screen</li>
+                        <li>Services with starting prices</li>
+                        <li>How it works, in three steps</li>
+                        <li>Common questions</li>
+                        <li>A final call to action</li>
+                    </ol>
+                  </div>
+                  <p class="tpl-note">A single page, built to get the phone ringing.</p>
+                </div>
+              </div>
+            </div>
+            <a class="text-link tpl-link" href="../projects/templates/landing-page.html">Open the template</a>
           </article>
-          <article class="start">
-            <h3>Restaurant template</h3>
-            <p>A one-page layout with a menu, opening hours, a call or message button for bookings, and a map link. It has no booking system.</p>
-            <a class="btn btn-quiet" href="../projects/templates/restaurant.html">Open the template</a>
-          </article>
-          <article class="start">
-            <h3>Egg O Clock, a live site</h3>
-            <p>A five-page website for a food brand in Dhaka: home, menu, about, business catering and contact. It is the size of the small business site plus one extra page.</p>
-            <a class="btn btn-quiet" href="https://eggoclock.netlify.app/" rel="noopener">Visit the site</a>
+          <article class="tpl fold-card reveal" id="tpl-restaurant" style="--i:1">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="tpl-restaurant-panel">
+                <span class="tpl-title">Restaurant template</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+                <span class="tpl-line">Four pages for a restaurant or cafe.</span>
+                <span class="fold-hint"><span class="when-closed">See what is inside</span><span class="when-open">Hide the details</span></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="tpl-restaurant-panel">
+              <div class="fold-inner">
+                <div class="fold-body">
+                  <div class="term">
+                    <p class="term-title">restaurant <span>template</span></p>
+                    <ol>
+                        <li>Home, with the best dishes up front</li>
+                        <li>Menu, with prices and diet markers</li>
+                        <li>About, for the story of the kitchen</li>
+                        <li>Contact, with hours, address and questions</li>
+                    </ol>
+                  </div>
+                  <p class="tpl-note">Guests book by calling or messaging, so there is no booking system. The pictures are sample illustrations, and I swap in your own photos.</p>
+                </div>
+              </div>
+            </div>
+            <a class="text-link tpl-link" href="../projects/templates/restaurant/index.html">Open the template</a>
           </article>
         </div>
       </div>
@@ -249,91 +319,173 @@
 
     <section class="section" id="process">
       <div class="wrap">
-        <h2>How a project runs</h2>
-        <ol class="steps">
-          <li>
-            <div>
-              <h3>You send me a message</h3>
-              <p>Tell me what the business does, where it is and when you would like to be live.</p>
+        <h2 class="reveal">How a project runs</h2>
+        <ol class="rows steps">
+
+          <li class="step fold-card reveal" style="--i:0">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="step-1-panel">
+                <span class="step-num" aria-hidden="true">1</span>
+                <span class="step-title">You send me a message</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="step-1-panel">
+              <div class="fold-inner"><div class="fold-body"><p>Tell me what the business does, where it is and when you would like to be live.</p></div></div>
             </div>
           </li>
-          <li>
-            <div>
-              <h3>I reply with a price and a date</h3>
-              <p>You get the package, any add-ons, the total and the delivery date in writing.</p>
+          <li class="step fold-card reveal" style="--i:1">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="step-2-panel">
+                <span class="step-num" aria-hidden="true">2</span>
+                <span class="step-title">I reply with a price and a date</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="step-2-panel">
+              <div class="fold-inner"><div class="fold-body"><p>You get the package, any add-ons, the total and the delivery date in writing.</p></div></div>
             </div>
           </li>
-          <li>
-            <div>
-              <h3>I send an invoice</h3>
-              <p>The invoice comes through Payoneer to your email address and lists the ways you can pay. Half is due before I start and half before the site goes live.</p>
+          <li class="step fold-card reveal" style="--i:2">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="step-3-panel">
+                <span class="step-num" aria-hidden="true">3</span>
+                <span class="step-title">I send an invoice</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="step-3-panel">
+              <div class="fold-inner"><div class="fold-body"><p>The invoice comes through Payoneer to your email address. You open the link in it and pay online. Half is due before I start and half before the site goes live.</p></div></div>
             </div>
           </li>
-          <li>
-            <div>
-              <h3>You see a preview</h3>
-              <p>I send a link you can open on your phone and your computer. You tell me what to change.</p>
+          <li class="step fold-card reveal" style="--i:3">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="step-4-panel">
+                <span class="step-num" aria-hidden="true">4</span>
+                <span class="step-title">You see a preview</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="step-4-panel">
+              <div class="fold-inner"><div class="fold-body"><p>I send a link you can open on your phone and your computer. You tell me what to change.</p></div></div>
             </div>
           </li>
-          <li>
-            <div>
-              <h3>Launch and handover</h3>
-              <p>The site goes live. You get all the files and a short note on how to make small edits.</p>
+          <li class="step fold-card reveal" style="--i:4">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="step-5-panel">
+                <span class="step-num" aria-hidden="true">5</span>
+                <span class="step-title">Launch and handover</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="step-5-panel">
+              <div class="fold-inner"><div class="fold-body"><p>The site goes live. You get all the files and a short note on how to make small edits.</p></div></div>
             </div>
           </li>
         </ol>
 
-        <h3 class="needs-title">What I need from you</h3>
-        <ul class="needs">
-          <li>Your business name and logo, if you have one</li>
-          <li>The text you want on the site, or notes I can write it from</li>
-          <li>Photos you own or have permission to use</li>
-          <li>Opening hours, address, phone number and email</li>
-          <li>Your prices, if you want them shown</li>
-        </ul>
+        <div class="term need reveal">
+          <p class="term-title">what I <span>need from you</span></p>
+          <ul>
+            <li>Your business name and logo, if you have one</li>
+            <li>The text you want on the site, or notes I can write it from</li>
+            <li>Photos you own or have permission to use</li>
+            <li>Opening hours, address, phone number and email</li>
+            <li>Your prices, if you want them shown</li>
+          </ul>
+        </div>
       </div>
     </section>
 
     <section class="section" id="questions">
       <div class="wrap">
-        <h2>Questions</h2>
-        <div class="faq">
-          <details>
-            <summary>Who owns the finished site?</summary>
-            <p>You do. When the final payment is made I hand over every file, and you can move the site to any host you like.</p>
-          </details>
-          <details>
-            <summary>Do you host the site?</summary>
-            <p>No. I put it on a host in your name, so the account and the bill belong to you. Simple sites like these can often run on free hosting. A domain name usually costs $10 to $20 a year and you buy it from a registrar you choose.</p>
-          </details>
-          <details>
-            <summary>What if I need changes after launch?</summary>
-            <p>Small edits are covered by the 30-day add-on. For anything bigger, send me a message and I quote it before I start.</p>
-          </details>
-          <details>
-            <summary>Can you build something that is not on this list?</summary>
-            <p>Maybe. Send me a message that explains what you need. If I am not the right person for it, I will say so.</p>
-          </details>
-          <details>
-            <summary>How fast do you reply?</summary>
-            <p>By email, usually within one working day.</p>
-          </details>
+        <h2 class="reveal">Questions</h2>
+        <div class="rows faq">
+
+          <div class="fold-card reveal" style="--i:0">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="q-1-panel">
+                <span class="q-title">Who owns the finished site?</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="q-1-panel">
+              <div class="fold-inner"><div class="fold-body"><p>You do. When the final payment is made I hand over every file, and you can move the site to any host you like.</p></div></div>
+            </div>
+          </div>
+          <div class="fold-card reveal" style="--i:1">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="q-2-panel">
+                <span class="q-title">Do you host the site?</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="q-2-panel">
+              <div class="fold-inner"><div class="fold-body"><p>No. I put it on a host in your name, so the account and the bill belong to you. Simple sites like these can often run on free hosting. A domain name usually costs $10 to $20 a year and you buy it from a registrar you choose.</p></div></div>
+            </div>
+          </div>
+          <div class="fold-card reveal" style="--i:2">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="q-3-panel">
+                <span class="q-title">How do I pay you?</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="q-3-panel">
+              <div class="fold-inner"><div class="fold-body"><p>Send me the email address to invoice. I send an invoice through Payoneer, you open the link in it and pay online.</p></div></div>
+            </div>
+          </div>
+          <div class="fold-card reveal" style="--i:3">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="q-4-panel">
+                <span class="q-title">What if I need changes after launch?</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="q-4-panel">
+              <div class="fold-inner"><div class="fold-body"><p>Small edits are covered by the 30-day add-on. For anything bigger, send me a message and I quote it before I start.</p></div></div>
+            </div>
+          </div>
+          <div class="fold-card reveal" style="--i:4">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="q-5-panel">
+                <span class="q-title">Can you build something that is not on this list?</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="q-5-panel">
+              <div class="fold-inner"><div class="fold-body"><p>Maybe. Send me a message that explains what you need. If I am not the right person for it, I will say so.</p></div></div>
+            </div>
+          </div>
+          <div class="fold-card reveal" style="--i:5">
+            <h3 class="fold-heading">
+              <button class="fold-toggle" type="button" aria-expanded="false" aria-controls="q-6-panel">
+                <span class="q-title">How fast do you reply?</span>
+                <span class="fold-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="fold-panel" id="q-6-panel">
+              <div class="fold-inner"><div class="fold-body"><p>By email, usually within one working day.</p></div></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="closing">
       <div class="wrap">
-        <h2>Tell me about your business.</h2>
-        <p>Say what you sell or do, where you are, and the date you would like to be live. I reply with a price and a delivery date.</p>
-        <a class="btn" href="mailto:YOUR-EMAIL@example.com?subject=Website%20quote&amp;body=Business%20name%3A%0AWhat%20you%20do%3A%0AWhere%20you%20are%3A%0APackage%20you%20are%20interested%20in%3A%0ADate%20you%20want%20to%20be%20live%3A">Ask for a quote</a>
+        <h2 class="reveal">Tell me about your business.</h2>
+        <p class="reveal" style="--i:1">Say what you sell or do, where you are, and the date you would like to be live. I reply with a price and a delivery date.</p>
+        <div class="reveal" style="--i:2">
+          <a class="btn" href="mailto:ruhan@taqensoftware.com?subject=Website%20quote&amp;body=Business%20name%3A%0AWhat%20you%20do%3A%0AWhere%20you%20are%3A%0APackage%20you%20are%20interested%20in%3A%0ADate%20you%20want%20to%20be%20live%3A">Email me about a build</a>
+        </div>
       </div>
     </section>
 
   </main>
 
   <footer class="site-footer">
-    <div class="wrap">
+    <div class="wrap label">
       <p>&copy; 2026 Ruhan Tahlil Islam Britto</p>
       <p><a href="index.html">All services</a> and <a href="../ruhan/Ruhan-portfolio.html">my portfolio</a></p>
     </div>

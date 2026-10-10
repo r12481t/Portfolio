@@ -1,0 +1,262 @@
+/* =========================================================================
+   Restaurant template: one stylesheet shared by all four pages
+   (index.html, menu.html, about.html, contact.html)
+
+   1. Tokens: the colours, fonts and spacing, all in one place.
+   2. Base: plain element styles.
+   3. Pieces: one block for each part of the page.
+
+   If you change this file, bump the number in every page
+   (style.css?v=1) so visitors do not see the old copy.
+   No JavaScript is used anywhere on the site.
+   ========================================================================= */
+
+/* 1. TOKENS
+   To rebrand the site, change the colours and fonts here. Nothing below has
+   a colour typed in by hand. */
+:root {
+  --board: #22332b;      /* dark green: header, hero and footer */
+  --chalk: #f2efe6;      /* text and buttons on the dark green */
+  --chalk-soft: #c9d1c8; /* quieter text on the dark green */
+  --paper: #fbfaf6;      /* page background */
+  --paper-deep: #efece1; /* a slightly darker band for variety */
+  --ink: #1c2420;        /* main text */
+  --muted: #55605a;      /* secondary text */
+  --line: #cfcbbd;       /* thin lines */
+  --leader: #a39e8c;     /* the dotted lines between a dish and its price */
+  --wine: #7a2535;       /* buttons and links on the paper */
+  --wine-dark: #5f1c29;  /* button hover */
+
+  /* System fonts only, so the site downloads no font files and loads fast. */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-text: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Spacing on an 8px scale */
+  --s1: 0.25rem;  /* 4px  */
+  --s2: 0.5rem;   /* 8px  */
+  --s3: 1rem;     /* 16px */
+  --s4: 1.5rem;   /* 24px */
+  --s5: 2rem;     /* 32px */
+  --s6: 3rem;     /* 48px */
+  --s7: 4rem;     /* 64px */
+
+  --radius: 8px;
+  --page-width: 70rem;
+}
+
+/* 2. BASE */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* No grey or blue flash when a finger taps something on a phone */
+* { -webkit-tap-highlight-color: transparent; }
+button, a { touch-action: manipulation; }
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+
+body {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+  /* Room for the call bar that sticks to the bottom on phones */
+  padding-bottom: 4.5rem;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.15; margin: 0; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: var(--wine); }
+
+/* A clear outline for people who use the keyboard. It does not show after a mouse click or a tap. Never remove it. */
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--wine); outline-offset: 3px; }
+.on-board :focus-visible { outline-color: var(--chalk); }
+
+/* Keeps content in a centred column with space at the sides */
+.wrap { width: min(100% - 2 * var(--s3), var(--page-width)); margin-inline: auto; }
+
+/* The "skip to content" link is hidden until someone presses Tab */
+.skip {
+  position: absolute; left: var(--s3); top: -4rem; z-index: 10;
+  background: var(--chalk); color: var(--board); padding: var(--s2) var(--s3); border-radius: var(--radius);
+}
+.skip:focus { top: var(--s2); }
+
+/* 3. PIECES */
+
+/* Buttons. The smallest is 48px tall so they are easy to tap. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 3rem; padding: 0 var(--s4);
+  border: 2px solid var(--wine); border-radius: var(--radius);
+  background: var(--wine); color: #fff;
+  font: inherit; font-weight: 600; text-decoration: none; white-space: nowrap;
+  width: fit-content; /* stops a button stretching across a wide box */
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+.btn:hover { background: var(--wine-dark); border-color: var(--wine-dark); }
+.btn-quiet { background: transparent; color: var(--wine); }
+.btn-quiet:hover { background: var(--wine); color: #fff; }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--s3); }
+
+/* Anything inside .on-board sits on the dark green, so the buttons swap colours */
+.on-board .btn { background: var(--chalk); border-color: var(--chalk); color: var(--board); }
+.on-board .btn:hover { background: #fff; border-color: #fff; }
+.on-board .btn-quiet { background: transparent; color: var(--chalk); }
+.on-board .btn-quiet:hover { background: var(--chalk); color: var(--board); }
+
+/* HEADER: logo and name on the left, page links and a call button on the right.
+   On a phone the links drop to a second row, so there is no menu button and no JavaScript. */
+.site-header { background: var(--board); color: var(--chalk); }
+.site-header .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s1) var(--s4); padding: var(--s2) 0; }
+.brand { white-space: nowrap; display: inline-flex; align-items: center; gap: var(--s2); color: var(--chalk); text-decoration: none; font-family: var(--font-display); font-size: 1.375rem; }
+.brand img { width: 2.5rem; height: 2.5rem; }
+.site-nav { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); width: 100%; order: 3; }
+.site-nav a { white-space: nowrap; color: var(--chalk); text-decoration: none; padding: var(--s2) 0; border-bottom: 2px solid transparent; }
+.site-nav a:hover { border-bottom-color: var(--chalk-soft); }
+.site-nav a[aria-current="page"] { border-bottom-color: var(--chalk); font-weight: 600; }
+.header-call { display: none; }
+
+/* HERO on the home page. The scalloped edge at the bottom looks like a shop awning. */
+.hero { position: relative; background: var(--board); color: var(--chalk); padding: var(--s6) 0 calc(var(--s7) + var(--s3)); margin-bottom: 1rem; }
+.hero::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1rem; height: 1rem;
+  background: radial-gradient(circle at 1rem 0, var(--board) 0.96rem, transparent 1rem) 0 0 / 2rem 1rem repeat-x;
+}
+.hero .wrap { display: grid; gap: var(--s5); align-items: center; }
+.hero h1 { font-size: clamp(2.5rem, 1.5rem + 5vw, 4.5rem); letter-spacing: -0.01em; max-width: 14ch; }
+.hero-text p { margin: var(--s4) 0; max-width: 34rem; font-size: 1.125rem; color: var(--chalk-soft); }
+.hero-image img { width: 100%; border-radius: var(--radius); }
+
+/* PAGE HEAD: the dark band at the top of the Menu, About and Contact pages */
+.page-head { position: relative; background: var(--board); color: var(--chalk); padding: var(--s6) 0 var(--s7); margin-bottom: 1rem; }
+.page-head::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1rem; height: 1rem;
+  background: radial-gradient(circle at 1rem 0, var(--board) 0.96rem, transparent 1rem) 0 0 / 2rem 1rem repeat-x;
+}
+.page-head h1 { font-size: clamp(2.5rem, 1.6rem + 4vw, 4rem); }
+.page-head p { margin-top: var(--s3); max-width: 38rem; color: var(--chalk-soft); font-size: 1.125rem; }
+.jump { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3); margin-top: var(--s4); }
+.jump a { color: var(--chalk); padding: var(--s1) var(--s3); border: 2px solid var(--chalk-soft); border-radius: 999px; text-decoration: none; min-height: 2.75rem; display: inline-flex; align-items: center; }
+.jump a:hover { background: var(--chalk); color: var(--board); }
+
+/* SECTIONS. Each one gets its own spacing so the page does not feel like a stack of identical boxes. */
+.section { padding: var(--s7) 0; }
+.section.tight { padding: var(--s6) 0; }
+.section.deep { background: var(--paper-deep); }
+.section h2 { font-size: clamp(2rem, 1.4rem + 2.5vw, 3rem); }
+.section-intro { margin-top: var(--s3); max-width: 38rem; color: var(--muted); }
+.more { margin-top: var(--s5); }
+
+/* FAVOURITES on the home page: a picture, the name, the price and a line about the dish */
+.cards { display: grid; gap: var(--s5); margin-top: var(--s5); }
+.card img { width: 100%; border-radius: var(--radius); }
+.card .dish-line { margin-top: var(--s3); }
+.card .dish-note { margin-top: var(--s1); }
+
+/* THREE SHORT POINTS on the home page */
+.points { display: grid; gap: var(--s5); margin-top: var(--s5); }
+.points h3 { font-size: 1.5rem; margin-bottom: var(--s2); }
+.points p { color: var(--muted); max-width: 26rem; }
+
+/* PICTURE AND TEXT side by side. On a phone the picture comes first. */
+.split { display: grid; gap: var(--s5); align-items: center; }
+.split img { width: 100%; border-radius: var(--radius); }
+.split p + p { margin-top: var(--s3); }
+.split .btn { margin-top: var(--s4); }
+.copy p { max-width: 36rem; }
+.copy h2 + p { margin-top: var(--s3); }
+
+/* MENU. Each dish is a name, a dotted leader and a price, like a printed menu. */
+.menu-section { padding: var(--s6) 0; }
+.menu-section + .menu-section { border-top: 1px solid var(--line); }
+.menu-section .split { align-items: start; }
+.menu-section h2 { font-size: clamp(2rem, 1.4rem + 2.5vw, 3rem); margin-bottom: var(--s3); }
+.dish { padding: var(--s2) 0; }
+.dish-line { display: flex; align-items: baseline; gap: var(--s2); }
+.dish-name { font-weight: 600; }
+.dish-leader { flex: 1; min-width: var(--s3); align-self: flex-end; margin-bottom: 0.4em; border-bottom: 2px dotted var(--leader); }
+.dish-price { font-variant-numeric: tabular-nums; font-weight: 600; }
+.dish-note { margin-top: var(--s1); color: var(--muted); font-size: 0.9375rem; max-width: 30rem; }
+/* Small diet markers such as V or GF. The key for them sits in the page head. */
+abbr.diet {
+  display: inline-block; margin-left: var(--s2); padding: 0 var(--s1);
+  border: 1px solid var(--muted); border-radius: 4px;
+  font-size: 0.75rem; font-weight: 600; line-height: 1.4; text-decoration: none; color: var(--muted);
+}
+
+/* OPENING HOURS. Works on the dark green and on the paper. */
+.hours { width: 100%; max-width: 24rem; border-collapse: collapse; --hours-line: var(--line); }
+.on-board .hours { --hours-line: rgb(242 239 230 / 0.35); }
+.hours caption { text-align: left; font-family: var(--font-display); font-size: clamp(2rem, 1.4rem + 2.5vw, 3rem); line-height: 1.15; padding-bottom: var(--s3); }
+.hours th, .hours td { padding: var(--s2) 0; border-bottom: 1px dotted var(--hours-line); }
+.hours th { text-align: left; font-weight: 400; }
+.hours td { text-align: right; font-variant-numeric: tabular-nums; }
+.hours-note { margin-top: var(--s3); color: var(--muted); font-size: 0.9375rem; }
+
+/* FIND US AND BOOK */
+.two { display: grid; gap: var(--s6); }
+.two h2 { margin-bottom: var(--s3); }
+address { font-style: normal; font-size: 1.125rem; margin-bottom: var(--s4); }
+.info h3 { font-size: 1.25rem; margin: var(--s4) 0 var(--s1); }
+.info p { color: var(--muted); max-width: 32rem; }
+.book-lead { font-family: var(--font-display); font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem); line-height: 1.2; max-width: 30rem; margin-bottom: var(--s3); }
+.book p { max-width: 32rem; }
+.book .btn-row { margin-top: var(--s4); }
+
+/* QUESTIONS. details/summary opens and closes with no JavaScript. */
+.faq { margin-top: var(--s4); max-width: 44rem; border-top: 1px solid var(--line); }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; padding: var(--s3) 0; font-weight: 600; min-height: 3rem; }
+.faq details p { padding: 0 0 var(--s3); color: var(--muted); max-width: 38rem; }
+
+/* FOOTER */
+.site-footer { background: var(--board); color: var(--chalk-soft); padding: var(--s6) 0 var(--s5); font-size: 0.9375rem; }
+.site-footer a { color: var(--chalk); }
+.site-footer h2 { font-family: var(--font-text); font-size: 0.9375rem; font-weight: 600; color: var(--chalk); margin-bottom: var(--s2); }
+.site-footer .cols { display: grid; gap: var(--s5); }
+.site-footer li { padding: var(--s1) 0; }
+.site-footer .small { margin-top: var(--s5); padding-top: var(--s4); border-top: 1px solid rgb(242 239 230 / 0.25); display: grid; gap: var(--s1); }
+
+/* The call button that sticks to the bottom of a phone screen */
+.call-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  padding: var(--s2) var(--s3); padding-bottom: calc(var(--s2) + env(safe-area-inset-bottom, 0px));
+  background: var(--paper); border-top: 1px solid var(--line);
+}
+.call-bar .btn { width: 100%; }
+
+/* WIDE SCREENS: tablets and up */
+@media (min-width: 54rem) {
+  body { padding-bottom: 0; }
+  .call-bar { display: none; }
+  .site-header .wrap { flex-wrap: nowrap; padding: var(--s2) 0; min-height: 4.5rem; }
+  .site-nav { width: auto; order: 0; margin-left: auto; flex-wrap: nowrap; }
+  .header-call { display: inline-flex; min-height: 2.5rem; padding: 0 var(--s3); }
+  .hero { padding: var(--s7) 0 var(--s7); }
+  .hero .wrap { grid-template-columns: 1.1fr 0.9fr; gap: var(--s6); }
+  .page-head { padding: var(--s7) 0 calc(var(--s7) + var(--s3)); }
+  .cards, .points { grid-template-columns: repeat(3, 1fr); }
+  .split { grid-template-columns: 1fr 1fr; gap: var(--s7); }
+  /* Every second menu section puts its picture on the right, so the page has a rhythm */
+  .menu-section:nth-of-type(even) .split > :first-child { order: 2; }
+  .two { grid-template-columns: 1fr 1fr; gap: var(--s7); }
+  .site-footer .cols { grid-template-columns: 1.2fr 1fr 1fr; }
+  .site-footer .small { grid-template-columns: 1fr auto; }
+}
+
+/* If a visitor's device asks for less movement, turn off the fades too */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn { transition: none; }
+}
+
+/* PRINTING: someone may print the menu, so hide the buttons and bars */
+@media print {
+  .site-header, .call-bar, .btn-row, .site-footer, .jump { display: none; }
+  .hero, .page-head { background: none; color: var(--ink); padding: 0; }
+  .hero::after, .page-head::after { display: none; }
+  .hero-text p, .page-head p { color: var(--ink); }
+}

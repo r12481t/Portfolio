@@ -1,26 +1,38 @@
 /* =========================================================================
-   Custom builds page styles
-   1. Tokens: colours, fonts and spacing in one place.
+   Custom builds page styles (dark, warm, to match the rest of the site)
+
+   1. Tokens: colours, fonts, spacing in one place. Tune these first.
    2. Base: plain element styles.
-   3. Pieces: header, hero, package rows, add-on picker, and so on.
-   This page keeps its own CSS on purpose, so it never depends on another
-   page's files. If you change this file, bump the number in builds.html
-   (builds.css?v=1) so visitors do not see the old copy.
+   3. Motion: the animations, with a switch-off for people who ask for less movement.
+   4. Pieces: header, hero, the open-and-close cards, add-on dropdown, and so on.
+
+   SCOPING: every rule here starts with .page-builds, a class on the <html> tag of
+   builds.html. Even the colour tokens live on that class, and the animation names
+   start with builds-. So this file cannot change any other page, and no other
+   stylesheet in the services folder (such as the audit page's) can change this one,
+   even if both are ever loaded together by mistake.
+
+   If you change this file, bump the number in builds.html (builds.css?v=3)
+   so visitors do not see the old copy.
    ========================================================================= */
 
 /* 1. TOKENS */
-:root {
-  --paper: #f4f6f5;      /* page background */
-  --surface: #ffffff;    /* rows and panels that sit on the page */
-  --ink: #14201c;        /* main text */
-  --muted: #52605b;      /* secondary text */
-  --line: #c9d3cf;       /* thin lines and the dotted leaders */
-  --brand: #17524d;      /* buttons, links, focus ring */
-  --brand-dark: #0f3a36; /* button hover */
-  --tint: #e2edea;       /* quiet fill behind the add-on panel */
+.page-builds {
+  --bg: #14100d;           /* page background, a warm black */
+  --panel: #1c1611;        /* cards and panels */
+  --panel-raised: #231b15; /* dropdown list and hovered rows */
+  --line: #3a2e24;         /* thin borders */
+  --line-strong: #5a4733;  /* borders when something is hovered or open */
+  --text: #f5ede1;         /* main text, warm cream */
+  --muted: #b9ab97;        /* secondary text */
+  --amber: #f4a65a;        /* buttons, numbers, small accents */
+  --on-amber: #1a120b;     /* text that sits on an amber button */
 
-  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  /* If the rest of your site loads a font (for example from Google Fonts), add the same
+     <link> tag in builds.html and put that font's name first in --font-display. */
+  --font-display: "Space Grotesk", "Schibsted Grotesk", "Helvetica Neue", Arial, system-ui, sans-serif;
   --font-text: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Courier New", monospace;
 
   /* Spacing on an 8px scale */
   --s1: 0.25rem;  /* 4px  */
@@ -30,174 +42,305 @@
   --s5: 2rem;     /* 32px */
   --s6: 3rem;     /* 48px */
   --s7: 4rem;     /* 64px */
+  --s8: 6rem;     /* 96px */
 
-  --radius: 8px;
-  --page-width: 66rem;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);   /* a gentle slow-down at the end of a move */
+  --page-width: 62rem;
 }
 
 /* 2. BASE */
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 5rem; color-scheme: light; }
+.page-builds *, .page-builds *::before, .page-builds *::after { box-sizing: border-box; }
 
-body {
+/* No grey or blue flash when a finger taps something on a phone */
+.page-builds * { -webkit-tap-highlight-color: transparent; }
+
+.page-builds { scroll-behavior: smooth; scroll-padding-top: 5rem; color-scheme: dark; }
+
+.page-builds body {
   margin: 0;
   font-family: var(--font-text);
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--ink);
-  background: var(--paper);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
 }
 
-h1, h2, h3, h4 { margin: 0; line-height: 1.2; }
-h1, h2, h3 { font-family: var(--font-display); font-weight: 400; }
-h4 { font-size: 1rem; font-weight: 600; }
-p { margin: 0; }
-ul, ol { margin: 0; padding: 0; list-style: none; }
-a { color: var(--brand); }
+.page-builds h1, .page-builds h2, .page-builds h3, .page-builds h4 { margin: 0; font-family: var(--font-display); font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
+.page-builds h4 { font-size: 1rem; letter-spacing: 0; }
+.page-builds p { margin: 0; }
+.page-builds ul, .page-builds ol { margin: 0; padding: 0; list-style: none; }
+.page-builds a { color: var(--amber); }
+.page-builds button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; touch-action: manipulation; }
 
-/* A clear outline for keyboard users. Never remove it. */
-:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+/* Selected text uses the site's amber instead of the browser's blue */
+.page-builds ::selection { background: var(--amber); color: var(--on-amber); }
 
-/* Keeps content in a centred column with space at the sides */
-.wrap { width: min(100% - 2 * var(--s3), var(--page-width)); margin-inline: auto; }
+/* Focus ring: shows for keyboard users only, never after a mouse click or a tap.
+   Keep it, because people who cannot use a mouse need to see where they are. */
+.page-builds :focus { outline: none; }
+.page-builds :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 4px; }
 
-/* Hidden until someone presses Tab, then it lets them jump past the menu */
-.skip {
-  position: absolute; left: var(--s3); top: -4rem; z-index: 10;
-  background: var(--brand); color: #fff; padding: var(--s2) var(--s3); border-radius: var(--radius);
+.page-builds [hidden] { display: none !important; }
+
+.page-builds .wrap { width: min(100% - 2 * var(--s4), var(--page-width)); margin-inline: auto; }
+
+.page-builds .skip {
+  position: absolute; left: var(--s3); top: -4rem; z-index: 20;
+  background: var(--amber); color: var(--on-amber); padding: var(--s2) var(--s3); border-radius: var(--radius-sm);
 }
-.skip:focus { top: var(--s2); }
+.page-builds .skip:focus { top: var(--s2); }
 
-/* 3. PIECES */
-
-/* Buttons are at least 48px tall so they are easy to tap */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 3rem; padding: 0 var(--s4);
-  border: 2px solid var(--brand); border-radius: var(--radius);
-  background: var(--brand); color: #fff;
-  font: inherit; font-weight: 600; text-decoration: none;
-  transition: background-color 150ms ease-out, color 150ms ease-out;
+/* The warm glow and slow-moving embers behind everything. It never takes clicks. */
+.page-builds .ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  background:
+    radial-gradient(50rem 34rem at 88% -8%, rgb(130 84 40 / 0.34), transparent 62%),
+    radial-gradient(36rem 28rem at -6% 102%, rgb(90 55 26 / 0.26), transparent 62%); }
+.page-builds .ambient::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 140%;
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 12%, rgb(244 166 90 / 0.55), transparent),
+    radial-gradient(1px 1px at 22% 38%, rgb(245 237 225 / 0.35), transparent),
+    radial-gradient(2px 2px at 37% 22%, rgb(244 166 90 / 0.4), transparent),
+    radial-gradient(1px 1px at 51% 64%, rgb(245 237 225 / 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 63% 30%, rgb(244 166 90 / 0.5), transparent),
+    radial-gradient(1px 1px at 74% 78%, rgb(245 237 225 / 0.35), transparent),
+    radial-gradient(2px 2px at 86% 46%, rgb(244 166 90 / 0.4), transparent),
+    radial-gradient(1px 1px at 93% 14%, rgb(245 237 225 / 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 15% 84%, rgb(244 166 90 / 0.45), transparent),
+    radial-gradient(1px 1px at 44% 92%, rgb(245 237 225 / 0.3), transparent);
+  background-size: 100% 50%;
+  animation: builds-embers 60s linear infinite;
 }
-.btn:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
-.btn-quiet { background: transparent; color: var(--brand); }
-.btn-quiet:hover { background: var(--brand); color: #fff; }
-.btn-row { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
 
-/* Top bar */
-.site-header { background: var(--surface); border-bottom: 1px solid var(--line); }
-.site-header .wrap {
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: var(--s2) var(--s4); min-height: 4rem;
+.page-builds main, .page-builds .site-header, .page-builds .site-footer { position: relative; z-index: 1; }
+
+/* 3. MOTION */
+@keyframes builds-rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes builds-embers { from { transform: translateY(0); } to { transform: translateY(-35%); } }
+@keyframes builds-swap { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* The first screen plays in order: label, headline, text, button, note.
+   --d is the step number each element sets in the HTML. */
+.page-builds .rise { animation: builds-rise 0.8s var(--ease) backwards; animation-delay: calc(var(--d, 0) * 90ms + 80ms); }
+
+/* Things further down fade up once, when they scroll into view.
+   Without JavaScript they simply show, so nobody loses content. */
+.page-builds.js .reveal { opacity: 0; }
+.page-builds.js .reveal.in { opacity: 1; animation: builds-rise 0.8s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 90ms); }
+
+/* 4. PIECES */
+
+/* Header */
+.page-builds .site-header { background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 10; }
+.page-builds .site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); min-height: 4rem; }
+.page-builds .brand { color: var(--text); text-decoration: none; font-family: var(--font-display); font-weight: 600; }
+.page-builds .head-link { color: var(--muted); text-decoration: none; padding: var(--s2) 0; transition: color 0.2s; }
+.page-builds .head-link:hover { color: var(--amber); }
+
+/* Buttons and text links */
+.page-builds .btn {
+  display: inline-flex; align-items: center; justify-content: center; width: fit-content;
+  min-height: 3.5rem; padding: 0 var(--s5); border-radius: var(--radius-sm);
+  background: var(--amber); color: var(--on-amber); font-weight: 600; text-decoration: none;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background-color 0.2s;
 }
-.brand { font-family: var(--font-display); font-size: 1.25rem; color: var(--ink); text-decoration: none; }
-.site-nav { display: none; gap: var(--s4); }
-.site-nav a { color: var(--ink); text-decoration: none; padding: var(--s2) 0; }
-.site-nav a:hover { text-decoration: underline; }
-.back-link { font-size: 0.9375rem; }
+.page-builds .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgb(244 166 90 / 0.28); background: #f8b671; }
+.page-builds .btn:active { transform: scale(0.98); box-shadow: none; }
 
-/* Hero: text only. The page's memorable part is the price list below it. */
-.hero { padding: var(--s7) 0 var(--s6); }
-.hero h1 { font-size: clamp(2.25rem, 1.4rem + 4vw, 3.75rem); letter-spacing: -0.01em; max-width: 20ch; }
-.hero p { margin: var(--s4) 0; max-width: 38rem; font-size: 1.125rem; color: var(--muted); }
-.hero .fine { margin: var(--s4) 0 0; font-size: 0.9375rem; }
+/* A link with an underline that draws in from the left on hover */
+.page-builds .text-link { position: relative; display: inline-block; color: var(--amber); text-decoration: none; padding-bottom: 2px; }
+.page-builds .text-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.35s var(--ease); }
+.page-builds .text-link:hover::after, .page-builds .text-link:focus-visible::after { transform: scaleX(1); }
 
-/* Sections get different spacing on purpose so the page has a rhythm */
-.section { padding: var(--s6) 0; }
-.section h2 { font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem); }
-.section-intro { margin-top: var(--s3); max-width: 40rem; color: var(--muted); }
+/* Small mono text, like the labels on the rest of the site */
+.page-builds .mono { font-family: var(--font-mono); }
+.page-builds .label { font-family: var(--font-mono); font-size: 0.9375rem; color: var(--muted); }
 
-/* PACKAGE ROWS
-   Each package is a row, like a line on a rate card: name, a dotted leader,
-   then the price. The details sit underneath. */
-.packages { margin-top: var(--s5); display: grid; gap: var(--s4); }
-.package { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--s4); }
-.package-head { display: flex; align-items: baseline; gap: var(--s2); }
-.package-name { font-size: 1.75rem; }
-.leader { flex: 1; min-width: var(--s3); border-bottom: 2px dotted var(--line); }
-.package-price { font-family: var(--font-display); font-size: 1.75rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.package-price .from { font-family: var(--font-text); font-size: 0.9375rem; color: var(--muted); margin-right: var(--s1); }
-.package-meta { margin-top: var(--s2); color: var(--muted); max-width: 44rem; }
-.package-meta strong { color: var(--ink); }
-.package-body { display: grid; gap: var(--s4); margin-top: var(--s4); padding-top: var(--s4); border-top: 1px solid var(--line); }
-.package-body ul li { padding: var(--s1) 0 var(--s1) var(--s3); position: relative; }
-/* A plain small square as the list marker */
-.package-body ul li::before { content: ""; position: absolute; left: 0; top: 0.85em; width: 6px; height: 6px; background: var(--brand); }
-.package-body h4 { margin-bottom: var(--s2); }
-.package-link { margin-top: var(--s4); }
+/* Hero */
+.page-builds .hero { padding: var(--s8) 0 var(--s7); }
+.page-builds .hero h1 { font-size: clamp(2.5rem, 1.4rem + 5.4vw, 4.5rem); max-width: 16ch; margin: var(--s3) 0 var(--s4); }
+.page-builds .lead { font-size: 1.1875rem; color: var(--muted); max-width: 36rem; margin-bottom: var(--s5); }
+.page-builds .hero .label.note { margin-top: var(--s4); max-width: 34rem; }
 
-/* The day-by-day timeline. Each package has its own list, because the days differ. */
-.days li { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--s2); padding: var(--s1) 0; }
-.days .when { font-weight: 600; font-variant-numeric: tabular-nums; }
+/* Sections */
+.page-builds .section { padding: var(--s7) 0; }
+.page-builds .section h2 { font-size: clamp(1.875rem, 1.2rem + 2.8vw, 3rem); }
+.page-builds .section-intro { margin-top: var(--s3); max-width: 40rem; color: var(--muted); }
+.page-builds .stack { margin-top: var(--s5); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
 
-/* ADD-ON PICKER */
-.addons .picker { margin-top: var(--s5); max-width: 40rem; }
-.picker label { display: block; font-weight: 600; margin-bottom: var(--s2); }
-.picker select {
-  width: 100%; min-height: 3rem; padding: 0 var(--s3);
-  font: inherit; color: var(--ink); background: var(--surface);
-  border: 2px solid var(--ink); border-radius: var(--radius);
+/* THE OPEN-AND-CLOSE CARD
+   Used for the packages, the templates, the steps and the questions.
+   When JavaScript works, the details start hidden and open when you tap the card.
+   When it does not, everything simply shows. */
+.page-builds .fold-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel);
+  transition: border-color 0.3s, transform 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+@media (hover: hover) {
+  .page-builds .fold-card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
 }
-.addon-panel { margin-top: var(--s3); padding: var(--s4); background: var(--tint); border-radius: var(--radius); min-height: 9rem; }
-.addon-panel .addon-title { font-family: var(--font-display); font-size: 1.375rem; }
-.addon-panel .addon-facts { margin-top: var(--s1); font-weight: 600; font-variant-numeric: tabular-nums; }
-.addon-panel .addon-text { margin-top: var(--s2); }
-.addon-panel .addon-hint { color: var(--muted); }
-.addon-panel a { display: inline-block; margin-top: var(--s3); }
-.addon-table { margin-top: var(--s4); width: 100%; border-collapse: collapse; background: var(--surface); }
-.addon-table th, .addon-table td { text-align: left; padding: var(--s2) var(--s3); border-bottom: 1px solid var(--line); vertical-align: top; }
+.page-builds .fold-card.is-open { border-color: rgb(244 166 90 / 0.5); box-shadow: 0 18px 44px rgb(0 0 0 / 0.4), 0 0 0 1px rgb(244 166 90 / 0.12); }
 
-/* TEMPLATES AND EXAMPLE */
-.starts { margin-top: var(--s5); display: grid; gap: var(--s4); }
-.start { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--s4); display: grid; gap: var(--s2); }
-.start h3 { font-size: 1.375rem; }
-.start p { color: var(--muted); max-width: 40rem; }
-.start a { justify-self: start; }
+.page-builds .fold-heading { margin: 0; font-family: var(--font-text); font-weight: 400; font-size: 1rem; letter-spacing: 0; line-height: 1.65; }
+.page-builds .fold-toggle { display: block; position: relative; width: 100%; padding: var(--s4); border-radius: var(--radius); }
+.page-builds:not(.js) .fold-toggle { cursor: default; }
 
-/* HOW A PROJECT RUNS. This really is a sequence, so the steps are numbered. */
-.steps { margin-top: var(--s5); display: grid; gap: var(--s3); counter-reset: step; max-width: 46rem; }
-.steps li { counter-increment: step; display: grid; grid-template-columns: 2.5rem 1fr; gap: var(--s3); }
-.steps li::before {
-  content: counter(step); display: grid; place-items: center;
-  width: 2.5rem; height: 2.5rem; border-radius: 50%;
-  border: 2px solid var(--brand); color: var(--brand); font-weight: 600;
+/* The plus sign turns into a cross when the card opens */
+.page-builds .fold-icon { position: absolute; right: var(--s4); top: var(--s4); width: 1.5rem; height: 1.5rem; transition: transform 0.45s var(--ease); }
+.page-builds .fold-icon::before, .page-builds .fold-icon::after { content: ""; position: absolute; left: 50%; top: 50%; width: 1rem; height: 2px; margin: -1px 0 0 -0.5rem; background: var(--amber); border-radius: 1px; }
+.page-builds .fold-icon::after { transform: rotate(90deg); }
+.page-builds .fold-card.is-open .fold-icon { transform: rotate(135deg); }
+.page-builds:not(.js) .fold-icon, .page-builds:not(.js) .fold-hint { display: none; }
+
+.page-builds .fold-hint { display: block; margin-top: var(--s3); font-family: var(--font-mono); font-size: 0.875rem; color: var(--muted); transition: color 0.2s; }
+.page-builds .fold-card:hover .fold-hint { color: var(--amber); }
+.page-builds .fold-hint .when-open { display: none; }
+.page-builds .fold-card.is-open .fold-hint .when-open { display: inline; }
+.page-builds .fold-card.is-open .fold-hint .when-closed { display: none; }
+
+/* The hidden part. The row height grows from 0 to its full size, which is what makes it slide open.
+   visibility keeps links inside a closed card out of the Tab order. */
+.page-builds.js .fold-panel { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows 0.5s var(--ease), visibility 0s 0.5s; }
+.page-builds.js .fold-card.is-open .fold-panel { grid-template-rows: 1fr; visibility: visible; transition-delay: 0s; }
+.page-builds .fold-inner { min-height: 0; overflow: hidden; }
+.page-builds .fold-body { padding: 0 var(--s4) var(--s4); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
+
+/* Each piece inside slides up one after another. --i is set by builds.js. */
+.page-builds.js .fold-body > *, .page-builds.js .ticks li, .page-builds.js .term li, .page-builds.js .timeline li { transition: opacity 0.5s var(--ease), transform 0.5s var(--ease); transition-delay: calc(var(--i, 0) * 70ms + 140ms); }
+.page-builds.js .fold-card:not(.is-open) .fold-body > *, .page-builds.js .fold-card:not(.is-open) .ticks li, .page-builds.js .fold-card:not(.is-open) .term li, .page-builds.js .fold-card:not(.is-open) .timeline li { opacity: 0; transform: translateY(14px); transition-delay: 0s; }
+
+/* PACKAGES */
+.page-builds .pkg-name, .page-builds .tpl-title { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+.page-builds .pkg-name { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); }
+.page-builds .pkg-price { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+.page-builds .pkg-price .from { font-family: var(--font-mono); font-weight: 400; font-size: 0.875rem; color: var(--muted); margin-right: var(--s1); }
+.page-builds .pkg-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s1) var(--s3); }
+.page-builds .pkg-meta { display: block; margin-top: var(--s2); color: var(--muted); }
+.page-builds .chip { display: inline-block; margin-right: var(--s2); padding: 0 var(--s2); border: 1px solid var(--line-strong); border-radius: 999px; font-family: var(--font-mono); font-size: 0.8125rem; color: var(--text); }
+/* In a package card the icon sits in the top right corner, under the price row */
+.page-builds .pkg .fold-icon { top: auto; bottom: var(--s4); }
+.page-builds .pkg .fold-toggle { padding-bottom: calc(var(--s4) + 0.25rem); }
+.page-builds .pkg .fold-hint { padding-right: 3rem; }
+
+.page-builds .pkg-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s5); padding-top: var(--s4); border-top: 1px solid var(--line); }
+.page-builds .pkg-cols h4 { margin-bottom: var(--s3); }
+.page-builds .pkg-note { color: var(--muted); margin-top: var(--s3); font-size: 0.9375rem; max-width: 30rem; }
+
+.page-builds .ticks li { position: relative; padding: var(--s1) 0 var(--s1) var(--s4); }
+.page-builds .ticks li::before { content: ""; position: absolute; left: 2px; top: 0.9em; width: 7px; height: 7px; border-radius: 2px; background: var(--amber); }
+
+/* The day-by-day timeline. A line draws down, and a dot pops in for each stage. */
+.page-builds .timeline { position: relative; display: grid; gap: var(--s3); padding-left: 2rem; }
+.page-builds .timeline::before { content: ""; position: absolute; left: 6px; top: 0.6rem; bottom: 0.6rem; width: 1px; background: var(--line-strong); transform-origin: top; transition: transform 0.8s var(--ease) 0.2s; }
+.page-builds.js .fold-card:not(.is-open) .timeline::before { transform: scaleY(0); transition-delay: 0s; }
+.page-builds .timeline li { position: relative; }
+.page-builds .timeline li::before { content: ""; position: absolute; left: -2rem; top: 0.45rem; width: 13px; height: 13px; border-radius: 50%; background: var(--bg); border: 2px solid var(--amber);
+  transition: transform 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) calc(var(--i, 0) * 110ms + 300ms); }
+.page-builds.js .fold-card:not(.is-open) .timeline li::before { transform: scale(0); transition-delay: 0s; }
+.page-builds .when { display: block; font-family: var(--font-mono); font-size: 0.875rem; color: var(--amber); }
+
+.page-builds .pkg-link { justify-self: start; }
+
+/* ADD-ON DROPDOWN
+   Built by hand instead of using the browser's own list, so it matches the site
+   and has no blue highlight. builds.js makes it work with the keyboard too. */
+.page-builds .addon { margin-top: var(--s5); max-width: 36rem; }
+.page-builds .addon .label { display: block; margin-bottom: var(--s2); }
+.page-builds .dd { position: relative; }
+.page-builds .dd-button { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); width: 100%; min-height: 3.5rem; padding: 0 var(--s4);
+  background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); transition: border-color 0.25s, box-shadow 0.25s; }
+.page-builds .dd-button:hover { border-color: var(--amber); }
+.page-builds .dd.open .dd-button { border-color: var(--amber); box-shadow: 0 0 0 3px rgb(244 166 90 / 0.14); }
+.page-builds .dd-caret { width: 0.6rem; height: 0.6rem; border-right: 2px solid var(--amber); border-bottom: 2px solid var(--amber); transform: translateY(-2px) rotate(45deg); transition: transform 0.35s var(--ease); }
+.page-builds .dd.open .dd-caret { transform: translateY(2px) rotate(225deg); }
+.page-builds .dd-list { position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + var(--s2)); max-height: 20rem; overflow: auto;
+  background: var(--panel-raised); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); box-shadow: 0 20px 50px rgb(0 0 0 / 0.5);
+  opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.98); transform-origin: top;
+  transition: opacity 0.25s var(--ease), transform 0.3s var(--ease), visibility 0s 0.3s; }
+.page-builds .dd.open .dd-list { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.page-builds .dd-option { display: flex; justify-content: space-between; gap: var(--s3); padding: var(--s3) var(--s4); cursor: pointer; transition: background-color 0.15s, color 0.15s; }
+.page-builds .dd-option .dd-price { font-family: var(--font-mono); font-size: 0.9375rem; color: var(--muted); white-space: nowrap; }
+.page-builds .dd-option.is-active { background: rgb(244 166 90 / 0.13); }
+.page-builds .dd-option[aria-selected="true"] { color: var(--amber); }
+
+.page-builds .addon-panel { margin-top: var(--s3); padding: var(--s4); min-height: 9.5rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+.page-builds .addon-panel.swap > * { animation: builds-swap 0.45s var(--ease) backwards; }
+.page-builds .addon-panel.swap > *:nth-child(2) { animation-delay: 70ms; }
+.page-builds .addon-panel.swap > *:nth-child(3) { animation-delay: 140ms; }
+.page-builds .addon-panel.swap > *:nth-child(4) { animation-delay: 210ms; }
+.page-builds .addon-title { font-family: var(--font-display); font-weight: 600; font-size: 1.5rem; letter-spacing: -0.02em; }
+.page-builds .addon-facts { margin-top: var(--s1); font-family: var(--font-mono); color: var(--amber); font-size: 0.9375rem; }
+.page-builds .addon-text { margin-top: var(--s2); color: var(--muted); }
+.page-builds .addon-panel .text-link { margin-top: var(--s3); }
+.page-builds .addon-hint { color: var(--muted); }
+
+.page-builds .addon-table { margin-top: var(--s4); width: 100%; border-collapse: collapse; }
+.page-builds .addon-table th, .page-builds .addon-table td { text-align: left; padding: var(--s2) var(--s3); border-bottom: 1px solid var(--line); vertical-align: top; }
+
+/* TEMPLATES */
+.page-builds .tpl-title { font-size: clamp(1.375rem, 1.1rem + 1vw, 1.75rem); }
+.page-builds .tpl-title { display: block; padding-right: 3rem; }
+.page-builds .tpl-line { display: block; margin-top: var(--s2); color: var(--muted); }
+.page-builds .tpl .fold-hint { padding-right: 3rem; }
+.page-builds .tpl-link { margin: 0 var(--s4) var(--s4); }
+
+/* A panel that looks like the terminal on your Classly page: mono text, amber numbers */
+.page-builds .term { padding: var(--s4); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.9375rem; }
+.page-builds .term-title { margin-bottom: var(--s3); }
+.page-builds .term-title span { color: var(--amber); }
+.page-builds .term ol { counter-reset: n; display: grid; gap: var(--s2); }
+.page-builds .term li { counter-increment: n; display: grid; grid-template-columns: 2rem minmax(0, 1fr); }
+.page-builds .term ol li::before { content: counter(n); color: var(--amber); }
+.page-builds .term ul li { position: relative; padding-left: var(--s4); }
+.page-builds .term ul li::before { content: ""; position: absolute; left: 2px; top: 0.7em; width: 6px; height: 6px; border-radius: 2px; background: var(--amber); }
+.page-builds .term ul { display: grid; gap: var(--s2); }
+.page-builds .tpl-note { color: var(--muted); font-size: 0.9375rem; }
+
+/* STEPS AND QUESTIONS: rows in a list */
+.page-builds .rows { margin-top: var(--s5); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s2); max-width: 46rem; }
+.page-builds .rows .fold-toggle { display: flex; align-items: center; gap: var(--s3); min-height: 3.5rem; padding: var(--s3) calc(var(--s4) + 2.5rem) var(--s3) var(--s4); }
+.page-builds .step-num { flex: none; width: 1.5rem; }
+.page-builds .step-num { font-family: var(--font-mono); color: var(--amber); transition: transform 0.35s var(--ease); }
+.page-builds .step-title, .page-builds .q-title { font-family: var(--font-display); font-weight: 600; font-size: 1.1875rem; letter-spacing: -0.01em; transition: transform 0.35s var(--ease); }
+
+.page-builds .rows .fold-icon { top: 50%; margin-top: -0.75rem; }
+@media (hover: hover) {
+  .page-builds .step .fold-toggle:hover .step-title, .page-builds .faq .fold-toggle:hover .q-title { transform: translateX(6px); }
 }
-.steps h3 { font-family: var(--font-text); font-size: 1rem; font-weight: 600; }
-.steps p { color: var(--muted); }
+.page-builds .rows .fold-body { padding: 0 var(--s4) var(--s4); color: var(--muted); }
+.page-builds .step .fold-body { padding-left: calc(var(--s4) + 1.5rem + var(--s3)); }
+.page-builds .rows .fold-card:hover { transform: none; }
 
-.needs-title { margin-top: var(--s6); font-size: 1.5rem; }
-.needs { margin-top: var(--s4); max-width: 40rem; }
-.needs li { padding: var(--s1) 0 var(--s1) var(--s3); position: relative; }
-.needs li::before { content: ""; position: absolute; left: 0; top: 0.85em; width: 6px; height: 6px; background: var(--brand); }
-
-/* QUESTIONS: details/summary opens and closes with no JavaScript */
-.faq { margin-top: var(--s4); max-width: 46rem; border-top: 1px solid var(--line); }
-.faq details { border-bottom: 1px solid var(--line); }
-.faq summary { cursor: pointer; padding: var(--s3) 0; font-weight: 600; min-height: 3rem; }
-.faq details p { padding: 0 0 var(--s3); color: var(--muted); max-width: 40rem; }
+.page-builds .need { margin-top: var(--s5); max-width: 34rem; }
+.page-builds.js .need.in li { animation: builds-rise 0.6s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 80ms + 250ms); }
 
 /* CLOSING CALL TO ACTION */
-.closing { background: var(--brand); color: #fff; padding: var(--s6) 0; margin-top: var(--s6); }
-.closing h2 { font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem); }
-.closing p { margin: var(--s3) 0 var(--s4); max-width: 38rem; }
-.closing .btn { background: #fff; border-color: #fff; color: var(--brand-dark); }
-.closing .btn:hover { background: var(--tint); border-color: var(--tint); }
-.closing :focus-visible { outline-color: #fff; }
+.page-builds .closing { padding: var(--s7) 0 var(--s8); }
+.page-builds .closing h2 { font-size: clamp(2rem, 1.2rem + 3.4vw, 3.5rem); max-width: 18ch; }
+.page-builds .closing p { margin: var(--s3) 0 var(--s5); color: var(--muted); max-width: 36rem; }
 
-.site-footer { padding: var(--s5) 0; font-size: 0.9375rem; color: var(--muted); }
-.site-footer .wrap { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4); justify-content: space-between; }
+.page-builds .site-footer { padding: var(--s5) 0 var(--s6); border-top: 1px solid var(--line); }
+.page-builds .site-footer .wrap { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4); justify-content: space-between; }
+.page-builds .site-footer a { color: var(--muted); }
 
 /* WIDE SCREENS: tablets and up */
 @media (min-width: 54rem) {
-  .site-nav { display: flex; }
-  .package { padding: var(--s5); }
-  .package-body { grid-template-columns: 1fr 1.2fr; gap: var(--s6); }
-  .start { grid-template-columns: 1fr auto; align-items: center; column-gap: var(--s5); }
-  .start a { justify-self: end; grid-column: 2; grid-row: 1 / span 2; }
+  .page-builds .hero { padding: calc(var(--s8) + var(--s5)) 0 var(--s8); }
+  .page-builds .section { padding: var(--s8) 0; }
+  .page-builds .fold-toggle { padding: var(--s5); }
+  .page-builds .fold-body { padding: 0 var(--s5) var(--s5); }
+  .page-builds .pkg-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: var(--s7); }
+  .page-builds .fold-icon { right: var(--s5); top: var(--s5); }
+  .page-builds .pkg .fold-icon { top: auto; bottom: var(--s5); }
+  .page-builds .pkg .fold-toggle { padding-bottom: calc(var(--s5) + 0.25rem); }
+  .page-builds .tpl-link { margin: 0 var(--s5) var(--s5); }
+  .page-builds .stack.two { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
 }
 
-/* If a visitor's device asks for less movement, turn off the fades too */
+/* If a visitor's device asks for less movement, everything still works but nothing animates */
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .btn { transition: none; }
+  .page-builds { scroll-behavior: auto; }
+  .page-builds *, .page-builds *::before, .page-builds *::after { animation: none !important; transition: none !important; }
+  .page-builds.js .reveal { opacity: 1; }
+  .page-builds .ambient::before { display: none; }
 }
