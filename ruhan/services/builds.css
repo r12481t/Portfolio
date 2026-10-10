@@ -1,0 +1,203 @@
+/* =========================================================================
+   Custom builds page styles
+   1. Tokens: colours, fonts and spacing in one place.
+   2. Base: plain element styles.
+   3. Pieces: header, hero, package rows, add-on picker, and so on.
+   This page keeps its own CSS on purpose, so it never depends on another
+   page's files. If you change this file, bump the number in builds.html
+   (builds.css?v=1) so visitors do not see the old copy.
+   ========================================================================= */
+
+/* 1. TOKENS */
+:root {
+  --paper: #f4f6f5;      /* page background */
+  --surface: #ffffff;    /* rows and panels that sit on the page */
+  --ink: #14201c;        /* main text */
+  --muted: #52605b;      /* secondary text */
+  --line: #c9d3cf;       /* thin lines and the dotted leaders */
+  --brand: #17524d;      /* buttons, links, focus ring */
+  --brand-dark: #0f3a36; /* button hover */
+  --tint: #e2edea;       /* quiet fill behind the add-on panel */
+
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-text: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Spacing on an 8px scale */
+  --s1: 0.25rem;  /* 4px  */
+  --s2: 0.5rem;   /* 8px  */
+  --s3: 1rem;     /* 16px */
+  --s4: 1.5rem;   /* 24px */
+  --s5: 2rem;     /* 32px */
+  --s6: 3rem;     /* 48px */
+  --s7: 4rem;     /* 64px */
+
+  --radius: 8px;
+  --page-width: 66rem;
+}
+
+/* 2. BASE */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; color-scheme: light; }
+
+body {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+h1, h2, h3, h4 { margin: 0; line-height: 1.2; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; }
+h4 { font-size: 1rem; font-weight: 600; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+a { color: var(--brand); }
+
+/* A clear outline for keyboard users. Never remove it. */
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+
+/* Keeps content in a centred column with space at the sides */
+.wrap { width: min(100% - 2 * var(--s3), var(--page-width)); margin-inline: auto; }
+
+/* Hidden until someone presses Tab, then it lets them jump past the menu */
+.skip {
+  position: absolute; left: var(--s3); top: -4rem; z-index: 10;
+  background: var(--brand); color: #fff; padding: var(--s2) var(--s3); border-radius: var(--radius);
+}
+.skip:focus { top: var(--s2); }
+
+/* 3. PIECES */
+
+/* Buttons are at least 48px tall so they are easy to tap */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 3rem; padding: 0 var(--s4);
+  border: 2px solid var(--brand); border-radius: var(--radius);
+  background: var(--brand); color: #fff;
+  font: inherit; font-weight: 600; text-decoration: none;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+.btn:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
+.btn-quiet { background: transparent; color: var(--brand); }
+.btn-quiet:hover { background: var(--brand); color: #fff; }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+
+/* Top bar */
+.site-header { background: var(--surface); border-bottom: 1px solid var(--line); }
+.site-header .wrap {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--s2) var(--s4); min-height: 4rem;
+}
+.brand { font-family: var(--font-display); font-size: 1.25rem; color: var(--ink); text-decoration: none; }
+.site-nav { display: none; gap: var(--s4); }
+.site-nav a { color: var(--ink); text-decoration: none; padding: var(--s2) 0; }
+.site-nav a:hover { text-decoration: underline; }
+.back-link { font-size: 0.9375rem; }
+
+/* Hero: text only. The page's memorable part is the price list below it. */
+.hero { padding: var(--s7) 0 var(--s6); }
+.hero h1 { font-size: clamp(2.25rem, 1.4rem + 4vw, 3.75rem); letter-spacing: -0.01em; max-width: 20ch; }
+.hero p { margin: var(--s4) 0; max-width: 38rem; font-size: 1.125rem; color: var(--muted); }
+.hero .fine { margin: var(--s4) 0 0; font-size: 0.9375rem; }
+
+/* Sections get different spacing on purpose so the page has a rhythm */
+.section { padding: var(--s6) 0; }
+.section h2 { font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem); }
+.section-intro { margin-top: var(--s3); max-width: 40rem; color: var(--muted); }
+
+/* PACKAGE ROWS
+   Each package is a row, like a line on a rate card: name, a dotted leader,
+   then the price. The details sit underneath. */
+.packages { margin-top: var(--s5); display: grid; gap: var(--s4); }
+.package { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--s4); }
+.package-head { display: flex; align-items: baseline; gap: var(--s2); }
+.package-name { font-size: 1.75rem; }
+.leader { flex: 1; min-width: var(--s3); border-bottom: 2px dotted var(--line); }
+.package-price { font-family: var(--font-display); font-size: 1.75rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.package-price .from { font-family: var(--font-text); font-size: 0.9375rem; color: var(--muted); margin-right: var(--s1); }
+.package-meta { margin-top: var(--s2); color: var(--muted); max-width: 44rem; }
+.package-meta strong { color: var(--ink); }
+.package-body { display: grid; gap: var(--s4); margin-top: var(--s4); padding-top: var(--s4); border-top: 1px solid var(--line); }
+.package-body ul li { padding: var(--s1) 0 var(--s1) var(--s3); position: relative; }
+/* A plain small square as the list marker */
+.package-body ul li::before { content: ""; position: absolute; left: 0; top: 0.85em; width: 6px; height: 6px; background: var(--brand); }
+.package-body h4 { margin-bottom: var(--s2); }
+.package-link { margin-top: var(--s4); }
+
+/* The day-by-day timeline. Each package has its own list, because the days differ. */
+.days li { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--s2); padding: var(--s1) 0; }
+.days .when { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* ADD-ON PICKER */
+.addons .picker { margin-top: var(--s5); max-width: 40rem; }
+.picker label { display: block; font-weight: 600; margin-bottom: var(--s2); }
+.picker select {
+  width: 100%; min-height: 3rem; padding: 0 var(--s3);
+  font: inherit; color: var(--ink); background: var(--surface);
+  border: 2px solid var(--ink); border-radius: var(--radius);
+}
+.addon-panel { margin-top: var(--s3); padding: var(--s4); background: var(--tint); border-radius: var(--radius); min-height: 9rem; }
+.addon-panel .addon-title { font-family: var(--font-display); font-size: 1.375rem; }
+.addon-panel .addon-facts { margin-top: var(--s1); font-weight: 600; font-variant-numeric: tabular-nums; }
+.addon-panel .addon-text { margin-top: var(--s2); }
+.addon-panel .addon-hint { color: var(--muted); }
+.addon-panel a { display: inline-block; margin-top: var(--s3); }
+.addon-table { margin-top: var(--s4); width: 100%; border-collapse: collapse; background: var(--surface); }
+.addon-table th, .addon-table td { text-align: left; padding: var(--s2) var(--s3); border-bottom: 1px solid var(--line); vertical-align: top; }
+
+/* TEMPLATES AND EXAMPLE */
+.starts { margin-top: var(--s5); display: grid; gap: var(--s4); }
+.start { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--s4); display: grid; gap: var(--s2); }
+.start h3 { font-size: 1.375rem; }
+.start p { color: var(--muted); max-width: 40rem; }
+.start a { justify-self: start; }
+
+/* HOW A PROJECT RUNS. This really is a sequence, so the steps are numbered. */
+.steps { margin-top: var(--s5); display: grid; gap: var(--s3); counter-reset: step; max-width: 46rem; }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 2.5rem 1fr; gap: var(--s3); }
+.steps li::before {
+  content: counter(step); display: grid; place-items: center;
+  width: 2.5rem; height: 2.5rem; border-radius: 50%;
+  border: 2px solid var(--brand); color: var(--brand); font-weight: 600;
+}
+.steps h3 { font-family: var(--font-text); font-size: 1rem; font-weight: 600; }
+.steps p { color: var(--muted); }
+
+.needs-title { margin-top: var(--s6); font-size: 1.5rem; }
+.needs { margin-top: var(--s4); max-width: 40rem; }
+.needs li { padding: var(--s1) 0 var(--s1) var(--s3); position: relative; }
+.needs li::before { content: ""; position: absolute; left: 0; top: 0.85em; width: 6px; height: 6px; background: var(--brand); }
+
+/* QUESTIONS: details/summary opens and closes with no JavaScript */
+.faq { margin-top: var(--s4); max-width: 46rem; border-top: 1px solid var(--line); }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; padding: var(--s3) 0; font-weight: 600; min-height: 3rem; }
+.faq details p { padding: 0 0 var(--s3); color: var(--muted); max-width: 40rem; }
+
+/* CLOSING CALL TO ACTION */
+.closing { background: var(--brand); color: #fff; padding: var(--s6) 0; margin-top: var(--s6); }
+.closing h2 { font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem); }
+.closing p { margin: var(--s3) 0 var(--s4); max-width: 38rem; }
+.closing .btn { background: #fff; border-color: #fff; color: var(--brand-dark); }
+.closing .btn:hover { background: var(--tint); border-color: var(--tint); }
+.closing :focus-visible { outline-color: #fff; }
+
+.site-footer { padding: var(--s5) 0; font-size: 0.9375rem; color: var(--muted); }
+.site-footer .wrap { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4); justify-content: space-between; }
+
+/* WIDE SCREENS: tablets and up */
+@media (min-width: 54rem) {
+  .site-nav { display: flex; }
+  .package { padding: var(--s5); }
+  .package-body { grid-template-columns: 1fr 1.2fr; gap: var(--s6); }
+  .start { grid-template-columns: 1fr auto; align-items: center; column-gap: var(--s5); }
+  .start a { justify-self: end; grid-column: 2; grid-row: 1 / span 2; }
+}
+
+/* If a visitor's device asks for less movement, turn off the fades too */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn { transition: none; }
+}
