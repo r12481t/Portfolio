@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- TITLE AND DESCRIPTION: what people see in Google results. Title under about 60 characters, description under 160. -->
+  <title>Menu | Your Restaurant</title>
+  <meta name="description" content="Starters, mains, desserts and drinks at Your Restaurant, with prices and notes for vegetarian, vegan and gluten-free dishes.">
+  <!-- noindex keeps this sample site out of Google. DELETE THIS LINE on every page when the real site goes live. -->
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#22332b">
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- HEADER: the same on all four pages. If you change it, change it in index.html, menu.html, about.html and contact.html.
+       Replace the number in every tel: link. Use the international form: + country code, then the number, no spaces. -->
+  <header class="site-header on-board">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img src="img/logo-mark.svg" alt="" width="40" height="40">Your Restaurant</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="menu.html" aria-current="page">Menu</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <a class="btn header-call" href="tel:+15550100100">Call (555) 010-0100</a>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="page-head on-board">
+      <div class="wrap">
+        <h1>Menu</h1>
+        <p>Everything is cooked to order. V is vegetarian, VG is vegan and GF is gluten-free. Tell us about any allergy when you order and we will check with the kitchen.</p>
+        <nav class="jump" aria-label="Menu sections">
+          <a href="#starters">Starters</a>
+          <a href="#mains">Mains</a>
+          <a href="#desserts">Desserts</a>
+          <a href="#drinks">Drinks</a>
+        </nav>
+      </div>
+    </section>
+
+    <!-- SAMPLE DISHES AND PRICES. Replace every line with your own food.
+         To add a dish, copy one whole <li class="dish"> block and paste it where you want it.
+         The dish-note line is optional, so delete it for dishes that need no description.
+         Each section has a picture. Swap the sample illustrations for real photos of your dishes. -->
+
+    <section class="menu-section" id="starters">
+      <div class="wrap split">
+        <img src="img/dish-soup.svg" width="480" height="360" alt="Illustration of a bowl of tomato soup with bread" loading="lazy">
+        <div>
+          <h2>Starters</h2>
+          <ul>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Soup of the day<abbr class="diet" title="Vegetarian">V</abbr></span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$6.50</span></div>
+                <p class="dish-note">Ask what is in the pot today. Served with bread.</p>
+              </li>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Garlic flatbread<abbr class="diet" title="Vegetarian">V</abbr></span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$5.00</span></div>
+              </li>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Crispy chicken wings</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$8.50</span></div>
+                <p class="dish-note">Six wings with a mild or hot sauce.</p>
+              </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="menu-section" id="mains">
+      <div class="wrap split">
+        <img src="img/dish-plate.svg" width="480" height="360" alt="Illustration of grilled chicken with rice and vegetables" loading="lazy">
+        <div>
+          <h2>Mains</h2>
+          <ul>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Grilled chicken</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$14.00</span></div>
+                <p class="dish-note">With rice and a green salad.</p>
+              </li>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Vegetable curry<abbr class="diet" title="Vegan">VG</abbr><abbr class="diet" title="Gluten-free">GF</abbr></span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$12.50</span></div>
+                <p class="dish-note">Seasonal vegetables in a tomato and coconut sauce, with rice.</p>
+              </li>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Beef burger</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$13.50</span></div>
+                <p class="dish-note">With cheese, tomato, lettuce and chips.</p>
+              </li>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Fish of the day</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$16.00</span></div>
+                <p class="dish-note">Pan-fried, with potatoes and vegetables.</p>
+              </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="menu-section" id="desserts">
+      <div class="wrap split">
+        <img src="img/dish-cake.svg" width="480" height="360" alt="Illustration of a slice of chocolate cake with a strawberry on top" loading="lazy">
+        <div>
+          <h2>Desserts</h2>
+          <ul>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Chocolate cake<abbr class="diet" title="Vegetarian">V</abbr></span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$6.00</span></div>
+                <p class="dish-note">A thick slice with a fresh strawberry.</p>
+              </li>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Fresh fruit plate<abbr class="diet" title="Vegan">VG</abbr><abbr class="diet" title="Gluten-free">GF</abbr></span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$5.00</span></div>
+              </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="menu-section" id="drinks">
+      <div class="wrap split">
+        <img src="img/dish-drinks.svg" width="480" height="360" alt="Illustration of a glass of lemonade and a cup of coffee" loading="lazy">
+        <div>
+          <h2>Drinks</h2>
+          <ul>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Tea or coffee</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$3.00</span></div>
+              </li>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Fresh lemonade<abbr class="diet" title="Vegan">VG</abbr></span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$3.50</span></div>
+              </li>
+              <li class="dish">
+                <div class="dish-line"><span class="dish-name">Soft drinks</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$2.50</span></div>
+              </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section deep tight">
+      <div class="wrap book">
+        <p class="book-lead">To book a table, call or message. Tell us the day, the time and how many of you.</p>
+        <p>We confirm by reply. For groups of eight or more, please ask a day ahead.</p>
+        <div class="btn-row">
+          <a class="btn" href="tel:+15550100100">Call (555) 010-0100</a>
+          <a class="btn btn-quiet" href="https://wa.me/15550100100">Message on WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER: the same on all four pages. -->
+  <footer class="site-footer on-board">
+    <div class="wrap">
+      <div class="cols">
+        <div>
+          <h2>Your Restaurant</h2>
+          <p>Lunch and dinner in Your Town.<br>123 Main Street, Your Town</p>
+        </div>
+        <div>
+          <h2>Pages</h2>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Book a table</h2>
+          <ul>
+            <li><a href="tel:+15550100100">Call (555) 010-0100</a></li>
+            <li><a href="https://wa.me/15550100100">Message on WhatsApp</a></li>
+            <!-- Add Instagram and Facebook here when the restaurant has real accounts. Never leave a link that points nowhere. -->
+          </ul>
+        </div>
+      </div>
+      <div class="small">
+        <p>&copy; 2026 Your Restaurant</p>
+        <!-- This link is relative on purpose: from projects/templates/restaurant/ the portfolio is three folders up.
+             Remove this line when you hand the site to a client, unless they agree to keep the credit. -->
+        <p>Site by <a href="../../../ruhan/Ruhan-portfolio.html">Ruhan Tahlil Islam Britto</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- On phones, a call button stays at the bottom of the screen. It is hidden on wider screens. -->
+  <div class="call-bar">
+    <a class="btn" href="tel:+15550100100">Call to book a table</a>
+  </div>
+</body>
+</html>

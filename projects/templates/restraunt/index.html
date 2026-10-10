@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- TITLE AND DESCRIPTION: what people see in Google results. Title under about 60 characters, description under 160. -->
+  <title>Your Restaurant | Food cooked to order in Your Town</title>
+  <meta name="description" content="Lunch and dinner in Your Town. See the menu, opening hours and how to book a table by phone or message.">
+  <!-- noindex keeps this sample site out of Google. DELETE THIS LINE on every page when the real site goes live. -->
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#22332b">
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- HEADER: the same on all four pages. If you change it, change it in index.html, menu.html, about.html and contact.html.
+       Replace the number in every tel: link. Use the international form: + country code, then the number, no spaces. -->
+  <header class="site-header on-board">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img src="img/logo-mark.svg" alt="" width="40" height="40">Your Restaurant</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="menu.html">Menu</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <a class="btn header-call" href="tel:+15550100100">Call (555) 010-0100</a>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="hero on-board">
+      <div class="wrap">
+        <div class="hero-text">
+          <h1>Good food, cooked to order.</h1>
+          <p>Open for lunch and dinner. Call or message to book a table, or walk in and we will find you a seat.</p>
+          <div class="btn-row">
+            <a class="btn" href="tel:+15550100100">Call to book a table</a>
+            <a class="btn btn-quiet" href="menu.html">See the menu</a>
+          </div>
+        </div>
+        <!-- PHOTO: this is a sample illustration. Replace img/hero-table.svg with a real photo of your food or your room.
+             Keep the width and height written on the tag (use the real photo's size), and write real alt text that says what the photo shows. -->
+        <div class="hero-image">
+          <img src="img/hero-table.svg" width="640" height="560" alt="Illustration of a table with a plate of grilled chicken and rice, a bowl of soup, a cup of tea and a glass of lemonade">
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>From the menu</h2>
+        <p class="section-intro">A few dishes to start with. The full menu has starters, mains, desserts and drinks.</p>
+        <!-- Pick the three dishes you most want to sell. Copy one whole <article class="card"> block to add another. -->
+        <div class="cards">
+          <article class="card">
+            <img src="img/dish-soup.svg" width="480" height="360" alt="Illustration of a bowl of tomato soup with bread" loading="lazy">
+            <div class="dish-line"><span class="dish-name">Soup of the day</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$6.50</span></div>
+            <p class="dish-note">Ask what is in the pot today. Served with bread.</p>
+          </article>
+          <article class="card">
+            <img src="img/dish-plate.svg" width="480" height="360" alt="Illustration of grilled chicken with rice and vegetables" loading="lazy">
+            <div class="dish-line"><span class="dish-name">Grilled chicken</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$14.00</span></div>
+            <p class="dish-note">With rice, carrots and broccoli.</p>
+          </article>
+          <article class="card">
+            <img src="img/dish-burger.svg" width="480" height="360" alt="Illustration of a beef burger with chips" loading="lazy">
+            <div class="dish-line"><span class="dish-name">Beef burger</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$13.50</span></div>
+            <p class="dish-note">With cheese, tomato, lettuce and chips.</p>
+          </article>
+        </div>
+        <div class="more btn-row"><a class="btn btn-quiet" href="menu.html">See the full menu</a></div>
+      </div>
+    </section>
+
+    <section class="section deep">
+      <div class="wrap">
+        <h2>How we cook</h2>
+        <!-- SAMPLE WORDS. Replace these three points with things that are really true about your restaurant. -->
+        <div class="points">
+          <div>
+            <h3>Cooked to order</h3>
+            <p>Each dish is made when you order it, so the food reaches your table hot.</p>
+          </div>
+          <div>
+            <h3>A menu that changes</h3>
+            <p>We change some dishes through the year. Ask about today's specials.</p>
+          </div>
+          <div>
+            <h3>Easy to book</h3>
+            <p>Call or send a message and we confirm by reply. Walk-ins are welcome when we have a table.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap split">
+        <img src="img/about-kitchen.svg" width="640" height="440" alt="Illustration of a small kitchen with a pot on the stove and pans hanging on a rail" loading="lazy">
+        <div class="copy">
+          <h2>A small kitchen with a short menu</h2>
+          <p>We cook what we know well and keep the prices fair. Come for lunch, a family dinner or a quick bite after work.</p>
+          <a class="btn btn-quiet" href="about.html">Read our story</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section deep">
+      <div class="wrap two">
+        <div>
+          <table class="hours">
+            <caption>Opening hours</caption>
+            <tbody>
+              <tr><th scope="row">Monday</th><td>Closed</td></tr>
+              <tr><th scope="row">Tuesday</th><td>11:30 am to 10 pm</td></tr>
+              <tr><th scope="row">Wednesday</th><td>11:30 am to 10 pm</td></tr>
+              <tr><th scope="row">Thursday</th><td>11:30 am to 10 pm</td></tr>
+              <tr><th scope="row">Friday</th><td>11:30 am to 11 pm</td></tr>
+              <tr><th scope="row">Saturday</th><td>11:30 am to 11 pm</td></tr>
+              <tr><th scope="row">Sunday</th><td>12 pm to 9 pm</td></tr>
+            </tbody>
+          </table>
+          <p class="hours-note">The kitchen stops taking orders 30 minutes before closing.</p>
+        </div>
+        <div class="info">
+          <h2>Find us</h2>
+          <address>123 Main Street<br>Your Town</address>
+          <div class="btn-row">
+            <a class="btn" href="tel:+15550100100">Call to book a table</a>
+            <!-- Open Google Maps, search for your restaurant, press Share, copy the link, and paste it as the href below. -->
+            <a class="btn btn-quiet" href="https://www.google.com/maps/search/?api=1&amp;query=123%20Main%20Street%20Your%20Town">Open in maps</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER: the same on all four pages. -->
+  <footer class="site-footer on-board">
+    <div class="wrap">
+      <div class="cols">
+        <div>
+          <h2>Your Restaurant</h2>
+          <p>Lunch and dinner in Your Town.<br>123 Main Street, Your Town</p>
+        </div>
+        <div>
+          <h2>Pages</h2>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Book a table</h2>
+          <ul>
+            <li><a href="tel:+15550100100">Call (555) 010-0100</a></li>
+            <li><a href="https://wa.me/15550100100">Message on WhatsApp</a></li>
+            <!-- Add Instagram and Facebook here when the restaurant has real accounts. Never leave a link that points nowhere. -->
+          </ul>
+        </div>
+      </div>
+      <div class="small">
+        <p>&copy; 2026 Your Restaurant</p>
+        <!-- This link is relative on purpose: from projects/templates/restaurant/ the portfolio is three folders up.
+             Remove this line when you hand the site to a client, unless they agree to keep the credit. -->
+        <p>Site by <a href="../../../ruhan/Ruhan-portfolio.html">Ruhan Tahlil Islam Britto</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- On phones, a call button stays at the bottom of the screen. It is hidden on wider screens. -->
+  <div class="call-bar">
+    <a class="btn" href="tel:+15550100100">Call to book a table</a>
+  </div>
+</body>
+</html>
