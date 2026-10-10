@@ -12,13 +12,13 @@
    stylesheet in the services folder (such as the audit page's) can change this one,
    even if both are ever loaded together by mistake.
 
-   If you change this file, bump the number in builds.html (builds.css?v=4)
+   If you change this file, bump the number in builds.html (builds.css?v=5)
    so visitors do not see the old copy.
    ========================================================================= */
 
 /* 1. TOKENS */
 .page-builds {
-  --bg: #14100d;           /* page background, a warm black */
+  --bg: #0d0a08;           /* page background, the same warm black as the portfolio */
   --panel: #1c1611;        /* cards and panels */
   --panel-raised: #241c15; /* dropdown list */
   --line: #3a2e24;         /* thin borders */
@@ -28,10 +28,10 @@
   --amber: #f4a65a;        /* the button, numbers and links */
   --on-amber: #1a120b;     /* text that sits on the amber button */
 
-  /* If the rest of your site loads a font (for example from Google Fonts), add the same
-     <link> tag in builds.html and put that font's name first in --font. */
-  --font: "Space Grotesk", "Schibsted Grotesk", "Helvetica Neue", Arial, system-ui, sans-serif;
-  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Courier New", monospace;
+  /* The same three fonts the portfolio loads (the Google Fonts link in builds.html) */
+  --font-display: "Space Grotesk", "Helvetica Neue", Arial, system-ui, sans-serif;   /* headings, names, prices */
+  --font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; /* body text */
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Courier New", monospace;  /* small labels */
 
   /* Five text sizes, and only these */
   --t-sm: 0.875rem;                                /* 14px: hints and small mono text */
@@ -81,7 +81,7 @@
   background: var(--bg);
 }
 
-.page-builds h1, .page-builds h2, .page-builds h3, .page-builds h4 { margin: 0; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
+.page-builds h1, .page-builds h2, .page-builds h3, .page-builds h4 { margin: 0; font-family: var(--font-display); font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
 .page-builds h4 { font-size: var(--t-base); letter-spacing: 0; line-height: 1.5; }
 .page-builds p { margin: 0; }
 .page-builds ul, .page-builds ol { margin: 0; padding: 0; list-style: none; }
@@ -133,7 +133,7 @@
 /* Header */
 .page-builds .site-header { background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 10; }
 .page-builds .site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); min-height: 4rem; }
-.page-builds .brand { color: var(--text); text-decoration: none; font-weight: 600; }
+.page-builds .brand { color: var(--text); text-decoration: none; font-family: var(--font-display); font-weight: 600; }
 .page-builds .head-link { color: var(--muted); text-decoration: none; padding: var(--s3) 0; transition: color var(--d-quick); }
 .page-builds .head-link:hover { color: var(--amber); }
 
@@ -177,7 +177,7 @@
 }
 .page-builds .fold-card.is-open { border-color: var(--amber); }
 
-.page-builds .fold-heading { margin: 0; font-weight: 400; font-size: var(--t-base); letter-spacing: 0; line-height: 1.6; }
+.page-builds .fold-heading { margin: 0; font-family: var(--font); font-weight: 400; font-size: var(--t-base); letter-spacing: 0; line-height: 1.6; }
 .page-builds .fold-toggle { display: block; position: relative; width: 100%; padding: var(--s4); border-radius: var(--radius); }
 
 /* The plus sign turns into a cross when the card opens */
@@ -208,10 +208,10 @@
 
 /* BUILD CARDS (custom builds and template builds share one layout):
    the name, then the time on the left and the price on the right, then one line about who it is for. */
-.page-builds .build-name { display: block; padding-right: var(--s6); font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+.page-builds .build-name { display: block; font-family: var(--font-display); padding-right: var(--s6); font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
 .page-builds .build-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s1) var(--s3); margin-top: var(--s2); }
 .page-builds .build-days { font-family: var(--mono); font-size: var(--t-sm); color: var(--muted); }
-.page-builds .build-price { font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.page-builds .build-price { font-family: var(--font-display); font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .page-builds .build-price .from { font-family: var(--mono); font-size: var(--t-sm); font-weight: 400; letter-spacing: 0; color: var(--muted); margin-right: var(--s1); }
 .page-builds .build-for { display: block; margin-top: var(--s2); color: var(--muted); max-width: 36rem; }
 
@@ -260,7 +260,7 @@
 .page-builds .addon-panel.swap > *:nth-child(2) { animation-delay: 40ms; }
 .page-builds .addon-panel.swap > *:nth-child(3) { animation-delay: 80ms; }
 .page-builds .addon-panel.swap > *:nth-child(4) { animation-delay: 120ms; }
-.page-builds .addon-title { font-size: var(--t-md); font-weight: 600; letter-spacing: -0.01em; }
+.page-builds .addon-title { font-family: var(--font-display); font-size: var(--t-md); font-weight: 600; letter-spacing: -0.01em; }
 .page-builds .addon-facts { margin-top: var(--s1); font-family: var(--mono); color: var(--amber); font-size: var(--t-sm); }
 .page-builds .addon-text { margin-top: var(--s2); color: var(--muted); }
 .page-builds .addon-panel .text-link { margin-top: var(--s2); }
@@ -274,7 +274,7 @@
 .page-builds .rows .fold-toggle { display: flex; align-items: center; gap: var(--s3); min-height: 3.5rem; padding: var(--s3) calc(var(--s4) + var(--s5)) var(--s3) var(--s4); }
 .page-builds .rows .fold-icon { top: 50%; bottom: auto; margin-top: -0.75rem; }
 .page-builds .step-num { flex: none; width: 1.5rem; font-family: var(--mono); color: var(--amber); }
-.page-builds .step-title, .page-builds .q-title { font-size: var(--t-md); font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; transition: transform var(--d-std) var(--ease-out); }
+.page-builds .step-title, .page-builds .q-title { font-family: var(--font-display); font-size: var(--t-md); font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; transition: transform var(--d-std) var(--ease-out); }
 @media (hover: hover) {
   .page-builds .rows .fold-card:hover { transform: none; }
   .page-builds .rows .fold-toggle:hover .step-title, .page-builds .rows .fold-toggle:hover .q-title { transform: translateX(4px); }
