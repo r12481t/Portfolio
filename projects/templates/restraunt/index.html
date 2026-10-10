@@ -9,7 +9,7 @@
   <!-- noindex keeps this sample site out of Google. DELETE THIS LINE on every page when the real site goes live. -->
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#22332b">
-  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -18,7 +18,7 @@
        Replace the number in every tel: link. Use the international form: + country code, then the number, no spaces. -->
   <header class="site-header on-board">
     <div class="wrap">
-      <a class="brand" href="index.html"><img src="img/logo-mark.svg" alt="" width="40" height="40">Your Restaurant</a>
+      <a class="brand" href="index.html"><svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#f2efe6"/><circle cx="32" cy="32" r="14" fill="none" stroke="#7a2535" stroke-width="3"/><g fill="#7a2535"><rect x="12" y="16" width="2.4" height="12" rx="1.2"/><rect x="16.6" y="16" width="2.4" height="12" rx="1.2"/><rect x="12" y="26" width="7" height="4" rx="2"/><rect x="14" y="28" width="3" height="20" rx="1.5"/><path d="M50 16q5 8 1 18h-4q-2-10 3-18z"/><rect x="48" y="32" width="3.4" height="16" rx="1.7"/></g></svg>Your Restaurant</a>
       <nav class="site-nav" aria-label="Main">
         <a href="index.html" aria-current="page">Home</a>
         <a href="menu.html">Menu</a>
@@ -31,6 +31,9 @@
 
   <main id="main">
 
+    <!-- HERO. The picture is the background of this whole band (set in style.css, img/hero.webp), so if a picture is ever missing
+         the band simply shows its dark green and the words, with no empty gap. To change it, replace img/hero.webp
+         with a real photo of the food or the room, about 1600 x 900, with the busy part on the right and calm space on the left for the words. -->
     <section class="hero on-board">
       <div class="wrap">
         <div class="hero-text">
@@ -40,11 +43,6 @@
             <a class="btn" href="tel:+15550100100">Call to book a table</a>
             <a class="btn btn-quiet" href="menu.html">See the menu</a>
           </div>
-        </div>
-        <!-- PHOTO: this is a sample illustration. Replace img/hero-table.svg with a real photo of your food or your room.
-             Keep the width and height written on the tag (use the real photo's size), and write real alt text that says what the photo shows. -->
-        <div class="hero-image">
-          <img src="img/hero-table.svg" width="640" height="560" alt="Illustration of a table with a plate of grilled chicken and rice, a bowl of soup, a cup of tea and a glass of lemonade">
         </div>
       </div>
     </section>
@@ -56,17 +54,17 @@
         <!-- Pick the three dishes you most want to sell. Copy one whole <article class="card"> block to add another. -->
         <div class="cards">
           <article class="card">
-            <img src="img/dish-soup.svg" width="480" height="360" alt="Illustration of a bowl of tomato soup with bread" loading="lazy">
+            <img src="img/dish-soup.webp" width="960" height="720" alt="Bowl of tomato soup with bread, on a wooden table" loading="lazy">
             <div class="dish-line"><span class="dish-name">Soup of the day</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$6.50</span></div>
             <p class="dish-note">Ask what is in the pot today. Served with bread.</p>
           </article>
           <article class="card">
-            <img src="img/dish-plate.svg" width="480" height="360" alt="Illustration of grilled chicken with rice and vegetables" loading="lazy">
+            <img src="img/dish-plate.webp" width="960" height="720" alt="Plate of grilled chicken with rice, tomatoes and broccoli" loading="lazy">
             <div class="dish-line"><span class="dish-name">Grilled chicken</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$14.00</span></div>
             <p class="dish-note">With rice, carrots and broccoli.</p>
           </article>
           <article class="card">
-            <img src="img/dish-burger.svg" width="480" height="360" alt="Illustration of a beef burger with chips" loading="lazy">
+            <img src="img/dish-burger.webp" width="960" height="720" alt="Beef burger with cheese and lettuce, with chips beside it" loading="lazy">
             <div class="dish-line"><span class="dish-name">Beef burger</span><span class="dish-leader" aria-hidden="true"></span><span class="dish-price">$13.50</span></div>
             <p class="dish-note">With cheese, tomato, lettuce and chips.</p>
           </article>
@@ -98,7 +96,7 @@
 
     <section class="section">
       <div class="wrap split">
-        <img src="img/about-kitchen.svg" width="640" height="440" alt="Illustration of a small kitchen with a pot on the stove and pans hanging on a rail" loading="lazy">
+        <img src="img/about-kitchen.webp" width="960" height="720" alt="Chopping board with tomatoes, garlic, basil and a knife" loading="lazy">
         <div class="copy">
           <h2>A small kitchen with a short menu</h2>
           <p>We cook what we know well and keep the prices fair. Come for lunch, a family dinner or a quick bite after work.</p>
@@ -138,38 +136,22 @@
 
   </main>
 
-  <!-- FOOTER: the same on all four pages. -->
+  <!-- FOOTER: the same on all four pages. Kept short on purpose: the call button already stays on screen. -->
   <footer class="site-footer on-board">
     <div class="wrap">
-      <div class="cols">
-        <div>
-          <h2>Your Restaurant</h2>
-          <p>Lunch and dinner in Your Town.<br>123 Main Street, Your Town</p>
-        </div>
-        <div>
-          <h2>Pages</h2>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="menu.html">Menu</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div>
-        <div>
-          <h2>Book a table</h2>
-          <ul>
-            <li><a href="tel:+15550100100">Call (555) 010-0100</a></li>
-            <li><a href="https://wa.me/15550100100">Message on WhatsApp</a></li>
-            <!-- Add Instagram and Facebook here when the restaurant has real accounts. Never leave a link that points nowhere. -->
-          </ul>
-        </div>
+      <div class="foot-main">
+        <p class="foot-name">Your Restaurant<span>123 Main Street, Your Town</span></p>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="index.html">Home</a>
+          <a href="menu.html">Menu</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+        </nav>
       </div>
-      <div class="small">
-        <p>&copy; 2026 Your Restaurant</p>
-        <!-- This link is relative on purpose: from projects/templates/restaurant/ the portfolio is three folders up.
-             Remove this line when you hand the site to a client, unless they agree to keep the credit. -->
-        <p>Site by <a href="../../../ruhan/Ruhan-portfolio.html">Ruhan Tahlil Islam Britto</a></p>
-      </div>
+      <!-- Add Instagram and Facebook links next to the page links when the restaurant has real accounts. Never leave a link that points nowhere. -->
+      <p class="foot-small">&copy; 2026 Your Restaurant. Site by <a href="../../../ruhan/Ruhan-portfolio.html">Ruhan Tahlil Islam Britto</a></p>
+      <!-- The "Site by" link is relative on purpose: from projects/templates/restraunt/ the portfolio is three folders up.
+           Remove it when you hand the site to a client, unless they agree to keep the credit. -->
     </div>
   </footer>
 

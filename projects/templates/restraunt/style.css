@@ -46,6 +46,10 @@
 
 /* 2. BASE */
 *, *::before, *::after { box-sizing: border-box; }
+
+/* No grey or blue flash when a finger taps something on a phone */
+* { -webkit-tap-highlight-color: transparent; }
+button, a { touch-action: manipulation; }
 html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
 
 body {
@@ -65,7 +69,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 img { display: block; max-width: 100%; height: auto; }
 a { color: var(--wine); }
 
-/* A clear outline for people who use the keyboard. Never remove this. */
+/* A clear outline for people who use the keyboard. It does not show after a mouse click or a tap. Never remove it. */
+:focus { outline: none; }
 :focus-visible { outline: 3px solid var(--wine); outline-offset: 3px; }
 .on-board :focus-visible { outline-color: var(--chalk); }
 
@@ -114,16 +119,22 @@ a { color: var(--wine); }
 .site-nav a[aria-current="page"] { border-bottom-color: var(--chalk); font-weight: 600; }
 .header-call { display: none; }
 
-/* HERO on the home page. The scalloped edge at the bottom looks like a shop awning. */
-.hero { position: relative; background: var(--board); color: var(--chalk); padding: var(--s6) 0 calc(var(--s7) + var(--s3)); margin-bottom: 1rem; }
+/* HERO on the home page. The picture is the background of the whole band, so nothing can leave a gap.
+   A dark layer sits on top of the picture so the words stay easy to read: strongest behind the words,
+   fading out toward the food. The scalloped edge at the bottom looks like a shop awning. */
+.hero {
+  position: relative; color: var(--chalk); margin-bottom: 1rem;
+  padding: var(--s6) 0 var(--s7);
+  background:
+    linear-gradient(180deg, rgb(34 51 43 / 0.74), rgb(34 51 43 / 0.9)),
+    var(--board) url("img/hero.webp") 85% center / cover no-repeat;
+}
 .hero::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: -1rem; height: 1rem;
   background: radial-gradient(circle at 1rem 0, var(--board) 0.96rem, transparent 1rem) 0 0 / 2rem 1rem repeat-x;
 }
-.hero .wrap { display: grid; gap: var(--s5); align-items: center; }
-.hero h1 { font-size: clamp(2.5rem, 1.5rem + 5vw, 4.5rem); letter-spacing: -0.01em; max-width: 14ch; }
-.hero-text p { margin: var(--s4) 0; max-width: 34rem; font-size: 1.125rem; color: var(--chalk-soft); }
-.hero-image img { width: 100%; border-radius: var(--radius); }
+.hero h1 { font-size: clamp(2.5rem, 1.5rem + 5vw, 4.5rem); letter-spacing: -0.01em; max-width: 12ch; }
+.hero-text p { margin: var(--s4) 0; max-width: 30rem; font-size: 1.125rem; color: var(--chalk); }
 
 /* PAGE HEAD: the dark band at the top of the Menu, About and Contact pages */
 .page-head { position: relative; background: var(--board); color: var(--chalk); padding: var(--s6) 0 var(--s7); margin-bottom: 1rem; }
@@ -207,13 +218,16 @@ address { font-style: normal; font-size: 1.125rem; margin-bottom: var(--s4); }
 .faq summary { cursor: pointer; padding: var(--s3) 0; font-weight: 600; min-height: 3rem; }
 .faq details p { padding: 0 0 var(--s3); color: var(--muted); max-width: 38rem; }
 
-/* FOOTER */
-.site-footer { background: var(--board); color: var(--chalk-soft); padding: var(--s6) 0 var(--s5); font-size: 0.9375rem; }
+/* FOOTER: short on purpose. The name and address on the left, the page links on the right. */
+.site-footer { background: var(--board); color: var(--chalk-soft); padding: var(--s4) 0; font-size: 0.9375rem; }
 .site-footer a { color: var(--chalk); }
-.site-footer h2 { font-family: var(--font-text); font-size: 0.9375rem; font-weight: 600; color: var(--chalk); margin-bottom: var(--s2); }
-.site-footer .cols { display: grid; gap: var(--s5); }
-.site-footer li { padding: var(--s1) 0; }
-.site-footer .small { margin-top: var(--s5); padding-top: var(--s4); border-top: 1px solid rgb(242 239 230 / 0.25); display: grid; gap: var(--s1); }
+.foot-main { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s2) var(--s4); }
+.foot-name { font-family: var(--font-display); font-size: 1.25rem; color: var(--chalk); line-height: 1.3; }
+.foot-name span { display: block; font-family: var(--font-text); font-size: 0.9375rem; color: var(--chalk-soft); }
+.foot-links { display: flex; flex-wrap: wrap; gap: 0 var(--s3); }
+.foot-links a { display: inline-flex; align-items: center; min-height: 2.75rem; text-decoration: none; }
+.foot-links a:hover { text-decoration: underline; }
+.foot-small { margin-top: var(--s2); padding-top: var(--s2); border-top: 1px solid rgb(242 239 230 / 0.2); }
 
 /* The call button that sticks to the bottom of a phone screen */
 .call-bar {
@@ -230,16 +244,17 @@ address { font-style: normal; font-size: 1.125rem; margin-bottom: var(--s4); }
   .site-header .wrap { flex-wrap: nowrap; padding: var(--s2) 0; min-height: 4.5rem; }
   .site-nav { width: auto; order: 0; margin-left: auto; flex-wrap: nowrap; }
   .header-call { display: inline-flex; min-height: 2.5rem; padding: 0 var(--s3); }
-  .hero { padding: var(--s7) 0 var(--s7); }
-  .hero .wrap { grid-template-columns: 1.1fr 0.9fr; gap: var(--s6); }
+  .hero { padding: var(--s7) 0; min-height: 32rem; display: flex; align-items: center;
+    background:
+      linear-gradient(90deg, rgb(34 51 43 / 0.94) 0%, rgb(34 51 43 / 0.78) 38%, rgb(34 51 43 / 0.1) 72%),
+      var(--board) url("img/hero.webp") center / cover no-repeat; }
+  .hero .wrap { width: min(100% - 2 * var(--s3), var(--page-width)); }
   .page-head { padding: var(--s7) 0 calc(var(--s7) + var(--s3)); }
   .cards, .points { grid-template-columns: repeat(3, 1fr); }
   .split { grid-template-columns: 1fr 1fr; gap: var(--s7); }
   /* Every second menu section puts its picture on the right, so the page has a rhythm */
   .menu-section:nth-of-type(even) .split > :first-child { order: 2; }
   .two { grid-template-columns: 1fr 1fr; gap: var(--s7); }
-  .site-footer .cols { grid-template-columns: 1.2fr 1fr 1fr; }
-  .site-footer .small { grid-template-columns: 1fr auto; }
 }
 
 /* If a visitor's device asks for less movement, turn off the fades too */

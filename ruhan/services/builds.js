@@ -26,7 +26,7 @@
       child.style.setProperty('--i', i);
     });
   }
-  Array.prototype.forEach.call(document.querySelectorAll('.fold-body, .ticks, .timeline, .term ol, .term ul'), numberChildren);
+  Array.prototype.forEach.call(document.querySelectorAll('.fold-body, .plain, .timeline'), numberChildren);
 
   // ---------------------------------------------------------------------
   // 2. Open and close the cards.
@@ -70,7 +70,7 @@
     Array.prototype.forEach.call(root.querySelectorAll('[data-count]'), function (el) {
       var end = Number(el.getAttribute('data-count'));
       if (reduceMotion) { el.textContent = end; return; }
-      var duration = 1100;
+      var duration = 700;
       var start = null;
       function frame(now) {
         if (start === null) { start = now; }
