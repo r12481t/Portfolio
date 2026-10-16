@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact | Curiohatch</title>
+<meta name="description" content="Ask Curiohatch for a free website audit, a new website or fixes.">
+<meta name="theme-color" content="#011022">
+<link rel="canonical" href="https://curiohatch.studio/contact/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Curiohatch">
+<meta property="og:title" content="Contact | Curiohatch">
+<meta property="og:description" content="Ask Curiohatch for a free website audit, a new website or fixes.">
+<meta property="og:url" content="https://curiohatch.studio/contact/">
+<meta property="og:image" content="https://curiohatch.studio/assets/brand/social-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/brand/favicon.ico" sizes="48x48">
+<link rel="icon" href="../assets/brand/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+<link rel="preload" href="../assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/ibm-plex-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.className+=' js'</script>
+<link rel="stylesheet" href="../css/site.css?v=2">
+</head>
+<body>
+<!-- CHROME:HEADER:START -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../"><img src="../assets/brand/wordmark-cream-320.webp" width="160" height="32" alt="Curiohatch"></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="drawer" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../services/">Services</a></li><li><a href="../work/">Work</a></li><li><a href="../about/">About</a></li><li><a href="../contact/" aria-current="page">Contact</a></li>
+        <li><a class="btn btn--gold" href="../contact/?type=audit">Get a free audit</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<!-- CHROME:HEADER:END -->
+<main id="main">
+<div class="sky sky--orbit band--navy">
+  <div class="wrap page-head">
+    <h1>Contact</h1>
+    <p class="lede">Use this form to ask for the free audit, a new website or fixes. We reply by email.</p>
+  </div>
+</div>
+
+<section class="band band--cream2 horizon">
+  <div class="wrap">
+    <p class="prose">Prefer email? Write to <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a>.</p>
+    <form class="form" id="inquiry-form" method="post" action="{{FORM_ENDPOINT}}" aria-describedby="form-help">
+      <p id="form-help" class="muted">Fields marked <span class="req" aria-hidden="true">*</span><span class="sr-only"> with a star</span> are required.</p>
+      <div class="field">
+        <label for="inquiry_type">What do you need? <span class="req" aria-hidden="true">*</span></label>
+        <select id="inquiry_type" name="inquiry_type" required>
+          <option value="audit">Free website audit</option>
+          <option value="website">New website</option>
+          <option value="fixes">Fixes</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="name">Your name <span class="req" aria-hidden="true">*</span></label>
+        <input id="name" name="name" type="text" autocomplete="name" required aria-describedby="name-error">
+        <span class="field-error" id="name-error"></span>
+      </div>
+      <div class="field">
+        <label for="email">Email address <span class="req" aria-hidden="true">*</span></label>
+        <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error">
+        <span class="field-error" id="email-error"></span>
+      </div>
+      <div class="field">
+        <label for="website">Website address <span class="hint" id="website-hint">Required for a free audit.</span></label>
+        <input id="website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="example.com" aria-describedby="website-hint website-error">
+        <span class="field-error" id="website-error"></span>
+      </div>
+      <div class="field">
+        <label for="trade">Your trade <span class="hint">Optional</span></label>
+        <select id="trade" name="trade">
+          <option value="">Choose one</option>
+          <option>Plumbing</option>
+          <option>Electrical</option>
+          <option>Other trade or service</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="city">City and state <span class="hint">Optional</span></label>
+        <input id="city" name="city_state" type="text" autocomplete="address-level2">
+      </div>
+      <div class="field">
+        <label for="message">Message <span class="hint">Optional</span></label>
+        <textarea id="message" name="message"></textarea>
+      </div>
+      <div class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+      <button class="btn btn--gold" type="submit">Send</button>
+      <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+      <p class="muted" style="margin-top:1rem;font-size:1rem">We use what you send only to reply to you. <a href="../privacy/">Privacy</a></p>
+    </form>
+  </div>
+</section>
+<section class="band horizon">
+  <div class="wrap">
+    <div class="pair" data-reveal>
+      <div>
+        <h2 style="font-size:1.5rem">After you send the form</h2>
+        <ul class="stars">
+          <li>This page shows a message saying whether your request was sent.</li>
+          <li>We reply by email.</li>
+          <li>For an audit, we reply within 1 to 2 business days of a request that has a working website address and email address.</li>
+          <li>Nothing is charged, and no work starts, without your written yes.</li>
+        </ul>
+      </div>
+      <div>
+        <h2 style="font-size:1.5rem">Not sure which to choose?</h2>
+        <p>Choose &ldquo;Free website audit&rdquo; if you already have a website. Choose &ldquo;New website&rdquo; if you need one built, and &ldquo;Fixes&rdquo; if you already know what needs repair.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<!-- CHROME:FOOTER:START -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="../assets/brand/badge-128.webp" width="64" height="64" alt="">
+        <p>Curiohatch is a studio name used by Ruhan Tahlil. It is not a registered company.</p>
+      </div>
+      <nav class="footer-col" aria-labelledby="f-studio">
+        <h2 id="f-studio">Studio</h2>
+        <ul class="footer-links">
+          <li><a href="../services/">Services</a></li>
+          <li><a href="../services/builds/">Website builds</a></li>
+          <li><a href="../work/">Work</a></li>
+          <li><a href="../about/">About</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-labelledby="f-start">
+        <h2 id="f-start">Get started</h2>
+        <ul class="footer-links">
+          <li><a href="../contact/?type=audit">Free website audit</a></li>
+          <li><a href="../contact/?type=website">Start a project</a></li>
+          <li><a href="../services/#pricing">How pricing works</a></li>
+          <li><a href="../contact/" aria-current="page">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-labelledby="f-learn">
+        <h2 id="f-learn">Learn</h2>
+        <ul class="footer-links">
+          <li><a href="../courses/">Courses</a></li>
+          <li><a href="../learn/">Learning library</a></li>
+          <li><a href="https://www.youtube.com/@curiohatchstudio">Curiohatch on YouTube</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-labelledby="f-more">
+        <h2 id="f-more">More</h2>
+        <ul class="footer-links">
+          <li><a href="../ruhan/Ruhan-portfolio.html">Ruhan&rsquo;s portfolio</a></li>
+          <li><a href="../privacy/">Privacy</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-small"><span>&copy; 2026 Curiohatch</span><a href="#main">Back to top</a></p>
+  </div>
+</footer>
+<div class="drawer" id="drawer">
+  <div class="drawer-backdrop" data-drawer-close></div>
+  <div class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer-top">
+      <p class="mono-label" id="drawer-title">Menu</p>
+      <button class="drawer-close" type="button" data-drawer-close>Close</button>
+    </div>
+    <nav aria-label="Menu">
+      <ul class="drawer-links">
+        <li style="--i:1"><a href="../services/">Services</a></li>
+        <li style="--i:2"><a href="../work/">Work</a></li>
+        <li style="--i:3"><a href="../about/">About</a></li>
+        <li style="--i:4"><a href="../contact/" aria-current="page">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="drawer-cta" style="--i:5">
+      <a class="btn btn--gold" href="../contact/?type=audit">Get a free website audit</a>
+      <p>The audit is free, and you do not have to buy anything afterward.</p>
+    </div>
+    <nav class="drawer-learn" style="--i:6" aria-label="Learn">
+      <p class="mono-label">Learn</p>
+      <ul class="drawer-sub">
+        <li><a href="../courses/">Courses</a></li>
+        <li><a href="../learn/">Learning library</a></li>
+        <li><a href="https://www.youtube.com/@curiohatchstudio">Curiohatch on YouTube</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+<!-- CHROME:FOOTER:END -->
+<script src="../js/site.js?v=2" defer></script>
+</body>
+</html>

@@ -207,7 +207,7 @@ export function initScene(opts = {}) {
       "",
       "export { initScene };",
       "",
-      "// built by Ruhan Tahlil Islam Britto",
+      "// built by Ruhan Tahlil",
       "console.log('portfolio loaded');",
       "",
     ];

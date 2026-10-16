@@ -1,0 +1,586 @@
+#!/usr/bin/env python3
+"""Curiohatch site helper. Python 3.8+, standard library only. Run it from anywhere; it finds the repo itself.
+
+This is a convenience for the person editing the site. The website does not need it to run: it only writes
+plain HTML files that are then committed like any other file.
+
+    python tools/site.py chrome          Rewrite the shared header, menu drawer and footer on every Curiohatch page.
+    python tools/site.py sync            Rebuild what is generated from the content files:
+                                         the topic list on /learn/, the course list on /courses/, every topic page's
+                                         head and frame (the written article is never touched), sitemap.xml.
+    python tools/site.py new SLUG "Title"  Add a draft topic record and its page.
+    python tools/site.py check           Validate the content files and report anything out of date. Changes nothing.
+
+Why it exists: the header, drawer and footer are the same on ten or more pages, and a topic's title, summary and dates
+would otherwise have to be typed in several places. Here each fact is written once.
+"""
+import argparse, datetime, glob, html, json, os, re, sys
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+DOMAIN = 'https://curiohatch.studio'
+YOUTUBE = 'https://www.youtube.com/@curiohatchstudio'
+CSS_V, JS_V, LEARN_JS_V = 2, 2, 1
+TOPICS_FILE = os.path.join(ROOT, 'content', 'learn', 'topics.json')
+COURSES_FILE = os.path.join(ROOT, 'content', 'courses', 'courses.json')
+TOPIC_STATUSES = ['planned', 'drafted', 'reviewed', 'published', 'archived']
+COURSE_STATUSES = ['planned', 'upcoming', 'available', 'archived']
+SLUG_RE = re.compile(r'^[a-z0-9]+(-[a-z0-9]+)*$')
+VIDEO_RE = re.compile(r'^[A-Za-z0-9_-]{11}$')
+DATE_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+PLACEHOLDER = 'ARTICLE_PLACEHOLDER'
+
+# Curiohatch pages that carry the shared chrome. Topic pages under learn/ are added automatically.
+STATIC_PAGES = ['index.html', 'services/index.html', 'services/builds/index.html', 'work/index.html', 'about/index.html',
+                'contact/index.html', 'privacy/index.html', 'courses/index.html', 'learn/index.html']
+# Pages listed in sitemap.xml besides published topics (project write-ups are public work evidence).
+SITEMAP_PAGES = ['', 'services/', 'services/builds/', 'work/', 'about/', 'contact/', 'privacy/', 'courses/', 'learn/',
+                 'projects/taqen/case-study.html', 'projects/classley/case-study.html']
+
+
+def read(path):
+    with open(path, encoding='utf-8') as f:
+        return f.read()
+
+
+def write(path, text):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w', encoding='utf-8', newline='\n') as f:
+        f.write(text)
+
+
+def esc(s):
+    return html.escape(str(s), quote=True)
+
+
+def load_json(path, key):
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding='utf-8') as f:
+        data = json.load(f)
+    return data.get(key, [])
+
+
+def pretty_date(iso):
+    d = datetime.date.fromisoformat(iso)
+    return d.strftime('%B ') + str(d.day) + d.strftime(', %Y')
+
+
+def topic_pages():
+    return sorted(glob.glob(os.path.join(ROOT, 'learn', '*', 'index.html')))
+
+
+def all_chrome_pages():
+    pages = list(STATIC_PAGES)
+    for p in topic_pages():
+        pages.append(os.path.relpath(p, ROOT).replace(os.sep, '/'))
+    return [p for p in pages if os.path.exists(os.path.join(ROOT, p))]
+
+
+# ---------------------------------------------------------------- shared chrome
+def prefix(rel):
+    return '../' * rel.count('/')
+
+
+def render_header(rel):
+    P = prefix(rel)
+    here = rel[:-len('index.html')] if rel.endswith('index.html') else rel
+    def item(label, href):
+        cur = ' aria-current="page"' if href == here else ''
+        return f'<li><a href="{P}{href}"{cur}>{label}</a></li>'
+    items = ''.join([item('Services', 'services/'), item('Work', 'work/'), item('About', 'about/'), item('Contact', 'contact/')])
+    brand_href = P if P else './'
+    return f'''<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="{brand_href}"><img src="{P}assets/brand/wordmark-cream-320.webp" width="160" height="32" alt="Curiohatch"></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="drawer" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        {items}
+        <li><a class="btn btn--gold" href="{P}contact/?type=audit">Get a free audit</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>'''
+
+
+def render_footer(rel):
+    P = prefix(rel)
+    here = rel[:-len('index.html')] if rel.endswith('index.html') else rel
+    def link(label, href, external=False):
+        cur = ' aria-current="page"' if (not external and href == here) else ''
+        full = href if external else P + href
+        return f'<li><a href="{full}"{cur}>{label}</a></li>'
+    def drawer_link(i, label, href):
+        cur = ' aria-current="page"' if href == here else ''
+        return f'<li style="--i:{i}"><a href="{P}{href}"{cur}>{label}</a></li>'
+    def sub_link(label, href, external=False):
+        full = href if external else P + href
+        cur = ' aria-current="page"' if (not external and href == here) else ''
+        return f'<li><a href="{full}"{cur}>{label}</a></li>'
+    return f'''<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="{P}assets/brand/badge-128.webp" width="64" height="64" alt="">
+        <p>Curiohatch is a studio name used by Ruhan Tahlil. It is not a registered company.</p>
+      </div>
+      <nav class="footer-col" aria-labelledby="f-studio">
+        <h2 id="f-studio">Studio</h2>
+        <ul class="footer-links">
+          {link('Services', 'services/')}
+          {link('Website builds', 'services/builds/')}
+          {link('Work', 'work/')}
+          {link('About', 'about/')}
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-labelledby="f-start">
+        <h2 id="f-start">Get started</h2>
+        <ul class="footer-links">
+          {link('Free website audit', 'contact/?type=audit')}
+          {link('Start a project', 'contact/?type=website')}
+          {link('How pricing works', 'services/#pricing')}
+          {link('Contact', 'contact/')}
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-labelledby="f-learn">
+        <h2 id="f-learn">Learn</h2>
+        <ul class="footer-links">
+          {link('Courses', 'courses/')}
+          {link('Learning library', 'learn/')}
+          {link('Curiohatch on YouTube', YOUTUBE, True)}
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-labelledby="f-more">
+        <h2 id="f-more">More</h2>
+        <ul class="footer-links">
+          {link('Ruhan&rsquo;s portfolio', 'ruhan/Ruhan-portfolio.html')}
+          {link('Privacy', 'privacy/')}
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-small"><span>&copy; 2026 Curiohatch</span><a href="#main">Back to top</a></p>
+  </div>
+</footer>
+<div class="drawer" id="drawer">
+  <div class="drawer-backdrop" data-drawer-close></div>
+  <div class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer-top">
+      <p class="mono-label" id="drawer-title">Menu</p>
+      <button class="drawer-close" type="button" data-drawer-close>Close</button>
+    </div>
+    <nav aria-label="Menu">
+      <ul class="drawer-links">
+        {drawer_link(1, 'Services', 'services/')}
+        {drawer_link(2, 'Work', 'work/')}
+        {drawer_link(3, 'About', 'about/')}
+        {drawer_link(4, 'Contact', 'contact/')}
+      </ul>
+    </nav>
+    <div class="drawer-cta" style="--i:5">
+      <a class="btn btn--gold" href="{P}contact/?type=audit">Get a free website audit</a>
+      <p>The audit is free, and you do not have to buy anything afterward.</p>
+    </div>
+    <nav class="drawer-learn" style="--i:6" aria-label="Learn">
+      <p class="mono-label">Learn</p>
+      <ul class="drawer-sub">
+        {sub_link('Courses', 'courses/')}
+        {sub_link('Learning library', 'learn/')}
+        {sub_link('Curiohatch on YouTube', YOUTUBE, True)}
+      </ul>
+    </nav>
+  </div>
+</div>'''
+
+
+def marked(name, body):
+    return f'<!-- CHROME:{name}:START -->\n{body}\n<!-- CHROME:{name}:END -->'
+
+
+def apply_chrome(text, rel):
+    S = re.S
+    header = marked('HEADER', render_header(rel))
+    footer = marked('FOOTER', render_footer(rel))
+    if '<!-- CHROME:HEADER:START -->' in text:
+        text = re.sub(r'<!-- CHROME:HEADER:START -->.*?<!-- CHROME:HEADER:END -->', lambda m: header, text, flags=S)
+    else:
+        text, n = re.subn(r'<a class="skip-link" href="#main">Skip to content</a>\s*<header class="site-header">.*?</header>', lambda m: header, text, count=1, flags=S)
+        if n == 0:
+            raise SystemExit(f'{rel}: could not find the header to replace')
+    if '<!-- CHROME:FOOTER:START -->' in text:
+        text = re.sub(r'<!-- CHROME:FOOTER:START -->.*?<!-- CHROME:FOOTER:END -->', lambda m: footer, text, flags=S)
+    else:
+        text, n = re.subn(r'<footer class="site-footer">.*?</footer>', lambda m: footer, text, count=1, flags=S)
+        if n == 0:
+            raise SystemExit(f'{rel}: could not find the footer to replace')
+    # head: the "js" class (lets CSS know scripts run) and cache-busting numbers
+    if "documentElement.className+=' js'" not in text:
+        text = text.replace('<link rel="stylesheet" href="', "<script>document.documentElement.className+=' js'</script>\n<link rel=\"stylesheet\" href=\"", 1)
+    text = re.sub(r'(css/site\.css)\?v=\d+', rf'\1?v={CSS_V}', text)
+    text = re.sub(r'(js/site\.js)\?v=\d+', rf'\1?v={JS_V}', text)
+    text = re.sub(r'(js/learn\.js)\?v=\d+', rf'\1?v={LEARN_JS_V}', text)
+    return text
+
+
+def cmd_chrome(write_files=True):
+    changed = []
+    for rel in all_chrome_pages():
+        path = os.path.join(ROOT, rel)
+        old = read(path)
+        new = apply_chrome(old, rel)
+        if new != old:
+            changed.append(rel)
+            if write_files:
+                write(path, new)
+    return changed
+
+
+# ---------------------------------------------------------------- learning content
+def published_topics(topics):
+    return sorted([t for t in topics if t.get('status') == 'published'], key=lambda t: (t.get('publishedAt', ''), t.get('title', '')), reverse=True)
+
+
+def topic_card(t):
+    tags = '|'.join(t.get('tags', []))
+    haystack = ' '.join([t.get('title', ''), t.get('summary', ''), t.get('category', ''), ' '.join(t.get('tags', [])),
+                         ' '.join(t.get('subtopics', [])), ' '.join(t.get('concepts', []))]).lower()
+    cat = f'<p class="tag">{esc(t["category"])}</p>' if t.get('category') else ''
+    return (f'<li data-category="{esc(t.get("category", ""))}" data-tags="{esc(tags)}" data-text="{esc(haystack)}">\n'
+            f'  <article class="card">\n    {cat}\n    <h3><a href="{esc(t["slug"])}/">{esc(t["title"])}</a></h3>\n'
+            f'    <p>{esc(t["summary"])}</p>\n'
+            f'    <p class="card-meta">Published <time datetime="{t["publishedAt"]}">{pretty_date(t["publishedAt"])}</time></p>\n  </article>\n</li>')
+
+
+def render_library(topics):
+    pub = published_topics(topics)
+    if not pub:
+        return ('<div class="empty" id="library-empty">\n'
+                '  <h2>No topics are published yet</h2>\n'
+                '  <p>Each Curiohatch video will get a written lesson here, with the video, the explanation, the key ideas and links to related lessons. Nothing has been published yet, so this list is empty.</p>\n'
+                f'  <p>The videos come first. You can find them on <a href="{YOUTUBE}">the Curiohatch YouTube channel</a>.</p>\n'
+                '</div>')
+    cards = '\n'.join(topic_card(t) for t in pub)
+    return f'<h2>All topics</h2>\n<ul class="cards" id="topic-list">\n{cards}\n</ul>'
+
+
+def course_card(c):
+    status = c['status']
+    if status == 'available':
+        tag = 'Available'
+        title = f'<a href="{esc(c["url"])}">{esc(c["title"])}</a>'
+    else:
+        tag = 'Planned. Not available yet.'
+        title = esc(c['title'])
+    facts = []
+    if c.get('audience'): facts.append(('For', c['audience']))
+    if c.get('level'): facts.append(('Level', c['level']))
+    if c.get('duration'): facts.append(('Length', c['duration']))
+    if c.get('prerequisites'): facts.append(('Before you start', c['prerequisites']))
+    meta = ''
+    if facts:
+        meta = '<dl class="proj-meta" style="color:var(--muted)">' + ''.join(f'<dt style="color:var(--navy)">{esc(k)}</dt><dd>{esc(v)}</dd>' for k, v in facts) + '</dl>'
+    cat = f'<p class="card-meta">{esc(c["category"])}</p>' if c.get('category') else ''
+    return (f'<li>\n  <article class="card">\n    <p class="tag">{tag}</p>\n    <h3>{title}</h3>\n    <p>{esc(c["summary"])}</p>\n    {meta}\n    {cat}\n  </article>\n</li>')
+
+
+def render_courses(courses):
+    live = [c for c in courses if c.get('status') == 'available']
+    plan = [c for c in courses if c.get('status') in ('planned', 'upcoming')]
+    if not live and not plan:
+        return ('<div class="empty" id="courses-empty">\n'
+                '  <h3>No courses yet</h3>\n'
+                '  <p>No Curiohatch course exists yet, so there is nothing to enrol in and nothing to buy. When one is ready it will be listed here with what it covers, who it is for and how to start.</p>\n'
+                '  <p>In the meantime, the <a href="../learn/">Learning library</a> collects the written lessons that go with each video.</p>\n'
+                '</div>')
+    out = []
+    if live:
+        out.append('<h2>Available now</h2>\n<ul class="cards">\n' + '\n'.join(course_card(c) for c in live) + '\n</ul>')
+    if plan:
+        out.append('<h2 style="margin-top:3rem">Planned</h2>\n<p class="prose">These are plans. They are not available yet, and no release date is promised.</p>\n<ul class="cards">\n' + '\n'.join(course_card(c) for c in plan) + '\n</ul>')
+    return '\n'.join(out)
+
+
+def replace_between(text, tag, body):
+    pat = re.compile(rf'<!-- {tag}:START -->.*?<!-- {tag}:END -->', re.S)
+    if not pat.search(text):
+        raise SystemExit(f'missing <!-- {tag}:START --> / <!-- {tag}:END --> markers')
+    return pat.sub(lambda m: f'<!-- {tag}:START -->\n{body}\n<!-- {tag}:END -->', text)
+
+
+ARTICLE_RE = re.compile(r'<!-- ARTICLE:START -->(.*?)<!-- ARTICLE:END -->', re.S)
+
+
+def render_topic(t, topics, courses, article):
+    P = '../../'
+    rel = f'learn/{t["slug"]}/index.html'
+    by_id = {x['id']: x for x in topics}
+    published = t.get('status') == 'published'
+    canonical = f'{DOMAIN}/learn/{t["slug"]}/'
+    title = t['title']
+    summary = t.get('summary', '')
+    robots = '' if published else '<meta name="robots" content="noindex">\n'
+    ld = ''
+    if published:
+        data = {'@context': 'https://schema.org', '@type': 'Article', 'headline': title, 'description': summary,
+                'datePublished': t['publishedAt'], 'dateModified': t.get('updatedAt') or t['publishedAt'],
+                'mainEntityOfPage': canonical, 'publisher': {'@type': 'Organization', 'name': 'Curiohatch'}}
+        ld = '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace('</', '<\\/') + '</script>\n'
+    cat = t.get('category')
+    crumbs = f'<p class="crumbs"><a href="../">Learning library</a>' + (f' &middot; {esc(cat)}' if cat else '') + '</p>'
+    meta = ''
+    if published:
+        meta = f'<p class="topic-meta">Published <time datetime="{t["publishedAt"]}">{pretty_date(t["publishedAt"])}</time>'
+        if t.get('updatedAt') and t['updatedAt'] != t['publishedAt']:
+            meta += f' &middot; Updated <time datetime="{t["updatedAt"]}">{pretty_date(t["updatedAt"])}</time>'
+        meta += '</p>'
+    else:
+        meta = f'<p class="topic-meta">Status: {esc(t.get("status", "drafted"))}. This page is not public, not listed and not in the sitemap.</p>'
+    video = ''
+    if t.get('videoId'):
+        vid = t['videoId']
+        video = (f'<div class="video" data-video-id="{esc(vid)}" data-title="{esc(title)}">\n'
+                 f'  <p>Playing the video loads it from YouTube. <a href="https://www.youtube.com/watch?v={esc(vid)}">Watch on YouTube instead</a></p>\n</div>\n')
+    side = []
+    if t.get('concepts'):
+        side.append('<h2>Concepts covered</h2>\n<ul>' + ''.join(f'<li>{esc(c)}</li>' for c in t['concepts']) + '</ul>')
+    pre = [by_id[i] for i in t.get('prerequisites', []) if i in by_id and by_id[i].get('status') == 'published']
+    if pre:
+        side.append('<h2>Before you start</h2>\n<ul>' + ''.join(f'<li><a href="../{esc(x["slug"])}/">{esc(x["title"])}</a></li>' for x in pre) + '</ul>')
+    rel_topics = [by_id[i] for i in t.get('related', []) if i in by_id and by_id[i].get('status') == 'published']
+    if rel_topics:
+        side.append('<h2>Related topics</h2>\n<ul>' + ''.join(f'<li><a href="../{esc(x["slug"])}/">{esc(x["title"])}</a></li>' for x in rel_topics) + '</ul>')
+    cmap = {c['id']: c for c in courses}
+    live = [cmap[i] for i in t.get('courses', []) if i in cmap and cmap[i].get('status') == 'available' and cmap[i].get('url')]
+    if live:
+        side.append('<h2>Part of a course</h2>\n<ul>' + ''.join(f'<li><a href="{esc(c["url"])}">{esc(c["title"])}</a></li>' for c in live) + '</ul>')
+    side.append(f'<h2>More from Curiohatch</h2>\n<ul><li><a href="../">All topics</a></li><li><a href="{P}courses/">Courses</a></li><li><a href="{YOUTUBE}">YouTube channel</a></li></ul>')
+    side_html = '\n'.join(side)
+    og_title = esc(f'{title} | Curiohatch Learn')
+    return f'''<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- FRAME:HEAD:START (written by tools/site.py from content/learn/topics.json; edit the JSON, not this block) -->
+<title>{og_title}</title>
+<meta name="description" content="{esc(summary)}">
+<meta name="theme-color" content="#011022">
+{robots}<link rel="canonical" href="{canonical}">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Curiohatch">
+<meta property="og:title" content="{og_title}">
+<meta property="og:description" content="{esc(summary)}">
+<meta property="og:url" content="{canonical}">
+<meta property="og:image" content="{DOMAIN}/assets/brand/social-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+{ld}<!-- FRAME:HEAD:END -->
+<link rel="icon" href="{P}assets/brand/favicon.ico" sizes="48x48">
+<link rel="icon" href="{P}assets/brand/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="{P}assets/brand/apple-touch-icon.png">
+<link rel="preload" href="{P}assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{P}assets/fonts/ibm-plex-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.className+=' js'</script>
+<link rel="stylesheet" href="{P}css/site.css?v={CSS_V}">
+</head>
+<body>
+{marked('HEADER', render_header(rel))}
+<main id="main">
+<!-- FRAME:TOP:START (generated; edit the JSON) -->
+<div class="sky sky--field band--navy">
+  <div class="wrap page-head">
+    {crumbs}
+    <h1>{esc(title)}</h1>
+    <p class="lede">{esc(summary)}</p>
+    {meta}
+  </div>
+</div>
+<!-- FRAME:TOP:END -->
+<section class="band horizon">
+  <div class="wrap topic-layout">
+    <article class="article">
+      <!-- FRAME:VIDEO:START (generated; edit the JSON) -->
+      {video}<!-- FRAME:VIDEO:END -->
+      <!-- ARTICLE:START -->{article}<!-- ARTICLE:END -->
+    </article>
+    <aside class="side" aria-label="About this topic">
+      <!-- FRAME:SIDE:START (generated; edit the JSON) -->
+      {side_html}
+      <!-- FRAME:SIDE:END -->
+    </aside>
+  </div>
+</section>
+</main>
+{marked('FOOTER', render_footer(rel))}
+<script src="{P}js/site.js?v={JS_V}" defer></script>
+</body>
+</html>
+'''
+
+
+def placeholder_article(title):
+    return (f'\n      <p><strong>{PLACEHOLDER}</strong>: write the lesson here and delete this line. Use h2 headings for sections, '
+            'a short "Key takeaways" box at the end, and only code you have run.</p>\n      ')
+
+
+def current_article(t):
+    path = os.path.join(ROOT, 'learn', t['slug'], 'index.html')
+    if os.path.exists(path):
+        m = ARTICLE_RE.search(read(path))
+        if m:
+            return m.group(1)
+    return placeholder_article(t['title'])
+
+
+# ---------------------------------------------------------------- sitemap
+def render_sitemap(topics):
+    urls = [f'{DOMAIN}/{p}' for p in SITEMAP_PAGES]
+    urls += [f'{DOMAIN}/learn/{t["slug"]}/' for t in sorted(published_topics(topics), key=lambda t: t['slug'])]
+    body = '\n'.join(f'  <url><loc>{esc(u)}</loc></url>' for u in urls)
+    return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}\n</urlset>\n'
+
+
+# ---------------------------------------------------------------- commands
+def expected_files():
+    """Everything generated, as {relative path: text}. Used by sync (write) and check (compare)."""
+    topics = load_json(TOPICS_FILE, 'topics')
+    courses = load_json(COURSES_FILE, 'courses')
+    out = {}
+    learn = read(os.path.join(ROOT, 'learn', 'index.html'))
+    out['learn/index.html'] = replace_between(learn, 'TOPICS', render_library(topics))
+    courses_page = read(os.path.join(ROOT, 'courses', 'index.html'))
+    out['courses/index.html'] = replace_between(courses_page, 'COURSES', render_courses(courses))
+    for t in topics:
+        if t.get('status') == 'planned':
+            continue
+        rel = f'learn/{t["slug"]}/index.html'
+        out[rel] = render_topic(t, topics, courses, current_article(t))
+    out['sitemap.xml'] = render_sitemap(topics)
+    return out
+
+
+def cmd_sync():
+    files = expected_files()
+    for rel, text in files.items():
+        if rel.endswith('.html'):
+            text = apply_chrome(text, rel)
+        write(os.path.join(ROOT, rel), text)
+    cmd_chrome()
+    print(f'synced {len(files)} generated files and the shared chrome')
+
+
+def cmd_new(slug, title):
+    if not SLUG_RE.match(slug):
+        raise SystemExit('slug must be lowercase words joined by hyphens, for example css-grid-basics')
+    topics = load_json(TOPICS_FILE, 'topics')
+    if any(t['slug'] == slug for t in topics):
+        raise SystemExit(f'slug "{slug}" already exists')
+    nums = [int(t['id'][1:]) for t in topics if re.match(r'^t\d+$', t.get('id', ''))]
+    new_id = 't%03d' % (max(nums + [0]) + 1)
+    rec = {'id': new_id, 'slug': slug, 'status': 'drafted', 'title': title, 'summary': '', 'category': '', 'subtopics': [],
+           'tags': [], 'concepts': [], 'videoId': '', 'publishedAt': '', 'updatedAt': '', 'prerequisites': [], 'related': [], 'courses': []}
+    topics.append(rec)
+    write(TOPICS_FILE, json.dumps({'schema': 1, 'topics': topics}, indent=2, ensure_ascii=False) + '\n')
+    cmd_sync()
+    print(f'added {new_id} ({slug}) as a draft and created learn/{slug}/index.html. Fill in the record in content/learn/topics.json, write the article, then run: python tools/site.py sync')
+
+
+def cmd_check():
+    problems, warnings = [], []
+    try:
+        topics = load_json(TOPICS_FILE, 'topics')
+        courses = load_json(COURSES_FILE, 'courses')
+    except json.JSONDecodeError as e:
+        raise SystemExit(f'content file is not valid JSON: {e}')
+    tid = [t.get('id') for t in topics]
+    if len(set(tid)) != len(tid): problems.append('duplicate topic ids')
+    slugs = [t.get('slug') for t in topics]
+    if len(set(slugs)) != len(slugs): problems.append('duplicate topic slugs')
+    cid = [c.get('id') for c in courses]
+    if len(set(cid)) != len(cid): problems.append('duplicate course ids')
+    topic_ids, course_ids = set(tid), set(cid)
+    for t in topics:
+        n = t.get('id') or t.get('slug') or '?'
+        if not SLUG_RE.match(t.get('slug', '')): problems.append(f'{n}: slug is missing or not lowercase-hyphenated')
+        if t.get('status') not in TOPIC_STATUSES: problems.append(f'{n}: status must be one of {TOPIC_STATUSES}')
+        if not t.get('title'): problems.append(f'{n}: title is missing')
+        for field in ('prerequisites', 'related'):
+            for ref in t.get(field, []):
+                if ref not in topic_ids: problems.append(f'{n}: {field} points to unknown id {ref}')
+                elif ref == t.get('id'): problems.append(f'{n}: {field} points to itself')
+        for ref in t.get('courses', []):
+            if ref not in course_ids: problems.append(f'{n}: courses points to unknown id {ref}')
+        if t.get('status') == 'published':
+            if not t.get('summary'): problems.append(f'{n}: published but summary is empty')
+            elif len(t['summary']) > 170: warnings.append(f'{n}: summary is {len(t["summary"])} characters; search results cut it near 160')
+            if not VIDEO_RE.match(t.get('videoId', '')): problems.append(f'{n}: published but videoId is not an 11-character YouTube id')
+            if not DATE_RE.match(t.get('publishedAt', '')): problems.append(f'{n}: published but publishedAt is not YYYY-MM-DD')
+            if t.get('updatedAt') and (not DATE_RE.match(t['updatedAt']) or t['updatedAt'] < t.get('publishedAt', '')): problems.append(f'{n}: updatedAt is invalid or earlier than publishedAt')
+            if not t.get('category'): warnings.append(f'{n}: no category')
+            page = os.path.join(ROOT, 'learn', t.get('slug', '_'), 'index.html')
+            if not os.path.exists(page): problems.append(f'{n}: published but learn/{t.get("slug")}/index.html does not exist; run sync')
+            else:
+                art = ARTICLE_RE.search(read(page))
+                if not art or PLACEHOLDER in art.group(1): problems.append(f'{n}: published but the article is still the placeholder')
+                elif len(re.sub(r'<[^>]+>', ' ', art.group(1)).split()) < 300: warnings.append(f'{n}: article is under 300 words; make sure it adds more than the video does')
+            for ref in t.get('related', []) + t.get('prerequisites', []):
+                other = next((x for x in topics if x['id'] == ref), None)
+                if other and other.get('status') != 'published': warnings.append(f'{n}: links to {ref}, which is not published, so the link is left out of the page')
+        elif t.get('status') in ('drafted', 'reviewed', 'archived'):
+            page = os.path.join(ROOT, 'learn', t.get('slug', '_'), 'index.html')
+            if os.path.exists(page) and 'name="robots" content="noindex"' not in read(page): problems.append(f'{n}: not published but its page is indexable; run sync')
+    for c in courses:
+        n = c.get('id') or c.get('title') or '?'
+        if c.get('status') not in COURSE_STATUSES: problems.append(f'{n}: course status must be one of {COURSE_STATUSES}')
+        if not c.get('title') or not c.get('summary'): problems.append(f'{n}: course needs a title and summary')
+        if c.get('status') == 'available' and not c.get('url'): problems.append(f'{n}: available course needs a url that works')
+        for ref in c.get('lessons', []):
+            if ref not in topic_ids: problems.append(f'{n}: lessons points to unknown topic id {ref}')
+    # generated files must match what sync would write
+    try:
+        for rel, text in expected_files().items():
+            path = os.path.join(ROOT, rel)
+            want = apply_chrome(text, rel) if rel.endswith('.html') else text
+            if not os.path.exists(path) or read(path) != want:
+                problems.append(f'{rel} is out of date; run: python tools/site.py sync')
+    except SystemExit as e:
+        problems.append(str(e))
+    for rel in STATIC_PAGES:
+        path = os.path.join(ROOT, rel)
+        if os.path.exists(path) and read(path) != apply_chrome(read(path), rel):
+            problems.append(f'{rel}: shared header/drawer/footer is out of date; run: python tools/site.py chrome')
+    # orphan topic pages
+    known = {t.get('slug') for t in topics}
+    for p in topic_pages():
+        slug = os.path.basename(os.path.dirname(p))
+        if slug not in known: problems.append(f'learn/{slug}/ has no record in topics.json')
+    left = 0
+    for dirpath, _, files in os.walk(ROOT):
+        if '.git' in dirpath.split(os.sep) or 'tools' in dirpath.split(os.sep): continue
+        for f in files:
+            if f.endswith(('.html', '.js')):
+                left += read(os.path.join(dirpath, f)).count('{{')
+    if left: warnings.append(f'{left} "{{{{" placeholder(s) remain in the site (contact form and email); fill them before launch')
+    for w in warnings: print('warning:', w)
+    for p in problems: print('PROBLEM:', p)
+    pub = len(published_topics(topics))
+    print(f'checked {len(topics)} topic(s) ({pub} published) and {len(courses)} course(s): {len(problems)} problem(s), {len(warnings)} warning(s)')
+    return 1 if problems else 0
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = ap.add_subparsers(dest='cmd', required=True)
+    sub.add_parser('chrome'); sub.add_parser('sync'); sub.add_parser('check')
+    n = sub.add_parser('new'); n.add_argument('slug'); n.add_argument('title')
+    a = ap.parse_args()
+    if a.cmd == 'chrome':
+        ch = cmd_chrome(); print('updated', len(ch), 'page(s):', ', '.join(ch) if ch else 'none, already current')
+    elif a.cmd == 'sync': cmd_sync()
+    elif a.cmd == 'new': cmd_new(a.slug, a.title)
+    elif a.cmd == 'check': sys.exit(cmd_check())
+
+
+if __name__ == '__main__':
+    main()
