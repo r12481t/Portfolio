@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "projects": [
+    {
+      "id": "p001",
+      "slug": "taqen-collection",
+      "status": "published",
+      "group": "projects",
+      "page": "existing",
+      "featured": true,
+      "order": 1,
+      "tag": "Team project, paused",
+      "title": "TAQEN Collection",
+      "summary": "A team of six built a print-on-demand clothing brand. It never got an order and is no longer developed. The case study covers what was built and what went wrong.",
+      "builtBy": "A team of six",
+      "builtWith": "HTML, JavaScript, Supabase, Netlify, Printify",
+      "outcome": "No orders. The store is still online, but no longer developed.",
+      "shows": "A working storefront with a home page, product catalog, cart and information pages, backed by a database for products and orders. Ruhan Tahlil designed the website and created the initial designs. The case study also lists what went wrong and what the team learned.",
+      "links": [
+        {
+          "label": "Read the case study",
+          "href": "projects/taqen/case-study.html"
+        }
+      ]
+    },
+    {
+      "id": "p002",
+      "slug": "classly",
+      "status": "published",
+      "group": "projects",
+      "page": "existing",
+      "featured": true,
+      "order": 2,
+      "tag": "Browser demo",
+      "title": "Classly",
+      "summary": "Demo admin software for a language center: student registration, class tracking and course pricing. It runs in your browser and saves sample data on your own device. Designed with Barshon, who is not part of Curiohatch.",
+      "builtBy": "Ruhan Tahlil and Barshon. Design and systems design by Barshon.",
+      "builtWith": "HTML, JavaScript, browser localStorage",
+      "outcome": "A demo for an agency. It did not lead to a sale.",
+      "shows": "A multi-screen app you can use yourself: a three-step registration form that works out fees, a class counter, a course and pricing list, staff accounts and an analytics overview. It is a demo with no server and no real sign-in.",
+      "links": [
+        {
+          "label": "Read the case study",
+          "href": "projects/classley/case-study.html"
+        },
+        {
+          "label": "Try the demo",
+          "href": "projects/classley/classley.html"
+        }
+      ]
+    },
+    {
+      "id": "p003",
+      "slug": "landing-page-template",
+      "status": "published",
+      "group": "templates",
+      "page": "existing",
+      "featured": false,
+      "order": 1,
+      "tag": "Template, not client work",
+      "title": "Landing page template",
+      "summary": "A one-page layout for a local business, filled with sample text and placeholder details. Open it to see how a template-based site would look.",
+      "builtBy": "",
+      "builtWith": "",
+      "outcome": "",
+      "shows": "",
+      "links": [
+        {
+          "label": "Open the template",
+          "href": "projects/templates/landing-page.html"
+        }
+      ]
+    }
+  ]
+}

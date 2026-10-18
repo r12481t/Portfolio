@@ -13,6 +13,7 @@ cd tests && npm install axe-core && cd ..     # only for the accessibility scan;
 |---|---|
 | content and pricing check | `tools/site.py check`: lesson and course records, pricing numbers, hand-typed prices, form attributes, generated files up to date, shared header and footer up to date |
 | SEO and metadata | canonical and social URLs on the production domain and mapping to real files, unique titles, one h1, sitemap and robots, structured data matches the page. Runs twice: on the real site and on a copy with sample lessons published |
+| admin panel | `tools/admin.py` in a throwaway copy: localhost and token security, every save path, bad data refused, undo, generated files, phone-sized interface |
 | lesson and pricing tooling | draft privacy, duplicate guard, bad data refused, ending the intro offer, publishing terms, in a throwaway copy |
 | interaction, form, pricing | menu drawer and focus, reveals, reduced motion, no-JavaScript, keyboard, form success and failure states (the network is simulated), pricing cards, labels and links |
 | learning library | filters, empty and no-result states, topic page, video box (nothing sent to YouTube before Play), courses, using sample data |

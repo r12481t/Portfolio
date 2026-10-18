@@ -25,6 +25,10 @@ CSS_V, JS_V, LEARN_JS_V = 2, 2, 1
 TOPICS_FILE = os.path.join(ROOT, 'content', 'learn', 'topics.json')
 COURSES_FILE = os.path.join(ROOT, 'content', 'courses', 'courses.json')
 PRICING_FILE = os.path.join(ROOT, 'content', 'pricing.json')
+PROJECTS_FILE = os.path.join(ROOT, 'content', 'projects.json')
+PROJECT_STATUSES = ['draft', 'published', 'archived']
+PROJECT_GROUPS = ['projects', 'templates']
+GENERATED_MARK = '<!-- GENERATED:PROJECT -->'
 TOPIC_STATUSES = ['planned', 'drafted', 'reviewed', 'published', 'archived']
 COURSE_STATUSES = ['planned', 'upcoming', 'available', 'archived']
 SLUG_RE = re.compile(r'^[a-z0-9]+(-[a-z0-9]+)*$')
@@ -81,10 +85,17 @@ def topic_pages():
     return sorted(glob.glob(os.path.join(ROOT, 'learn', '*', 'index.html')))
 
 
+def generated_projects(projects=None):
+    projects = load_json(PROJECTS_FILE, 'projects') if projects is None else projects
+    return [p for p in projects if p.get('page') == 'generated']
+
+
 def all_chrome_pages():
     pages = list(STATIC_PAGES)
     for p in topic_pages():
         pages.append(os.path.relpath(p, ROOT).replace(os.sep, '/'))
+    for p in generated_projects():
+        pages.append(f'projects/{p["slug"]}/index.html')
     return [p for p in pages if os.path.exists(os.path.join(ROOT, p))]
 
 
@@ -445,6 +456,169 @@ def current_article(t):
     return placeholder_article(t['title'])
 
 
+# ---------------------------------------------------------------- wording lint (warnings only)
+CLAIM_RE = re.compile(r"(guarantee|\bbest\b|#1|\b100%|\baward|testimonial|\breview(s)?\b|\d+\s?%|\d+\s?x\b|\bdoubl|\btripl|\bboost|\bincreas|\bleading\b|top[- ]rated|\branked\b|\brevenue\b|\bsales\b|\bcustomers\b)", re.I)
+
+
+def claim_warnings(label, text):
+    """Words that often turn into claims the site cannot back up. A prompt to double-check, never a block."""
+    found = sorted({m.group(0).lower() for m in CLAIM_RE.finditer(text or '')})
+    return [f'{label}: check the wording of "{w}". Only say what you can show.' for w in found]
+
+
+# ---------------------------------------------------------------- projects and case studies
+def load_projects():
+    return load_json(PROJECTS_FILE, 'projects')
+
+
+def link_href(href, P):
+    return href if re.match(r'^(https?:|mailto:|#)', href) else P + href
+
+
+def effective_links(p):
+    links = []
+    if p.get('page') == 'generated':
+        links.append({'label': 'Read the case study', 'href': f'projects/{p["slug"]}/'})
+    return links + list(p.get('links', []))
+
+
+def paragraphs(text):
+    parts = [re.sub(r'\s*\n\s*', ' ', x).strip() for x in re.split(r'\n\s*\n', (text or '').strip())]
+    return [x for x in parts if x]
+
+
+def render_plate(p, P, home=False):
+    links = effective_links(p)
+    first = links[0]['href'] if links else ''
+    title = f'<a href="{esc(link_href(first, P))}">{esc(p["title"])}</a>' if first else esc(p['title'])
+    meta = []
+    if p.get('builtBy') and not home: meta.append(('Built by', p['builtBy']))
+    if p.get('builtWith'): meta.append(('Built with', p['builtWith']))
+    if p.get('outcome'): meta.append(('Outcome', p['outcome']))
+    dl = '<dl class="proj-meta">' + ''.join(f'<dt>{esc(k)}</dt><dd>{esc(v)}</dd>' for k, v in meta) + '</dl>\n        ' if meta else ''
+    shows = f'<details><summary>What this shows</summary><div><p>{esc(p["shows"])}</p></div></details>\n        ' if p.get('shows') else ''
+    lk = '<div class="links">' + ''.join(f'<a href="{esc(link_href(l["href"], P))}">{esc(l["label"])}</a>' for l in links) + '</div>\n        ' if links else ''
+    return (f'<article class="proj">\n        <p class="tag">{esc(p["tag"])}</p>\n        <h3>{title}</h3>\n        <p>{esc(p["summary"])}</p>\n        '
+            f'{dl}{shows}{lk}</article>').replace('\n        </article>', '\n      </article>')
+
+
+def published_projects(projects, group=None):
+    out = [p for p in projects if p.get('status') == 'published' and (group is None or p.get('group') == group)]
+    return sorted(out, key=lambda p: (p.get('order', 100), p.get('title', '')))
+
+
+def render_work(projects):
+    P = '../'
+    projs, tmpl = published_projects(projects, 'projects'), published_projects(projects, 'templates')
+    if not projs and not tmpl:
+        return ('<section class="band horizon">\n  <div class="wrap">\n    <div class="empty">\n      <h2>No projects are listed yet</h2>\n'
+                '      <p>Projects will appear here when there is something real to show, labelled for what it is.</p>\n    </div>\n  </div>\n</section>')
+    out, first = [], True
+    if projs:
+        plates = '\n      '.join(render_plate(p, P) for p in projs)
+        out.append('<section class="band horizon">\n  <div class="wrap">\n    <div data-reveal><h2>Personal and team projects</h2>\n'
+                   '    <p class="prose">Each project has its own page that says what was built, who built it and what happened. Open the details on any card to see what the project shows.</p></div>\n'
+                   f'    <div class="showcase" data-reveal>\n      {plates}\n    </div>\n  </div>\n</section>')
+        first = False
+    if tmpl:
+        plates = '\n      '.join(render_plate(p, P) for p in tmpl)
+        cls = 'band band--cream2' + (' horizon' if first else '')
+        out.append(f'<section class="{cls}">\n  <div class="wrap" data-reveal>\n    <h2>Sample templates</h2>\n    <div class="showcase">\n      {plates}\n    </div>\n  </div>\n</section>')
+    return '\n\n'.join(out)
+
+
+def render_home_projects(projects):
+    feat = [p for p in published_projects(projects, 'projects') if p.get('featured')][:3]
+    if not feat:
+        return '<p class="prose">No projects are listed yet.</p>'
+    return '\n      '.join(render_plate(p, '', home=True) for p in feat)
+
+
+def render_project_page(p):
+    P = '../../'
+    rel = f'projects/{p["slug"]}/index.html'
+    published = p.get('status') == 'published'
+    canonical = f'{DOMAIN}/projects/{p["slug"]}/'
+    title, summary = p['title'], p.get('summary', '')
+    robots = '' if published else '<meta name="robots" content="noindex">\n'
+    body = []
+    for img in p.get('images', []):
+        cap = f'<figcaption>{esc(img["caption"])}</figcaption>' if img.get('caption') else ''
+        dims = f' width="{int(img["width"])}" height="{int(img["height"])}"' if img.get('width') and img.get('height') else ''
+        body.append(f'<figure class="shot"><img src="{P}{esc(img["src"])}" alt="{esc(img.get("alt", ""))}"{dims} loading="lazy">{cap}</figure>')
+    def section(h, text):
+        ps = paragraphs(text)
+        if ps: body.append(f'<h2>{h}</h2>\n' + '\n'.join(f'<p>{esc(x)}</p>' for x in ps))
+    section('What was built', p.get('built'))
+    section('Our part', p.get('role'))
+    section('What happened', p.get('whatHappened'))
+    if p.get('learned'):
+        body.append('<h2>What we learned</h2>\n<ul>' + ''.join(f'<li>{esc(x)}</li>' for x in p['learned']) + '</ul>')
+    meta = []
+    if p.get('builtBy'): meta.append(('Built by', p['builtBy']))
+    if p.get('builtWith'): meta.append(('Built with', p['builtWith']))
+    if p.get('outcome'): meta.append(('Outcome', p['outcome']))
+    side = ''.join(f'<h2>{esc(k)}</h2><p>{esc(v)}</p>' for k, v in meta)
+    ext = [l for l in p.get('links', [])]
+    if ext:
+        side += '<h2>Links</h2><ul>' + ''.join(f'<li><a href="{esc(link_href(l["href"], P))}">{esc(l["label"])}</a></li>' for l in ext) + '</ul>'
+    side += f'<h2>More</h2><ul><li><a href="{P}work/">All work</a></li><li><a href="{P}contact/?type=audit">Get a free website audit</a></li></ul>'
+    og = esc(f'{title} | Curiohatch')
+    return f'''<!doctype html>
+<html lang="en">
+{GENERATED_MARK}
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{og}</title>
+<meta name="description" content="{esc(summary)}">
+<meta name="theme-color" content="#011022">
+{robots}<link rel="canonical" href="{canonical}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Curiohatch">
+<meta property="og:title" content="{og}">
+<meta property="og:description" content="{esc(summary)}">
+<meta property="og:url" content="{canonical}">
+<meta property="og:image" content="{DOMAIN}/assets/brand/social-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="{P}assets/brand/favicon.ico" sizes="48x48">
+<link rel="icon" href="{P}assets/brand/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="{P}assets/brand/apple-touch-icon.png">
+<link rel="preload" href="{P}assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{P}assets/fonts/ibm-plex-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.className+=' js'</script>
+<link rel="stylesheet" href="{P}css/site.css?v={CSS_V}">
+</head>
+<body>
+{marked('HEADER', render_header(rel))}
+<main id="main">
+<div class="sky sky--field band--navy">
+  <div class="wrap page-head">
+    <p class="crumbs"><a href="{P}work/">Work</a> &middot; {esc(p["tag"])}</p>
+    <h1>{esc(title)}</h1>
+    <p class="lede">{esc(summary)}</p>
+  </div>
+</div>
+<section class="band horizon">
+  <div class="wrap topic-layout">
+    <article class="article">
+{chr(10).join(body)}
+    </article>
+    <aside class="side" aria-label="About this project">
+{side}
+    </aside>
+  </div>
+</section>
+</main>
+{marked('FOOTER', render_footer(rel))}
+<script src="{P}js/site.js?v={JS_V}" defer></script>
+</body>
+</html>
+'''
+
+
 # ---------------------------------------------------------------- pricing
 def load_pricing():
     with open(PRICING_FILE, encoding='utf-8') as f:
@@ -493,11 +667,10 @@ def render_pricing(pr, P):
 
 
 def render_pricing_teaser(pr, P):
-    pk = {p['id']: p for p in pr['packages']}
     def line(p):
         pre = 'from ' if p['priceType'] == 'starting' else ''
         return f'<li><strong>{esc(p["name"])}</strong>, {pre}{money(p["price"])}</li>'
-    items = ''.join(line(pk[i]) for i in ('fixes', 'landing', 'business', 'custom') if i in pk)
+    items = ''.join(line(p) for p in pr['packages'])
     return f'''<h2>Prices</h2>
     <p class="prose">The audit is free. After that, fixes and websites have published prices, and the scope is agreed in writing before work begins.</p>
     <ul class="stars prose">{items}</ul>
@@ -508,6 +681,7 @@ def render_pricing_teaser(pr, P):
 def render_sitemap(topics):
     urls = [f'{DOMAIN}/{p}' for p in SITEMAP_PAGES]
     urls += [f'{DOMAIN}/learn/{t["slug"]}/' for t in sorted(published_topics(topics), key=lambda t: t['slug'])]
+    urls += [f'{DOMAIN}/projects/{p["slug"]}/' for p in sorted(generated_projects(), key=lambda p: p['slug']) if p.get('status') == 'published']
     body = '\n'.join(f'  <url><loc>{esc(u)}</loc></url>' for u in urls)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}\n</urlset>\n'
 
@@ -542,6 +716,14 @@ def _expected_files():
     out['services/index.html'] = replace_between(services, 'PRICING', render_pricing(pr, '../'))
     home = read(os.path.join(ROOT, 'index.html'))
     out['index.html'] = replace_between(home, 'PRICING-TEASER', render_pricing_teaser(pr, ''))
+    projects = load_projects()
+    work = read(os.path.join(ROOT, 'work', 'index.html'))
+    out['work/index.html'] = replace_between(work, 'PROJECTS', render_work(projects))
+    out['index.html'] = replace_between(out['index.html'], 'PROJECTS-HOME', render_home_projects(projects))
+    for p in generated_projects(projects):
+        if p.get('status') == 'archived' and not os.path.exists(os.path.join(ROOT, 'projects', p['slug'], 'index.html')):
+            continue
+        out[f'projects/{p["slug"]}/index.html'] = render_project_page(p)
     out['sitemap.xml'] = render_sitemap(topics)
     return out
 
@@ -621,7 +803,15 @@ def cmd_new(slug, title, allow_similar=False):
     print(f'added {new_id} ({slug}) as a draft and created learn/{slug}/index.html. Fill in the record in content/learn/topics.json, write the article, then run: python tools/site.py sync')
 
 
-def cmd_check():
+def site_file_exists(href):
+    path = href.split('#')[0].split('?')[0]
+    full = os.path.join(ROOT, path)
+    if path.endswith('/') or path == '':
+        return os.path.exists(os.path.join(full, 'index.html'))
+    return os.path.exists(full) or os.path.exists(full + '.html')
+
+
+def collect_issues():
     problems, warnings = [], []
     try:
         topics = load_json(TOPICS_FILE, 'topics')
@@ -681,6 +871,45 @@ def cmd_check():
         if c.get('status') == 'available' and not c.get('url'): problems.append(f'{n}: available course needs a url that works')
         for ref in c.get('lessons', []):
             if ref not in topic_ids: problems.append(f'{n}: lessons points to unknown topic id {ref}')
+    # projects and case studies
+    projects = load_projects()
+    pids = [p.get('id') for p in projects]
+    if len(set(pids)) != len(pids): problems.append('duplicate project ids')
+    pslugs = [p.get('slug') for p in projects]
+    if len(set(pslugs)) != len(pslugs): problems.append('duplicate project slugs')
+    for p in projects:
+        n = p.get('id') or p.get('slug') or '?'
+        if not SLUG_RE.match(p.get('slug', '')): problems.append(f'project {n}: slug is missing or not lowercase-hyphenated')
+        if p.get('status') not in PROJECT_STATUSES: problems.append(f'project {n}: status must be one of {PROJECT_STATUSES}')
+        if p.get('group') not in PROJECT_GROUPS: problems.append(f'project {n}: group must be one of {PROJECT_GROUPS}')
+        if p.get('page') not in ('generated', 'existing'): problems.append(f'project {n}: page must be generated or existing')
+        for l in p.get('links', []):
+            if not l.get('label') or not l.get('href'): problems.append(f'project {n}: every link needs a label and an address')
+            elif not re.match(r'^https?://', l['href']) and not site_file_exists(l['href']):
+                problems.append(f'project {n}: link {l["href"]} does not lead to a file in the site')
+        if p.get('page') == 'generated':
+            d = os.path.join(ROOT, 'projects', p.get('slug', '_'))
+            idx = os.path.join(d, 'index.html')
+            if os.path.isdir(d) and (not os.path.exists(idx) or GENERATED_MARK not in read(idx)):
+                problems.append(f'project {n}: projects/{p.get("slug")}/ already exists and was not made by the admin panel; choose another slug')
+            for im in p.get('images', []):
+                if not im.get('alt'): problems.append(f'project {n}: image {im.get("src")} needs alt text')
+                if not os.path.exists(os.path.join(ROOT, im.get('src', '_'))): problems.append(f'project {n}: image {im.get("src")} is missing')
+        else:
+            if not p.get('links'): problems.append(f'project {n}: an existing page needs at least one link')
+        if p.get('status') == 'published':
+            for f in ('tag', 'title', 'summary'):
+                if not p.get(f): problems.append(f'project {n}: published but {f} is empty')
+            if p.get('page') == 'generated' and not (p.get('built') or p.get('role')): problems.append(f'project {n}: a published case study page needs "What was built" or "Our part" written')
+        for f in ('title', 'summary', 'builtBy', 'builtWith', 'outcome', 'shows', 'built', 'role', 'whatHappened'):
+            warnings.extend(claim_warnings(f'project {n} ({f})', p.get(f, '')))
+        for x in p.get('learned', []): warnings.extend(claim_warnings(f'project {n} (learned)', x))
+    for c in courses:
+        for f in ('title', 'summary', 'audience', 'prerequisites'):
+            warnings.extend(claim_warnings(f'course {c.get("id", "?")} ({f})', c.get(f, '')))
+    for t in topics:
+        if t.get('status') == 'published':
+            warnings.extend(claim_warnings(f'lesson {t.get("id", "?")} (summary)', t.get('summary', '')))
     # generated files must match what sync would write
     try:
         for rel, text in expected_files().items():
@@ -731,10 +960,16 @@ def cmd_check():
             if f.endswith(('.html', '.js')):
                 left += read(os.path.join(dirpath, f)).count('{{')
     if left: problems.append(f'{left} "{{{{" placeholder(s) remain in the site; fill or remove them before launch')
+    return problems, warnings, topics, courses
+
+
+def cmd_check():
+    problems, warnings, topics, courses = collect_issues()
     for w in warnings: print('warning:', w)
     for p in problems: print('PROBLEM:', p)
     pub = len(published_topics(topics))
-    print(f'checked {len(topics)} topic(s) ({pub} published) and {len(courses)} course(s): {len(problems)} problem(s), {len(warnings)} warning(s)')
+    projects = load_projects()
+    print(f'checked {len(topics)} topic(s) ({pub} published), {len(courses)} course(s) and {len(projects)} project(s): {len(problems)} problem(s), {len(warnings)} warning(s)')
     return 1 if problems else 0
 
 

@@ -21,7 +21,11 @@ Portfolio/
 ├── content/                # The only place facts about lessons and courses are written
 │   ├── learn/topics.json   # One record per YouTube video and its lesson page
 │   ├── courses/courses.json # One record per course (empty until a real course exists)
-│   └── pricing.json        # Prices, scopes, first-three-client offer switch, unpublished terms draft
+│   ├── pricing.json        # Prices, scopes, first-three-client offer switch, unpublished terms draft
+│   └── projects.json       # Work page and home projects, and the case studies made by the admin panel
+├── tools/admin.py, tools/admin/   # Local-only admin panel (docs/admin-panel.md): lessons, courses, packages, case studies
+├── projects/<slug>/        # Case-study pages made by the admin panel (the older ones in projects/taqen, classley and templates are hand-built)
+├── assets/work/<slug>/     # Screenshots uploaded through the admin panel
 ├── tests/                  # Local test suite (python tests/run_all.py): docs/testing.md
 ├── docs/                   # pricing.md, contact-form.md, release-workflow.md, testing.md, launch-checklist.md, adding-a-learning-topic.md
 ├── .gitignore

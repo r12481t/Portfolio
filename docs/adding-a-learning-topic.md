@@ -1,5 +1,8 @@
 # Adding a video and its lesson to the Learning library
 
+The easiest way is the local admin panel (`python tools/admin.py`, see `docs/admin-panel.md`). This page explains the files
+underneath it, for when you prefer the command line or need to fix something by hand.
+
 Every published YouTube video gets one lesson page at `/learn/<topic-slug>/`. The facts about each lesson are written
 once, in `content/learn/topics.json`. A small script (`tools/site.py`) turns those records into the pages, the
 library list and the sitemap. The script needs Python 3 and nothing else. The website itself does not need it.

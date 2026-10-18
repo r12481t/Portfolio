@@ -10,6 +10,7 @@ sample = fixture.build(repo)   # throwaway copy with SAMPLE lessons; the real re
 steps = [
     ('content and pricing check', [sys.executable, os.path.join(repo, 'tools', 'site.py'), 'check']),
     ('SEO and metadata', [sys.executable, os.path.join(here, 'seo_check.py'), repo]),
+    ('admin panel (temp copy)', [sys.executable, os.path.join(here, 'admin_test.py')]),
     ('lesson and pricing tooling (temp copy)', [sys.executable, os.path.join(here, 'tools_test.py')]),
     ('interaction, form, pricing', [sys.executable, os.path.join(here, 'interact.py'), repo]),
     ('SEO and metadata with sample lessons published', [sys.executable, os.path.join(here, 'seo_check.py'), sample]),
