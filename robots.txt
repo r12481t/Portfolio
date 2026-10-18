@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /tests/
+Disallow: /tools/
+Disallow: /docs/
+Disallow: /content/
 
 Sitemap: https://curiohatch.studio/sitemap.xml

@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "currencyNote": "All prices are in US dollars.",
+  "introOffer": {
+    "active": true,
+    "note": "The first-three-client prices apply to the first three paid projects and no further. This page will be updated when they end."
+  },
+  "packages": [
+    {
+      "id": "fixes",
+      "name": "Website Fixes",
+      "priceType": "starting",
+      "price": 49,
+      "introPrice": null,
+      "summary": "A small, clearly scoped set of improvements to an existing website.",
+      "scope": [],
+      "note": "Larger fixes and new functionality require a separate quote.",
+      "cta": {
+        "label": "Ask about fixes",
+        "href": "contact/?type=fixes"
+      }
+    },
+    {
+      "id": "landing",
+      "name": "Landing Page",
+      "priceType": "package",
+      "price": 199,
+      "introPrice": 169,
+      "summary": "One responsive landing page.",
+      "scope": [
+        "Brand and content customization",
+        "Clear calls to action",
+        "Basic on-page SEO",
+        "Launch testing"
+      ],
+      "note": "",
+      "cta": {
+        "label": "Start a project",
+        "href": "contact/?type=website"
+      }
+    },
+    {
+      "id": "business",
+      "name": "Business Website",
+      "priceType": "package",
+      "price": 399,
+      "introPrice": 329,
+      "summary": "Up to five agreed pages.",
+      "scope": [
+        "Responsive layouts for mobile, tablet and desktop",
+        "Brand customization",
+        "Agreed contact options",
+        "Basic on-page SEO",
+        "Launch testing"
+      ],
+      "note": "",
+      "cta": {
+        "label": "Start a project",
+        "href": "contact/?type=website"
+      }
+    },
+    {
+      "id": "custom",
+      "name": "Custom-Coded Website",
+      "priceType": "starting",
+      "price": 699,
+      "introPrice": 599,
+      "summary": "A custom-coded website, from a starting scope.",
+      "scope": [
+        "Custom page layouts and styling",
+        "Responsive front-end development",
+        "Agreed interactive features",
+        "Basic on-page SEO",
+        "Testing and deployment support"
+      ],
+      "note": "",
+      "cta": {
+        "label": "Start a project",
+        "href": "contact/?type=website"
+      }
+    }
+  ],
+  "notIncludedByDefault": "E-commerce, payment processing, custom backend systems and third-party integrations are not included by default. If you need one, ask and we will tell you honestly whether we can help.",
+  "terms": {
+    "approved": false,
+    "items": [
+      "A 50% deposit is due before work begins, and the other 50% before final handover or launch.",
+      "The Landing Page and Business Website packages include two consolidated rounds of revisions.",
+      "You supply approved text, brand assets and images, unless writing or creating them is quoted separately.",
+      "Domain registration, paid hosting, premium assets, subscriptions and third-party fees are not included unless the proposal says they are.",
+      "E-commerce, payment processing, custom backend systems and complex integrations need a separate assessment.",
+      "Changes outside the agreed scope need a revised quote and your approval before they are done.",
+      "Maintenance and ongoing support are separate services unless the proposal says they are included."
+    ]
+  }
+}

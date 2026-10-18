@@ -95,7 +95,7 @@
     try {
       var vh = window.innerHeight || 800;
       all.forEach(function (el) {
-        if (el.getBoundingClientRect().top <= vh * 0.9) return;
+        if (el.getBoundingClientRect().top <= vh * 0.95) return;
         var index = 0, prev = el.previousElementSibling;
         while (prev && index < 4) { if (prev.hasAttribute('data-reveal')) index++; prev = prev.previousElementSibling; }
         el.style.setProperty('--r', index);
@@ -106,7 +106,7 @@
         entries.forEach(function (entry) {
           if (entry.isIntersecting) { entry.target.classList.add('is-in'); io.unobserve(entry.target); }
         });
-      }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+      }, { rootMargin: '0px 0px -4% 0px', threshold: 0 });
       pending.forEach(function (el) { io.observe(el); });
       // A quick jump (an in-page link, the End key) can pass blocks without any of them ever being on screen.
       // Anything now above the viewport is shown, so nothing is left invisible behind the reader.
@@ -124,6 +124,29 @@
       var onReduce = function () { if (reduceQuery.matches) showAll(); };
       if (reduceQuery.addEventListener) reduceQuery.addEventListener('change', onReduce);
     } catch (err) { showAll(); }
+  }
+
+  /* ---------- On-page navigation ----------
+     The tabs at the top of a long page (Services) mark the section you are reading. */
+  function initJump() {
+    var links = [].slice.call(document.querySelectorAll('.jump a[href^="#"]'));
+    if (!links.length || !('IntersectionObserver' in window)) return;
+    var map = [];
+    links.forEach(function (a) {
+      var target = document.getElementById(a.getAttribute('href').slice(1));
+      if (target) map.push({ a: a, el: target });
+    });
+    function mark(link) {
+      links.forEach(function (a) { if (a === link) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); });
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        for (var i = 0; i < map.length; i++) if (map[i].el === entry.target) mark(map[i].a);
+      });
+    }, { rootMargin: '-25% 0px -65% 0px', threshold: 0 });
+    map.forEach(function (m) { io.observe(m.el); });
+    links.forEach(function (a) { a.addEventListener('click', function () { mark(a); }); });
   }
 
   /* ---------- Depth in the sky backgrounds ----------
@@ -250,16 +273,15 @@
       if (problems.length) { e.preventDefault(); say('Please fix the highlighted fields.', 'error'); problems[0].focus(); return; }
       urlField.value = site;
 
-      if ((form.getAttribute('action') || '').indexOf('{{') !== -1) {
-        e.preventDefault();
-        say('This form is not connected yet, so nothing was sent.', 'error');
-        return;
-      }
       if (form.elements._gotcha && form.elements._gotcha.value) { e.preventDefault(); say('Thank you. Your message was sent.', 'ok'); return; }
 
       e.preventDefault();
       button.disabled = true; form.setAttribute('aria-busy', 'true'); say('Sending...', '');
-      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+      // Netlify Forms: a urlencoded POST to the site root that names the form. Anything other than a success
+      // response (for example a local test server, or a form Netlify has not registered) shows the failure message.
+      var body = new URLSearchParams(new FormData(form));
+      body.set('form-name', 'inquiry');
+      fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() })
         .then(function (r) {
           if (!r.ok) throw new Error('bad response');
           form.reset(); syncUrlRule();
@@ -281,5 +303,5 @@
   initDrawer();
   initVideo();
   initForm();
-  whenIdle(function () { initReveal(); initSky(); });
+  whenIdle(function () { initReveal(); initSky(); initJump(); });
 })();

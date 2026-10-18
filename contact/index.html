@@ -50,8 +50,7 @@
 
 <section class="band band--cream2 horizon">
   <div class="wrap">
-    <p class="prose">Prefer email? Write to <a href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a>.</p>
-    <form class="form" id="inquiry-form" method="post" action="{{FORM_ENDPOINT}}" aria-describedby="form-help">
+    <form class="form" id="inquiry-form" name="inquiry" method="POST" data-netlify="true" netlify-honeypot="_gotcha" aria-describedby="form-help">
       <p id="form-help" class="muted">Fields marked <span class="req" aria-hidden="true">*</span><span class="sr-only"> with a star</span> are required.</p>
       <div class="field">
         <label for="inquiry_type">What do you need? <span class="req" aria-hidden="true">*</span></label>
@@ -143,7 +142,7 @@
         <ul class="footer-links">
           <li><a href="../contact/?type=audit">Free website audit</a></li>
           <li><a href="../contact/?type=website">Start a project</a></li>
-          <li><a href="../services/#pricing">How pricing works</a></li>
+          <li><a href="../services/#pricing">Pricing</a></li>
           <li><a href="../contact/" aria-current="page">Contact</a></li>
         </ul>
       </nav>

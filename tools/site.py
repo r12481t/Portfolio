@@ -7,14 +7,16 @@ plain HTML files that are then committed like any other file.
     python tools/site.py chrome          Rewrite the shared header, menu drawer and footer on every Curiohatch page.
     python tools/site.py sync            Rebuild what is generated from the content files:
                                          the topic list on /learn/, the course list on /courses/, every topic page's
-                                         head and frame (the written article is never touched), sitemap.xml.
+                                         head and frame (the written article is never touched), the prices on /services/
+                                         and the home page (from content/pricing.json), sitemap.xml.
     python tools/site.py new SLUG "Title"  Add a draft topic record and its page.
+    python tools/site.py covered [WORDS] List what is already covered (concepts included) so a new video does not repeat it.
     python tools/site.py check           Validate the content files and report anything out of date. Changes nothing.
 
 Why it exists: the header, drawer and footer are the same on ten or more pages, and a topic's title, summary and dates
 would otherwise have to be typed in several places. Here each fact is written once.
 """
-import argparse, datetime, glob, html, json, os, re, sys
+import argparse, datetime, difflib, glob, html, json, os, re, sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 DOMAIN = 'https://curiohatch.studio'
@@ -22,6 +24,7 @@ YOUTUBE = 'https://www.youtube.com/@curiohatchstudio'
 CSS_V, JS_V, LEARN_JS_V = 2, 2, 1
 TOPICS_FILE = os.path.join(ROOT, 'content', 'learn', 'topics.json')
 COURSES_FILE = os.path.join(ROOT, 'content', 'courses', 'courses.json')
+PRICING_FILE = os.path.join(ROOT, 'content', 'pricing.json')
 TOPIC_STATUSES = ['planned', 'drafted', 'reviewed', 'published', 'archived']
 COURSE_STATUSES = ['planned', 'upcoming', 'available', 'archived']
 SLUG_RE = re.compile(r'^[a-z0-9]+(-[a-z0-9]+)*$')
@@ -32,9 +35,10 @@ PLACEHOLDER = 'ARTICLE_PLACEHOLDER'
 # Curiohatch pages that carry the shared chrome. Topic pages under learn/ are added automatically.
 STATIC_PAGES = ['index.html', 'services/index.html', 'services/builds/index.html', 'work/index.html', 'about/index.html',
                 'contact/index.html', 'privacy/index.html', 'courses/index.html', 'learn/index.html']
-# Pages listed in sitemap.xml besides published topics (project write-ups are public work evidence).
+# Pages listed in sitemap.xml besides published topics (project write-ups are public work evidence). The two case studies are
+# written without .html because that is the address Netlify serves for them (checked on the live site).
 SITEMAP_PAGES = ['', 'services/', 'services/builds/', 'work/', 'about/', 'contact/', 'privacy/', 'courses/', 'learn/',
-                 'projects/taqen/case-study.html', 'projects/classley/case-study.html']
+                 'projects/taqen/case-study', 'projects/classley/case-study']
 
 
 def read(path):
@@ -58,6 +62,14 @@ def load_json(path, key):
     with open(path, encoding='utf-8') as f:
         data = json.load(f)
     return data.get(key, [])
+
+
+def valid_date(iso):
+    try:
+        datetime.date.fromisoformat(iso)
+        return bool(DATE_RE.match(iso))
+    except (ValueError, TypeError):
+        return False
 
 
 def pretty_date(iso):
@@ -139,7 +151,7 @@ def render_footer(rel):
         <ul class="footer-links">
           {link('Free website audit', 'contact/?type=audit')}
           {link('Start a project', 'contact/?type=website')}
-          {link('How pricing works', 'services/#pricing')}
+          {link('Pricing', 'services/#pricing')}
           {link('Contact', 'contact/')}
         </ul>
       </nav>
@@ -433,6 +445,65 @@ def current_article(t):
     return placeholder_article(t['title'])
 
 
+# ---------------------------------------------------------------- pricing
+def load_pricing():
+    with open(PRICING_FILE, encoding='utf-8') as f:
+        return json.load(f)
+
+
+def money(n):
+    return '${:,}'.format(n)
+
+
+def render_plan(p, intro_on, P):
+    starting = p['priceType'] == 'starting'
+    tag = 'Starting price' if starting else 'Package price'
+    from_html = '<span class="plan-from">Starting at</span> ' if starting else ''
+    intro = ''
+    if intro_on and p.get('introPrice'):
+        lead = 'Starting at ' if starting else ''
+        intro = f'<p class="plan-intro"><strong>{lead}{money(p["introPrice"])}</strong> first-three-client price</p>\n    '
+    scope = ''
+    if p.get('scope'):
+        scope = '<ul class="stars">' + ''.join(f'<li>{esc(x)}</li>' for x in p['scope']) + '</ul>\n    '
+    note = f'<p class="plan-note">{esc(p["note"])}</p>\n    ' if p.get('note') else ''
+    cta = p['cta']
+    return (f'<li class="plan" id="plan-{esc(p["id"])}">\n  <article>\n    <p class="tag">{tag}</p>\n    <h3>{esc(p["name"])}</h3>\n'
+            f'    <p class="plan-price">{from_html}<span class="plan-amount">{money(p["price"])}</span></p>\n    {intro}'
+            f'<p class="plan-summary">{esc(p["summary"])}</p>\n    {scope}{note}'
+            f'<a class="btn btn--line plan-cta" href="{P}{esc(cta["href"])}">{esc(cta["label"])}<span class="sr-only"> for {esc(p["name"])}</span></a>\n  </article>\n</li>')
+
+
+def render_pricing(pr, P):
+    intro_on = bool(pr.get('introOffer', {}).get('active'))
+    plans = '\n'.join(render_plan(p, intro_on, P) for p in pr['packages'])
+    offer = f'<p class="prose">{esc(pr["introOffer"]["note"])}</p>\n    ' if intro_on else ''
+    terms = ''
+    if pr.get('terms', {}).get('approved'):
+        items = ''.join(f'<li>{esc(t)}</li>' for t in pr['terms']['items'])
+        terms = f'\n    <h3 id="terms" style="margin-top:2.5rem">Scope and terms</h3>\n    <ul class="stars prose">{items}</ul>'
+    return f'''<h2>Prices</h2>
+    <p class="prose">Start with the free audit. Then choose the package that fits, or ask for fixes. These are starting scopes, not unlimited-work agreements. Final scope, timeline, revisions, exclusions and payment terms are agreed in writing before any work begins.</p>
+    {offer}<ul class="plans">
+{plans}
+    </ul>
+    <p class="prose" style="margin-top:2rem">{esc(pr["notIncludedByDefault"])}</p>
+    <p class="muted prose">{esc(pr["currencyNote"])}</p>{terms}
+    <div class="btn-row"><a class="btn btn--gold" href="{P}contact/?type=audit">Get a free website audit</a></div>'''
+
+
+def render_pricing_teaser(pr, P):
+    pk = {p['id']: p for p in pr['packages']}
+    def line(p):
+        pre = 'from ' if p['priceType'] == 'starting' else ''
+        return f'<li><strong>{esc(p["name"])}</strong>, {pre}{money(p["price"])}</li>'
+    items = ''.join(line(pk[i]) for i in ('fixes', 'landing', 'business', 'custom') if i in pk)
+    return f'''<h2>Prices</h2>
+    <p class="prose">The audit is free. After that, fixes and websites have published prices, and the scope is agreed in writing before work begins.</p>
+    <ul class="stars prose">{items}</ul>
+    <p style="margin-top:1rem"><a href="{P}services/#pricing">See what each package includes</a></p>'''
+
+
 # ---------------------------------------------------------------- sitemap
 def render_sitemap(topics):
     urls = [f'{DOMAIN}/{p}' for p in SITEMAP_PAGES]
@@ -443,6 +514,13 @@ def render_sitemap(topics):
 
 # ---------------------------------------------------------------- commands
 def expected_files():
+    try:
+        return _expected_files()
+    except (ValueError, KeyError, TypeError) as e:
+        raise SystemExit(f'cannot build the generated pages ({type(e).__name__}: {e}). A record in content/ has a bad value; run: python tools/site.py check')
+
+
+def _expected_files():
     """Everything generated, as {relative path: text}. Used by sync (write) and check (compare)."""
     topics = load_json(TOPICS_FILE, 'topics')
     courses = load_json(COURSES_FILE, 'courses')
@@ -455,7 +533,15 @@ def expected_files():
         if t.get('status') == 'planned':
             continue
         rel = f'learn/{t["slug"]}/index.html'
-        out[rel] = render_topic(t, topics, courses, current_article(t))
+        try:
+            out[rel] = render_topic(t, topics, courses, current_article(t))
+        except (ValueError, KeyError, TypeError) as e:
+            raise SystemExit(f'{t.get("slug", "?")}: cannot build the page ({e}). Fix the record, then run: python tools/site.py check')
+    pr = load_pricing()
+    services = read(os.path.join(ROOT, 'services', 'index.html'))
+    out['services/index.html'] = replace_between(services, 'PRICING', render_pricing(pr, '../'))
+    home = read(os.path.join(ROOT, 'index.html'))
+    out['index.html'] = replace_between(home, 'PRICING-TEASER', render_pricing_teaser(pr, ''))
     out['sitemap.xml'] = render_sitemap(topics)
     return out
 
@@ -470,12 +556,61 @@ def cmd_sync():
     print(f'synced {len(files)} generated files and the shared chrome')
 
 
-def cmd_new(slug, title):
+STOP = {'a', 'an', 'the', 'and', 'or', 'of', 'in', 'on', 'to', 'for', 'is', 'are', 'what', 'how', 'why', 'with', 'your', 'basics', 'intro', 'introduction', 'guide'}
+
+
+def words(text):
+    found = set(re.findall(r'[a-z0-9]+', text.lower())) - STOP
+    return {w[:-1] if len(w) > 3 and w.endswith('s') else w for w in found}     # loops and loop count as one word
+
+
+def similar_topics(title, slug, concepts, topics, exclude_id=None):
+    """Topics already recorded that look like the same subject: close titles, close slugs or shared concepts."""
+    found = []
+    mine = words(title)
+    my_concepts = {c.strip().lower() for c in concepts if c.strip()}
+    for t in topics:
+        if t.get('id') == exclude_id or t.get('status') == 'archived':
+            continue
+        theirs = words(t.get('title', ''))
+        overlap = len(mine & theirs) / max(1, min(len(mine), len(theirs)))
+        ratio = difflib.SequenceMatcher(None, slug, t.get('slug', '')).ratio()
+        shared = my_concepts & {c.strip().lower() for c in t.get('concepts', [])}
+        why = []
+        if mine and theirs and overlap >= 0.67: why.append('similar title')
+        if ratio >= 0.8: why.append('similar slug')
+        if shared: why.append('same concept: ' + ', '.join(sorted(shared)))
+        if why:
+            found.append((t, '; '.join(why)))
+    return found
+
+
+def cmd_covered(terms):
+    topics = [t for t in load_json(TOPICS_FILE, 'topics') if t.get('status') != 'archived']
+    q = [w.lower() for w in terms]
+    shown = 0
+    for t in sorted(topics, key=lambda t: t.get('id', '')):
+        hay = ' '.join([t.get('title', ''), t.get('summary', ''), t.get('category', ''), ' '.join(t.get('tags', [])), ' '.join(t.get('subtopics', [])), ' '.join(t.get('concepts', []))]).lower()
+        if q and not all(w in hay for w in q):
+            continue
+        shown += 1
+        concepts = ', '.join(t.get('concepts', [])) or '(none recorded)'
+        print(f'{t["id"]}  {t["status"]:<9} {t.get("category", "") or "-":<18} {t["title"]}\n      concepts: {concepts}')
+    print(f'{shown} topic(s) listed' + (f' for "{" ".join(terms)}"' if terms else '') + '. Archived topics are not shown.')
+
+
+def cmd_new(slug, title, allow_similar=False):
     if not SLUG_RE.match(slug):
         raise SystemExit('slug must be lowercase words joined by hyphens, for example css-grid-basics')
     topics = load_json(TOPICS_FILE, 'topics')
     if any(t['slug'] == slug for t in topics):
         raise SystemExit(f'slug "{slug}" already exists')
+    near = similar_topics(title, slug, [], topics)
+    if near and not allow_similar:
+        print('A similar topic is already recorded, so nothing was added:')
+        for t, why in near:
+            print(f'  {t["id"]} ({t["status"]}) {t["title"]}  [{why}]')
+        raise SystemExit('If this really is a different lesson, run the command again with --allow-similar. To see what is covered: python tools/site.py covered')
     nums = [int(t['id'][1:]) for t in topics if re.match(r'^t\d+$', t.get('id', ''))]
     new_id = 't%03d' % (max(nums + [0]) + 1)
     rec = {'id': new_id, 'slug': slug, 'status': 'drafted', 'title': title, 'summary': '', 'category': '', 'subtopics': [],
@@ -515,8 +650,8 @@ def cmd_check():
             if not t.get('summary'): problems.append(f'{n}: published but summary is empty')
             elif len(t['summary']) > 170: warnings.append(f'{n}: summary is {len(t["summary"])} characters; search results cut it near 160')
             if not VIDEO_RE.match(t.get('videoId', '')): problems.append(f'{n}: published but videoId is not an 11-character YouTube id')
-            if not DATE_RE.match(t.get('publishedAt', '')): problems.append(f'{n}: published but publishedAt is not YYYY-MM-DD')
-            if t.get('updatedAt') and (not DATE_RE.match(t['updatedAt']) or t['updatedAt'] < t.get('publishedAt', '')): problems.append(f'{n}: updatedAt is invalid or earlier than publishedAt')
+            if not valid_date(t.get('publishedAt', '')): problems.append(f'{n}: published but publishedAt is not a real date written YYYY-MM-DD')
+            if t.get('updatedAt') and (not valid_date(t['updatedAt']) or t['updatedAt'] < t.get('publishedAt', '')): problems.append(f'{n}: updatedAt is invalid or earlier than publishedAt')
             if not t.get('category'): warnings.append(f'{n}: no category')
             page = os.path.join(ROOT, 'learn', t.get('slug', '_'), 'index.html')
             if not os.path.exists(page): problems.append(f'{n}: published but learn/{t.get("slug")}/index.html does not exist; run sync')
@@ -530,6 +665,15 @@ def cmd_check():
         elif t.get('status') in ('drafted', 'reviewed', 'archived'):
             page = os.path.join(ROOT, 'learn', t.get('slug', '_'), 'index.html')
             if os.path.exists(page) and 'name="robots" content="noindex"' not in read(page): problems.append(f'{n}: not published but its page is indexable; run sync')
+    seen = set()
+    for t in topics:
+        if t.get('status') == 'archived':
+            continue
+        for other, why in similar_topics(t.get('title', ''), t.get('slug', ''), t.get('concepts', []), topics, exclude_id=t.get('id')):
+            key = tuple(sorted([t.get('id', ''), other.get('id', '')]))
+            if key not in seen:
+                seen.add(key)
+                warnings.append(f'{key[0]} and {key[1]} may cover the same ground ({why}). Merge them, or make their concepts distinct.')
     for c in courses:
         n = c.get('id') or c.get('title') or '?'
         if c.get('status') not in COURSE_STATUSES: problems.append(f'{n}: course status must be one of {COURSE_STATUSES}')
@@ -555,13 +699,38 @@ def cmd_check():
     for p in topic_pages():
         slug = os.path.basename(os.path.dirname(p))
         if slug not in known: problems.append(f'learn/{slug}/ has no record in topics.json')
+    # pricing: valid, and prices appear only in the generated blocks so they cannot drift apart
+    try:
+        pr = load_pricing()
+        ids = [p.get('id') for p in pr.get('packages', [])]
+        if len(set(ids)) != len(ids) or not ids: problems.append('pricing.json: package ids missing or duplicated')
+        for p in pr.get('packages', []):
+            n = p.get('id', '?')
+            if p.get('priceType') not in ('starting', 'package'): problems.append(f'pricing {n}: priceType must be starting or package')
+            if not isinstance(p.get('price'), int) or p['price'] <= 0: problems.append(f'pricing {n}: price must be a whole number above 0')
+            ip = p.get('introPrice')
+            if ip is not None and (not isinstance(ip, int) or ip >= p.get('price', 0)): problems.append(f'pricing {n}: introPrice must be a whole number below price, or null')
+            if not p.get('cta', {}).get('href') or not os.path.exists(os.path.join(ROOT, p['cta']['href'].split('?')[0], 'index.html')): problems.append(f'pricing {n}: cta link does not lead to a page')
+        if pr.get('introOffer', {}).get('active'): warnings.append('pricing: the first-three-client prices are shown. Set introOffer.active to false in content/pricing.json when the third paid project is agreed.')
+        if not pr.get('terms', {}).get('approved'): warnings.append('pricing: the terms draft is NOT published (terms.approved is false). Approve it, then set it to true.')
+    except (OSError, json.JSONDecodeError, KeyError) as e:
+        problems.append(f'pricing.json: {e}')
+    for rel in all_chrome_pages():
+        txt = read(os.path.join(ROOT, rel))
+        txt = re.sub(r'<!-- PRICING(-TEASER)?:START -->.*?<!-- PRICING(-TEASER)?:END -->', '', txt, flags=re.S)
+        if re.search(r'\$\s?\d', txt): problems.append(f'{rel}: a price is written by hand outside the generated pricing blocks; move it into content/pricing.json')
+    # contact form must be a real Netlify form
+    contact = read(os.path.join(ROOT, 'contact', 'index.html'))
+    for need in ('data-netlify="true"', 'name="inquiry"', 'netlify-honeypot="_gotcha"', 'method="POST"'):
+        if need not in contact: problems.append(f'contact form is missing {need}')
+    warnings.append('contact form: delivery is NOT verified by this check. After deploying a preview, send a real test message and confirm it arrives (docs/launch-checklist.md).')
     left = 0
     for dirpath, _, files in os.walk(ROOT):
         if '.git' in dirpath.split(os.sep) or 'tools' in dirpath.split(os.sep): continue
         for f in files:
             if f.endswith(('.html', '.js')):
                 left += read(os.path.join(dirpath, f)).count('{{')
-    if left: warnings.append(f'{left} "{{{{" placeholder(s) remain in the site (contact form and email); fill them before launch')
+    if left: problems.append(f'{left} "{{{{" placeholder(s) remain in the site; fill or remove them before launch')
     for w in warnings: print('warning:', w)
     for p in problems: print('PROBLEM:', p)
     pub = len(published_topics(topics))
@@ -573,12 +742,14 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest='cmd', required=True)
     sub.add_parser('chrome'); sub.add_parser('sync'); sub.add_parser('check')
-    n = sub.add_parser('new'); n.add_argument('slug'); n.add_argument('title')
+    n = sub.add_parser('new'); n.add_argument('slug'); n.add_argument('title'); n.add_argument('--allow-similar', action='store_true')
+    c = sub.add_parser('covered'); c.add_argument('words', nargs='*')
     a = ap.parse_args()
     if a.cmd == 'chrome':
         ch = cmd_chrome(); print('updated', len(ch), 'page(s):', ', '.join(ch) if ch else 'none, already current')
     elif a.cmd == 'sync': cmd_sync()
-    elif a.cmd == 'new': cmd_new(a.slug, a.title)
+    elif a.cmd == 'new': cmd_new(a.slug, a.title, a.allow_similar)
+    elif a.cmd == 'covered': cmd_covered(a.words)
     elif a.cmd == 'check': sys.exit(cmd_check())
 
 

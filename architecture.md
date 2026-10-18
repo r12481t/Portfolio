@@ -3,10 +3,10 @@
 The Curiohatch studio site (home, services, builds, work, about, contact, privacy, courses, learn), plus Ruhan Tahlil's personal portfolio in `ruhan/` and shared project pieces in `projects/`. The old Two Desks home page is retired; it is preserved in the `pre-curiohatch` tag.
 
 - **Repo:** https://github.com/r12481t/Portfolio (public, branch: `main`)
-- **Live:** https://r12481t.github.io/Portfolio/ (GitHub Pages, served from `main`). Intended domain: https://curiohatch.studio. It is used in canonical and social-preview tags, and must be connected and verified (DNS, HTTPS, GitHub Pages custom-domain setting) before launch.
+- **Live:** https://curiohatch.studio on Netlify, connected to GitHub with automatic deploys. On 2026-10-17 it served the first redesign (the milestone 1 site, checked by loading the home page, the portfolio and a case study); the milestone 2 work (prices, Netlify form) is not published until the owner approves a merge. Netlify serves pages without `.html` (for example `/projects/taqen/case-study`), so canonical and sitemap addresses for those pages are written that way. The old GitHub Pages address (https://r12481t.github.io/Portfolio/) is no longer the home. The domain is used in canonical, social-preview and sitemap addresses. Release steps and rollback: `docs/release-workflow.md`.
 - **Naming note:** the repo/root name is the only thing likely to change. Don't hardcode it in paths (see Conventions).
-- **Host-agnostic:** nothing in the site may depend on GitHub Pages. Moving to Netlify or another host must need no code edits.
-- **Last updated:** 2026-10-15. Checked against the uploaded zip of the site (no `.git` folder inside, so branch and history were not checked) after the experience redesign of 2026-10-15. Earlier text was checked against a clone of `main` (last commit 2026-10-11, 47 files). Lines marked *(not verified)* were not checked against the repo.
+- **Host-agnostic, with one exception:** nothing depends on a particular host except the contact form, which uses Netlify Forms (`docs/contact-form.md`). Moving host means replacing the form handler.
+- **Last updated:** 2026-10-17 (pricing, Netlify form, tests and release docs added). Earlier: 2026-10-15, checked against the uploaded zip (no `.git` inside) after the experience redesign; before that, a clone of `main` (last commit 2026-10-11, 47 files).
 
 ## Folder tree
 
@@ -20,7 +20,11 @@ Portfolio/
 ├── js/learn.js             # Search and filters for /learn/ only. The list itself is already in the page
 ├── content/                # The only place facts about lessons and courses are written
 │   ├── learn/topics.json   # One record per YouTube video and its lesson page
-│   └── courses/courses.json # One record per course (empty until a real course exists)
+│   ├── courses/courses.json # One record per course (empty until a real course exists)
+│   └── pricing.json        # Prices, scopes, first-three-client offer switch, unpublished terms draft
+├── tests/                  # Local test suite (python tests/run_all.py): docs/testing.md
+├── docs/                   # pricing.md, contact-form.md, release-workflow.md, testing.md, launch-checklist.md, adding-a-learning-topic.md
+├── .gitignore
 ├── tools/site.py           # Optional helper (Python 3, no packages): shared header/drawer/footer, lesson pages, lists, sitemap, checks
 ├── courses/index.html      # Courses: honest catalog, list written by tools/site.py
 ├── learn/index.html        # Learning library: list written by tools/site.py
@@ -73,7 +77,7 @@ Portfolio/
 |---|---|
 | `index.html` | Curiohatch home page, built on `css/site.css`. The old home styles (`index.css`) were no longer linked and were removed; both old files are in the `pre-curiohatch` tag. |
 | `content/learn/topics.json`, `content/courses/courses.json` | The single source for the Learning library, lesson pages, Courses page and sitemap. Edit these, then run `python tools/site.py sync`. How to add a lesson: `docs/adding-a-learning-topic.md`. |
-| `tools/site.py` | Convenience script, not needed to run the site. `chrome` rewrites the header, menu drawer and footer on every Curiohatch page (they live in the script, not in ten files). `sync` writes the lists, lesson-page frames and sitemap. `new` adds a draft topic. `check` validates and changes nothing. |
+| `tools/site.py` | Convenience script, not needed to run the site. `chrome` rewrites the header, menu drawer and footer on every Curiohatch page (they live in the script, not in ten files). `sync` writes the lists, lesson-page frames, prices and sitemap. `new` adds a draft topic and refuses near-duplicates. `covered` lists what has already been taught. `check` validates and changes nothing. |
 | `courses/`, `learn/` | Educational area. Not in the header bar, on purpose: the commercial links stay first. They are in the menu drawer and the footer. Nothing is listed until a real video or course exists. |
 | `ruhan/` | Everything that belongs to Ruhan's own portfolio. Named after the person, lowercase. |
 | `ruhan/Ruhan-portfolio.html` | Ruhan's personal portfolio page. Stays inside `ruhan/`. Its Services section has two cards, Audit and Fix and Website Builds, which link to the Curiohatch pages `../services/` and `../services/builds/`. Loads Space Grotesk, IBM Plex Sans and IBM Plex Mono from Google Fonts. |
@@ -133,9 +137,9 @@ Relative links that are in use (all start from the folder the page is in):
   - `?motion=full` pretends the system's "reduce motion" setting is off (also works on the Classly page). On Windows that setting is Settings > Accessibility > Visual effects > Animation effects.
   - `?capture` / `?capture=mobile` downloads the still picture for the fallback.
 - Curiohatch pages: no libraries (the menu drawer, reveals and depth are about 200 lines of plain JavaScript in `js/site.js`). Cross-page transitions use the browser's own `@view-transition` rule; browsers without it just navigate normally. Two variable WOFF2 fonts (Space Grotesk, IBM Plex Sans) are self-hosted from `assets/fonts/`, so the pages make no third-party requests on load. Only the contact form posts to an outside service. The portfolio, the case studies and the landing template still load Google Fonts, and the restaurant template uses system fonts only, because a client owns it. Pictures are WebP with `width` and `height` written on the tag.
-- Contact form: `contact/index.html` posts to a form service. Until one is chosen, three placeholders mark what must be filled in: `{{FORM_ENDPOINT}}`, `{{CONTACT_EMAIL}}` and `{{FORM_SERVICE}}`. `js/site.js` refuses to send while the endpoint placeholder is present. Search the repo for `{{` before launch; it must find nothing.
+- Contact form: a Netlify Forms form named `inquiry` (`data-netlify`, honeypot `_gotcha`). `js/site.js` posts it, urlencoded, to `/` and shows success only on a success response. The recipient email is set in the Netlify dashboard, not in the code. Delivery is not verified until a real test message arrives: `docs/contact-form.md`. `python tools/site.py check` fails if any `{{` placeholder returns.
 - Reduced motion: the 3D scene still runs but calm; links jump instead of scrolling; the Classly demo button fades. On the Curiohatch pages reduced motion turns off every animation and transition, the drifting backgrounds, the scroll reveals and the page transition; content appears at once and the drawer opens without sliding.
-- Hosting: GitHub Pages. (Netlify was considered as the main host; not used currently.)
+- Hosting: Netlify (publishes the repository root, no build step). `tests/`, `tools/`, `docs/` and `content/` are therefore public addresses; `robots.txt` asks search engines to skip them. Keep nothing private in them.
 
 ## CSS ownership (read this before adding a stylesheet)
 
@@ -179,7 +183,7 @@ Known issue: none open. The audit page's old stylesheet naming problem went away
 
 ## Pricing
 
-No prices or timelines are published. Services and builds are quoted in writing per project. The old figures are historical and are not on any page; do not add them back without an explicit decision. The one published timeline is the free audit: 1 to 2 business days, defined on `services/index.html` as Monday to Friday, not counting US federal holidays *(wording awaiting approval)*.
+Prices are published from one file, `content/pricing.json` (Fixes from $49, Landing Page $199, Business Website $399, Custom-Coded Website from $699, with first-three-client prices of $169, $329 and from $599 while `introOffer.active` is true). `tools/site.py sync` writes them into `services/index.html` and the home page between `PRICING` markers; never type a price by hand (`check` fails). The terms draft in the same file stays unpublished until `terms.approved` is true. Details: `docs/pricing.md`. The older discarded figures stay off the site. No delivery times are published. The one published timeline is the free audit: 1 to 2 business days, defined on `services/index.html` as Monday to Friday, not counting US federal holidays *(wording awaiting approval)*.
 
 ## Making a client site from a template
 
@@ -191,12 +195,12 @@ No prices or timelines are published. Services and builds are quoted in writing 
 
 ## Open items
 
-- [ ] Launch gates (blocking): create the Curiohatch email, choose and test a form service, then fill the three `{{...}}` placeholders (contact and privacy pages). Search the repo for `{{`; it must find nothing.
-- [ ] Connect `curiohatch.studio` (DNS, HTTPS, GitHub Pages custom domain) and check that canonical and social-preview tags render.
+- [ ] Launch gates (blocking): see `docs/launch-checklist.md`. Main items: a Deploy Preview from a pull request, a real contact-form test message received, owner approval of the pricing wording, the first-three-client rule, the terms draft, the audit wording, and the YouTube link.
+- [ ] The domain is connected and the old site opens; confirm canonical and social-preview tags render on the preview and then on the live site.
 - [ ] Approve the audit business-day wording on `services/index.html`. The home, contact and work pages repeat "1 to 2 business days"; they must change together with it.
 - [ ] Learning library: the YouTube channel link in `tools/site.py` (`YOUTUBE`) is the handle the site already used; confirm it. Keep the first lesson's article at 300+ words that add to the video; `check` warns below that.
 - [ ] `sitemap.xml` and `robots.txt` only take effect when the site is served at a domain root (`curiohatch.studio`); on the `/Portfolio/` project URL search engines ignore them.
-- [ ] Pricing: no packages or prices are published (by decision). If packages are wanted, the owner must supply the real tiers; the services page has a "How pricing works" section ready for them.
+- [ ] Pricing decisions: what counts as an eligible first-three-client project; whether "$" means US dollars everywhere (the page says so); how clients pay (no method is published); whether to publish the terms draft.
 - [ ] Restaurant template: the missing `img/` folder. Requested files: `hero.webp` (1600x900); `dish-soup.webp`, `dish-plate.webp`, `dish-burger.webp`, `about-kitchen.webp` (960x720); `logo-mark.svg`, `about-kitchen.svg`, `dish-soup.svg`, `dish-plate.svg`, `dish-cake.svg`, `dish-drinks.svg`. Original illustrations are prepared and waiting for approval. After adding them, change the four WebP alt texts in `restraunt/index.html` to describe illustrations, and re-add the restaurant template to the work or builds page.
 - [ ] Classly sample-data names (`projects/classley/js/classly-data.js`): confirm they are fictional, or approve an exception to anonymize them.
 - [ ] Classly database code: if it turns up, a MySQL description can be added to the case study, checked for secrets.
@@ -204,7 +208,6 @@ No prices or timelines are published. Services and builds are quoted in writing 
 - [ ] `ruhan/Ruhan-portfolio.html` still says "online store" and "e-commerce" in the Website Builds card.
 - [ ] Make `scene-poster.webp` (open the portfolio with `?capture` in a normal PC window). Until it exists, desktop shows the phone picture, which looks blurry when enlarged.
 - [ ] Check the scene's brightness on a real PC (`?debug&exposure=1.55`, try 1.4 to 1.9) and the framing at your usual window size.
-- [ ] `projects/templates/landing-page.html`: its "Site by" link uses the full `https://r12481t.github.io/Portfolio/...` address. Make it relative (`../../ruhan/Ruhan-portfolio.html`).
 - [ ] Add a Pinterest board screenshot to `projects/taqen/img/` and uncomment the figure in `projects/taqen/case-study.html`.
 - [ ] Add Classly screenshots to `projects/classley/img/` and uncomment the figure in `case-study.html`.
 - [ ] Add a short README pointing here.

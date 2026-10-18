@@ -7,6 +7,7 @@ library list and the sitemap. The script needs Python 3 and nothing else. The we
 You can run it from the repo folder in any terminal:
 
 ```
+python tools/site.py covered [WORDS]                  # what is already covered?
 python tools/site.py new SLUG "Title of the lesson"   # start a draft
 python tools/site.py sync                             # write pages, lists, sitemap
 python tools/site.py check                            # report problems, change nothing
@@ -14,6 +15,8 @@ python tools/site.py check                            # report problems, change 
 
 ## The short version
 
+0. Before you plan a video, run `python tools/site.py covered` (or add a word, such as `covered loops`). It lists every
+   topic that is not archived, with its status and the concepts it teaches.
 1. `python tools/site.py new what-is-a-variable "What is a variable?"`
    This adds a draft record with the next free id (`t001`, `t002`, ...) and creates `learn/what-is-a-variable/index.html`.
    Drafts are not listed, not in the sitemap and carry `noindex`.
@@ -45,6 +48,18 @@ python tools/site.py check                            # report problems, change 
 | `courses` | Ids from `courses.json` | Shown only when that course is `available` and has a working `url`. |
 
 Do not invent any of these. Leave a field empty rather than guess.
+
+## Avoiding repeats
+
+The records are the memory of what has been taught. Three guards use them:
+
+- `new` refuses a topic whose title, slug or concepts look like one already recorded, and shows the match. If it really is
+  different, add `--allow-similar`.
+- `check` warns when two topics share a concept or have very close titles, so a repeat that slipped in is noticed.
+- The `concepts` and `subtopics` fields are what make this work. Fill them in carefully and use the same wording each time.
+
+The guards compare words. They do not understand meaning, so they will miss a repeat that uses different words. Read
+`covered` yourself too.
 
 ## Statuses
 
@@ -103,7 +118,7 @@ commit. That changes how the site is published, so it needs the owner's approval
 
 ## Before the first lesson goes live
 
-- Confirm the YouTube channel link (`YOUTUBE` near the top of `tools/site.py`).
+- Confirm the YouTube channel link (`YOUTUBE` near the top of `tools/site.py`). It has not been verified.
 - Run `python tools/site.py check` and fix every `PROBLEM`.
 - Open the lesson page, the library and the Courses page on a phone-sized window, with and without JavaScript.
 - Check the page's text and the video agree.

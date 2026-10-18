@@ -54,8 +54,9 @@ a:hover{text-decoration-thickness:.16em}
 .site-nav{width:100%}
 .site-nav ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .site-nav a{display:flex;align-items:center;min-height:48px;color:var(--cream);font-family:var(--head);font-weight:500;text-decoration:none;padding-inline:var(--s1)}
-.site-nav a:hover{text-decoration:underline;text-underline-offset:.3em}
-.site-nav a[aria-current="page"]{text-decoration:underline;text-underline-offset:.3em;text-decoration-thickness:.12em;text-decoration-color:var(--gold)}
+.site-nav a:not(.btn){position:relative}
+.site-nav a:not(.btn)::after{content:"";position:absolute;left:var(--s1);right:var(--s1);bottom:.6rem;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform var(--t-base) var(--ease-out)}
+.site-nav a:not(.btn):hover::after,.site-nav a:not(.btn):focus-visible::after,.site-nav a[aria-current="page"]::after{transform:scaleX(1)}
 .site-nav .btn{margin:var(--s1) 0;justify-content:center;padding-inline:1.5rem;color:var(--navy);white-space:nowrap}
 .site-nav .btn:hover{text-decoration:none}
 .js-nav .nav-toggle{display:inline-flex;align-items:center}
@@ -421,7 +422,6 @@ html.drawer-open,html.drawer-open body{overflow:hidden}
 .footer-brand{grid-column:1 / -1}
 .footer-col h2{font-family:var(--head);font-size:.875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 var(--s1)}
 .footer-links a{text-decoration:none;min-width:48px}
-.footer-links a:hover{text-decoration:underline}
 .footer-cta{margin-top:var(--s1)}
 @media (min-width:52em){
   .footer-grid{grid-template-columns:1.5fr repeat(4,1fr);gap:var(--s4)}
@@ -441,8 +441,6 @@ html.drawer-open,html.drawer-open body{overflow:hidden}
 @keyframes vt-in{from{opacity:0;transform:translateY(8px)}}
 
 /* ---------- service blocks and in-page links ---------- */
-.jump{display:flex;flex-wrap:wrap;gap:0 var(--s3);list-style:none;margin:var(--s3) 0 0;padding:0}
-.jump a{display:inline-flex;align-items:center;min-height:48px;font-family:var(--head);font-weight:600}
 .spec{display:grid;gap:var(--s1) var(--s4);margin:var(--s3) 0 0}
 .spec dt{font-family:var(--head);font-weight:600;color:var(--navy);margin-top:var(--s2)}
 .spec dd{margin:0;max-width:var(--measure)}
@@ -451,6 +449,56 @@ html.drawer-open,html.drawer-open body{overflow:hidden}
 .spec+.btn-row{margin-top:var(--s4)}
 .pair{display:grid;gap:var(--s2) var(--s4)}
 @media (min-width:52em){.pair{grid-template-columns:1fr 1fr}}
+
+/* ---------- pricing plans ---------- */
+.plans{list-style:none;margin:var(--s4) 0 0;padding:0;display:grid;gap:var(--s3)}
+@media (min-width:40em){.plans{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:80em){.plans{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.plan>article{display:flex;flex-direction:column;gap:var(--s1);height:100%;background:var(--white);border:1px solid var(--rule);border-top:4px solid var(--navy);border-radius:var(--radius);padding:var(--s3)}
+.plan h3{margin:0;font-size:1.25rem}
+@media (min-width:80em){.plan h3{min-height:2.6em}}
+.plan .tag{margin:0;align-self:flex-start}
+.plan-price{margin:0;font-family:var(--head);color:var(--navy);display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .5rem}
+.plan-from{font-size:1rem;font-weight:500}
+.plan-amount{font-size:2.5rem;font-weight:700;line-height:1.1}
+.plan-intro{margin:0;padding:.5rem var(--s2);border-left:4px solid var(--gold);background:var(--cream-2);font-size:1rem}
+.plan-intro strong{font-family:var(--head);font-size:1.25rem}
+.plan-summary{margin:0;font-weight:600}
+.plan ul.stars{margin:0}
+.plan-note,.plan .plan-summary+.plan-note{margin:0;font-size:1rem;color:var(--muted)}
+.plan-cta{margin-top:auto;align-self:flex-start}
+.plan>article>.stars+.plan-cta,.plan>article>.plan-summary+.plan-cta{margin-top:var(--s2)}
+.plan>article{align-items:stretch}
+.plan>article>.tag{align-self:flex-start}
+
+/* ---------- house styles for controls and links (added after the first review) ---------- */
+/* Dropdowns: the closed box is ours. The open list is drawn by the phone or browser and cannot be restyled. */
+select,.field select{-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:2.75rem;
+  background-color:var(--white);background-repeat:no-repeat;background-position:right 1rem center;background-size:1rem;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 6l5 5 5-5' fill='none' stroke='%23011022' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.field input:hover,.field select:hover,.field textarea:hover{border-color:var(--navy)}
+.field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible{border-color:var(--navy);box-shadow:0 0 0 4px rgba(253,196,75,.45)}
+input[type="search"]{-webkit-appearance:none;appearance:none}
+.field input,.field select,.field textarea{transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+/* On-page navigation: tabs with the logo star. aria-current="location" marks the section you are in (js/site.js). */
+.jump{display:flex;flex-wrap:wrap;gap:var(--s1);list-style:none;margin:var(--s3) 0 0;padding:0}
+.jump a{display:inline-flex;align-items:center;gap:.6rem;min-height:48px;padding:0 var(--s2);background:var(--white);color:var(--navy);border:2px solid var(--navy);border-radius:var(--radius);font-family:var(--head);font-weight:600;text-decoration:none;transition:background-color var(--t-fast),color var(--t-fast)}
+.jump a::before{content:"";flex:none;width:.7rem;height:.7rem;background:var(--navy);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);transition:transform var(--t-base) var(--ease-out),background-color var(--t-fast)}
+.jump a:hover,.jump a[aria-current="location"]{background:var(--navy);color:var(--cream)}
+.jump a:hover::before,.jump a[aria-current="location"]::before{background:var(--gold);transform:rotate(45deg) scale(1.3)}
+/* Links in running text: keep the underline, add a gold highlight on hover and focus. */
+main :is(p,li,dd,summary) a:not(.btn),.more,.crumbs a,.site-footer p a{border-radius:2px;transition:background-color var(--t-fast),color var(--t-fast),text-decoration-thickness var(--t-fast)}
+main :is(p,li,dd) a:not(.btn):hover,.more:hover,.crumbs a:hover,.site-footer p a:hover{background-color:rgba(253,196,75,.5);color:var(--navy);text-decoration-thickness:.16em}
+.band--navy :is(p,li,dd) a:not(.btn):hover,.sky .crumbs a:hover{background-color:rgba(253,196,75,.28);color:var(--cream)}
+/* Components keep their own hover (the text-link highlight above must not reach them). */
+main .jump li a:hover,main .jump li a[aria-current="location"]{background-color:var(--navy);color:var(--cream);text-decoration:none}
+main li.node a:hover,main .band--navy li.node a:hover{background-color:transparent;color:var(--cream)}
+main .card h3 a:hover,main .rows--links .row h3 a:hover{background-color:transparent}
+/* Footer links: a gold line draws in under the link. */
+.footer-links a{position:relative}
+.footer-links a::after{content:"";position:absolute;left:0;right:0;bottom:.7rem;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform var(--t-base) var(--ease-out)}
+.footer-links a:hover::after,.footer-links a:focus-visible::after,.footer-links a[aria-current="page"]::after{transform:scaleX(1)}
+.footer-links a:hover{text-decoration:none}
 
 /* ---------- reduced motion: a calm version, not just one effect removed ----------
    No parallax, no drifting layers, no entrance or reveal movement, no hover lifts, no line drawing.
