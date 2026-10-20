@@ -13,7 +13,7 @@ The Curiohatch studio site (home, services, builds, work, about, contact, privac
 ```
 Portfolio/
 ├── index.html              # Curiohatch home page (replaces the old Two Desks home)
-├── 404.html                # Not-found page. Self-contained: inline CSS, one root-absolute home link (right once the domain is connected)
+├── 404.html                # Not-found page in the Curiohatch design. Served at any address, so its header, footer and links are root-absolute (tools/site.py handles that)
 ├── sitemap.xml, robots.txt # Written by tools/site.py (sitemap). Only work once the site is served from the domain root
 ├── css/site.css            # Styles for the Curiohatch pages only (one site: home, services, builds, work, about, contact, privacy, courses, learn)
 ├── js/site.js              # Menu drawer, scroll reveals, sky depth, click-to-load video, inquiry form states. Everything works without it
@@ -40,7 +40,7 @@ Portfolio/
 ├── services/builds/index.html  # How website builds work
 ├── work/index.html         # Personal and team projects, sample template
 ├── about/index.html        # Who runs Curiohatch, how projects are handled
-├── contact/index.html      # Inquiry form
+├── contact/index.html      # Inquiry form (Netlify Forms). contact/thanks/ is the branded page a no-JavaScript send lands on
 ├── privacy/index.html      # Privacy policy
 ├── ruhan/                  # Ruhan's own portfolio
 │   ├── Ruhan-portfolio.html
@@ -58,11 +58,11 @@ Portfolio/
     ├── classley/
     │   ├── classley.html   # The demo itself: the working app (sign-in screen first)
     │   ├── case-study.html # Write-up of the project, links to the demo
-    │   ├── css/            # classly-styles.css (demo) + case-study.css
-    │   └── js/             # classly-*.js (demo scripts) + case-study.js (screen-boot transition)
+    │   ├── css/            # classly-styles.css (demo). case-study.css is no longer used (kept)
+    │   └── js/             # classly-*.js (demo scripts). case-study.js (screen-boot transition) is no longer used (kept)
     ├── taqen/              # TAQEN Collection: no demo (the store is on Netlify), so just the write-up
     │   ├── case-study.html
-    │   ├── css/case-study.css  # copy of the Classly components, own file on purpose
+    │   ├── css/case-study.css  # no longer used (kept); the page now uses css/site.css
     │   └── img/            # logo-white.png, product-1..3.webp, and `1` (a stray one-byte file, kept)
     └── templates/
         ├── css/base.css, css/landing.css, js/landing.js   # Used by landing-page.html only
@@ -89,9 +89,9 @@ Portfolio/
 | `ruhan/services/` | Retired. `auditnfix.html` and `builds.html` are redirect stubs to the new Services and builds pages. `builds.css`, `builds.js`, `services.css` and `style.css` are kept but nothing loads them. |
 | `projects/` | Separate from every person folder. Holds all the projects we do, one subfolder per project. |
 | `projects/classley/` | Classly: a browser demo of language-center admin software (registration, class tracking, analytics). Plain HTML and JavaScript. Data is saved in the browser's localStorage, and demo sign-in details sit in client-side code, so it is a demo and not secure authentication. The repo has no database code. Designed by Barshon, who is not part of Curiohatch, and built with Ruhan. The folder and file names use `classley`; the visible name is Classly. |
-| `projects/classley/case-study.html` | What it does, how to try it, how it went. Own `css/case-study.css` and `js/case-study.js`; links to `classley.html`. "Open the live demo" plays a short screen-boot animation, then opens the demo (a plain 0.25 s fade for reduced motion; a normal link if JS is off or it's a new-tab click). |
+| `projects/classley/case-study.html` | What it does, how to try it, how it went. In the Curiohatch design (css/site.css, shared header, drawer and footer); links to `classley.html`. The old screen-boot animation and the drawn monitor were removed in the 2026-10-18 conversion; the wording is unchanged. |
 | `projects/taqen/` | TAQEN Collection: print-on-demand brand for faith-inspired apparel, built by a team of six. Paused in practice (store still online, nothing new added). Only a write-up lives here. |
-| `projects/taqen/case-study.html` | Neutral voice. Credits Ruhan for the website and first designs and describes the other contributors by role, with no names. Links out to the live store, Instagram, Pinterest and Facebook. Own `css/case-study.css`, no JavaScript. |
+| `projects/taqen/case-study.html` | Neutral voice. Credits Ruhan for the website and first designs and describes the other contributors by role, with no names. Links out to the live store, Instagram, Pinterest and Facebook. In the Curiohatch design since 2026-10-18; wording unchanged. |
 | `projects/templates/landing-page.html` | Generic one-page template for a trade or clinic: call button that stays on screen, services, three-step process, questions, final call to action. Uses sample text. Loads `css/base.css`, `css/landing.css`, `js/landing.js` and Google Fonts. |
 | `projects/templates/restraunt/` | Four-page restaurant template. Booking is a call or WhatsApp button only (no booking system). No JavaScript. Marked `noindex` until a real site replaces it. Its `img/` folder is missing in the repo (see Open items). |
 
@@ -121,7 +121,7 @@ Relative links that are in use (all start from the folder the page is in):
 | `work/index.html` | TAQEN / Classly case studies | `../projects/taqen/case-study.html`, `../projects/classley/case-study.html` |
 | `ruhan/Ruhan-portfolio.html` | Services / builds | `../services/`, `../services/builds/` |
 | `ruhan/Ruhan-portfolio.html` | Curiohatch home (footer) | `../index.html` |
-| case studies | Curiohatch home (brand link, footer) | `../../index.html` |
+| case studies | Curiohatch header, drawer and footer (written by `tools/site.py chrome`) | `../../` |
 | `projects/templates/restraunt/*.html` | portfolio (the "Site by" credit) | `../../../ruhan/Ruhan-portfolio.html` |
 
 - Curiohatch pages link to each other with folder links that end in a slash (`services/`), so they need a local web server for preview (for example `python -m http.server`), not a double-clicked file.
@@ -140,7 +140,7 @@ Relative links that are in use (all start from the folder the page is in):
   - `?exposure=1.8` scene brightness (default 1.55).
   - `?motion=full` pretends the system's "reduce motion" setting is off (also works on the Classly page). On Windows that setting is Settings > Accessibility > Visual effects > Animation effects.
   - `?capture` / `?capture=mobile` downloads the still picture for the fallback.
-- Curiohatch pages: no libraries (the menu drawer, reveals and depth are about 200 lines of plain JavaScript in `js/site.js`). Cross-page transitions use the browser's own `@view-transition` rule; browsers without it just navigate normally. Two variable WOFF2 fonts (Space Grotesk, IBM Plex Sans) are self-hosted from `assets/fonts/`, so the pages make no third-party requests on load. Only the contact form posts to an outside service. The portfolio, the case studies and the landing template still load Google Fonts, and the restaurant template uses system fonts only, because a client owns it. Pictures are WebP with `width` and `height` written on the tag.
+- Curiohatch pages: no libraries (the menu drawer, reveals, depth and the analytics choice are plain JavaScript in `js/site.js`). Google Analytics 4 (id in the `ANALYTICS` block) loads only after the visitor allows it (`docs/analytics.md`); the privacy page describes it. Cross-page transitions use the browser's own `@view-transition` rule; browsers without it just navigate normally. Two variable WOFF2 fonts (Space Grotesk, IBM Plex Sans) are self-hosted from `assets/fonts/`, so the pages make no third-party requests on load. Only the contact form posts to an outside service. The portfolio, the case studies and the landing template still load Google Fonts, and the restaurant template uses system fonts only, because a client owns it. Pictures are WebP with `width` and `height` written on the tag.
 - Contact form: a Netlify Forms form named `inquiry` (`data-netlify`, honeypot `_gotcha`). `js/site.js` posts it, urlencoded, to `/` and shows success only on a success response. The recipient email is set in the Netlify dashboard, not in the code. Delivery is not verified until a real test message arrives: `docs/contact-form.md`. `python tools/site.py check` fails if any `{{` placeholder returns.
 - Reduced motion: the 3D scene still runs but calm; links jump instead of scrolling; the Classly demo button fades. On the Curiohatch pages reduced motion turns off every animation and transition, the drifting backgrounds, the scroll reveals and the page transition; content appears at once and the drawer opens without sliding.
 - Hosting: Netlify (publishes the repository root, no build step). `tests/`, `tools/`, `docs/` and `content/` are therefore public addresses; `robots.txt` asks search engines to skip them. Keep nothing private in them.
@@ -157,7 +157,7 @@ Two pages in the same folder must never be able to change each other.
 6. **Template folders handed to a client are the exception.** `restraunt/` is not scoped, because the client owns the whole site and one plain stylesheet is easier to edit.
 7. **Cache busting:** pages link their own CSS/JS with a version, like `builds.css?v=5`. Bump the number in the HTML when you change the file.
 
-8. **The Curiohatch pages share one stylesheet, on purpose.** `css/site.css` styles home, services, builds, work, about, contact, privacy, courses and learn, which are one site. It is not linked from the portfolio, the case studies or the templates, and they never link it.
+8. **The Curiohatch pages share one stylesheet, on purpose.** `css/site.css` styles home, services, builds, work, about, contact, privacy, courses, learn, the two case studies, the 404 page and the case-study pages the admin panel makes, which are one site. It is not linked from the portfolio, the case studies or the templates, and they never link it.
 
 Known issue: none open. The audit page's old stylesheet naming problem went away when that page became a redirect stub. `ruhan/services/services.css` and `style.css` remain unlinked.
 

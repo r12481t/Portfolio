@@ -21,7 +21,7 @@ import argparse, datetime, difflib, glob, html, json, os, re, sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 DOMAIN = 'https://curiohatch.studio'
 YOUTUBE = 'https://www.youtube.com/@curiohatchstudio'
-CSS_V, JS_V, LEARN_JS_V = 2, 2, 1
+CSS_V, JS_V, LEARN_JS_V = 3, 3, 1
 TOPICS_FILE = os.path.join(ROOT, 'content', 'learn', 'topics.json')
 COURSES_FILE = os.path.join(ROOT, 'content', 'courses', 'courses.json')
 PRICING_FILE = os.path.join(ROOT, 'content', 'pricing.json')
@@ -38,7 +38,8 @@ PLACEHOLDER = 'ARTICLE_PLACEHOLDER'
 
 # Curiohatch pages that carry the shared chrome. Topic pages under learn/ are added automatically.
 STATIC_PAGES = ['index.html', 'services/index.html', 'services/builds/index.html', 'work/index.html', 'about/index.html',
-                'contact/index.html', 'privacy/index.html', 'courses/index.html', 'learn/index.html']
+                'contact/index.html', 'privacy/index.html', 'courses/index.html', 'learn/index.html',
+                'projects/taqen/case-study.html', 'projects/classley/case-study.html', '404.html', 'contact/thanks/index.html']
 # Pages listed in sitemap.xml besides published topics (project write-ups are public work evidence). The two case studies are
 # written without .html because that is the address Netlify serves for them (checked on the live site).
 SITEMAP_PAGES = ['', 'services/', 'services/builds/', 'work/', 'about/', 'contact/', 'privacy/', 'courses/', 'learn/',
@@ -101,6 +102,8 @@ def all_chrome_pages():
 
 # ---------------------------------------------------------------- shared chrome
 def prefix(rel):
+    if rel == '404.html':
+        return '/'      # the error page is served at any address, so its links must start from the site root
     return '../' * rel.count('/')
 
 
@@ -182,7 +185,7 @@ def render_footer(rel):
         </ul>
       </nav>
     </div>
-    <p class="footer-small"><span>&copy; 2026 Curiohatch</span><a href="#main">Back to top</a></p>
+    <p class="footer-small"><span>&copy; 2026 Curiohatch</span><button class="linklike" type="button" data-analytics-settings hidden>Analytics settings</button><a href="#main">Back to top</a></p>
   </div>
 </footer>
 <div class="drawer" id="drawer">

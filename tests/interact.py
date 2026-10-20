@@ -1,5 +1,5 @@
 """Interaction tests for the Curiohatch redesign. Prints PASS/FAIL per check."""
-import sys, os, json, threading, http.server, socketserver, functools, json
+import re, sys, os, json, threading, http.server, socketserver, functools, json
 from playwright.sync_api import sync_playwright
 repo=os.path.abspath(sys.argv[1] if len(sys.argv)>1 else os.path.join(os.path.dirname(__file__),'..')); PORT=8767
 socketserver.TCPServer.allow_reuse_address=True
@@ -12,6 +12,10 @@ def check(name,ok,detail=''):
     res.append((name,bool(ok),detail)); print(('PASS ' if ok else 'FAIL ')+name+(f'  [{detail}]' if detail else ''))
 with sync_playwright() as p:
     b=p.chromium.launch()
+    _orig_new_context=b.new_context
+    def _declined(**kw):
+        c=_orig_new_context(**kw); c.add_init_script("try{localStorage.setItem('curiohatch-analytics','decline')}catch(e){}"); return c
+    b.new_context=_declined
     # ---------- drawer on phone
     ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page(); errs=[]
     pg.on('pageerror',lambda e:errs.append(str(e)))
@@ -112,7 +116,8 @@ with sync_playwright() as p:
     ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page(); pg.goto(base+'contact/?type=audit'); pg.wait_for_timeout(300)
     check('?type=audit preselects the audit option',pg.eval_on_selector('#inquiry-form [name=inquiry_type]','e=>e.value')=='audit')
     check('form is marked for Netlify (data-netlify, name, honeypot, POST)',pg.evaluate("(()=>{const f=document.getElementById('inquiry-form');return f.hasAttribute('data-netlify')&&f.getAttribute('name')==='inquiry'&&f.getAttribute('netlify-honeypot')==='_gotcha'&&f.method==='post'})()"))
-    check('form has no placeholder action',not pg.evaluate("document.getElementById('inquiry-form').getAttribute('action')"))
+    check('form posts natively to the branded thank-you page when JavaScript is off',pg.evaluate("document.getElementById('inquiry-form').getAttribute('action')")=='/contact/thanks/' and os.path.exists(os.path.join(repo,'contact','thanks','index.html')))
+    check('form fields are general (type of business, location), not trade-specific',pg.locator('[name=business_type]').count()==1 and pg.locator('[name=location]').count()==1 and pg.locator('[name=trade]').count()==0 and 'plumb' not in pg.inner_text('form').lower())
     pg.click('#inquiry-form button[type=submit]'); pg.wait_for_timeout(200)
     check('empty submit shows errors and focuses first field',pg.evaluate("document.activeElement.name")=='name' and 'fix' in pg.inner_text('#form-status').lower())
     fill_valid(pg); pg.click('#inquiry-form button[type=submit]'); pg.wait_for_timeout(500)
@@ -205,6 +210,96 @@ with sync_playwright() as p:
     pg.hover('.footer-links a >> nth=0'); pg.wait_for_timeout(500)
     check('footer link draws its gold line on hover',pg.evaluate("getComputedStyle(document.querySelector('.footer-links a'),'::after').transform")=='matrix(1, 0, 0, 1, 0, 0)')
     ctx.close()
+    # ---------- converted pages: case studies, 404, redirect stub (Curiohatch design)
+    for path in ('projects/taqen/case-study.html','projects/classley/case-study.html','404.html'):
+        ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page(); reqs=[]; errs=[]
+        pg.on('request',lambda r: reqs.append(r.url)); pg.on('pageerror',lambda e:errs.append(str(e)))
+        pg.goto(base+path); pg.wait_for_timeout(700)
+        sheets=pg.eval_on_selector_all('link[rel=stylesheet]','els=>els.map(e=>e.getAttribute("href"))')
+        check(path+': uses the shared Curiohatch stylesheet only',len(sheets)==1 and 'css/site.css' in sheets[0],str(sheets))
+        check(path+': makes no request to Google Fonts or any other site',not any(('googleapis' in r or 'gstatic' in r) for r in reqs) and all(r.startswith(base) for r in reqs),str([r for r in reqs if not r.startswith(base)][:3]))
+        check(path+': has the Curiohatch header, one h1 and the footer',pg.locator('.site-header .brand').count()==1 and pg.locator('h1').count()==1 and pg.locator('.site-footer .footer-grid').count()==1)
+        bad=pg.evaluate("[...document.images].filter(i=>i.complete===false||i.naturalWidth===0).map(i=>i.getAttribute('src'))")
+        check(path+': every image loads',not bad,str(bad))
+        pg.click('.nav-toggle'); pg.wait_for_timeout(400)
+        opened=pg.evaluate("document.getElementById('drawer').classList.contains('is-open')"); pg.keyboard.press('Escape'); pg.wait_for_timeout(350)
+        check(path+': menu drawer opens, and Escape closes it',opened and not pg.evaluate("document.getElementById('drawer').classList.contains('is-open')"))
+        check(path+': no script errors',not errs,str(errs))
+        ctx.close()
+    ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page(); pg.goto(base+'404.html'); pg.wait_for_timeout(300)
+    hrefs=pg.eval_on_selector_all('main a, .site-footer a, .site-nav a','els=>els.map(e=>e.getAttribute("href"))')
+    check('404: every internal link starts from the site root (the page is served at any address)',all(h.startswith('/') or h.startswith('http') or h.startswith('#') for h in hrefs),str([h for h in hrefs if not(h.startswith('/') or h.startswith('http') or h.startswith('#'))][:3]))
+    check('404 is noindex',pg.locator('meta[name=robots][content=noindex]').count()==1)
+    ctx.close()
+    for stub in ('ruhan/services/auditnfix.html','ruhan/services/builds.html'):
+        t=open(os.path.join(repo,stub),encoding='utf-8').read()
+        check(stub+': keeps its instant refresh and noindex, and uses the Curiohatch stylesheet (read from the file; a browser leaves it at once)','http-equiv="refresh"' in t and 'content="noindex"' in t and 'css/site.css' in t and 'googleapis' not in t)
+    # ---------- home page: general, brand-led
+    ctx=b.new_context(viewport={'width':360,'height':800}); pg=ctx.new_page(); pg.goto(base+'index.html'); pg.wait_for_timeout(800)
+    body=pg.inner_text('body').lower(); title=pg.title().lower()
+    check('home: no trade-specific wording (plumber, electrician, trade) anywhere on the page or in the title',not any(w in body or w in title for w in ('plumber','electrician','trade')),'')
+    check('home: title and description speak to small businesses in general','small businesses' in title and 'small businesses' in (pg.get_attribute('meta[name=description]','content') or '').lower())
+    check('home: the hero shows the Curiohatch badge and it loads',pg.evaluate("(()=>{const i=document.querySelector('.hero-badge img');return !!i&&i.complete&&i.naturalWidth===480})()"))
+    check('home: one h1, a gold audit button and a services button in the hero',pg.locator('h1').count()==1 and pg.locator('.hero .btn--gold').count()==1 and pg.locator('.hero a[href="services/"]').count()==1)
+    check('home: the audit section keeps all five check links and they resolve',pg.locator('#audit-start .node a').count()==5 and all(pg.request.get(base+'services/'+h.split('services/')[1].split('#')[0]).status==200 for h in pg.eval_on_selector_all('#audit-start .node a','e=>e.map(a=>a.getAttribute("href"))')))
+    check('home: the four "How we work" principles are present',pg.locator('.values li').count()==4)
+    check('home: no horizontal overflow at 360',pg.evaluate("document.documentElement.scrollWidth-document.documentElement.clientWidth")<=0)
+    ctx.close()
+    # ---------- analytics: consent first, Google only after "Allow"
+    GA='G-B29TWFJY0Q'
+    check('analytics id appears once, in site.js only',open(os.path.join(repo,'js','site.js'),encoding='utf-8').read().count(GA)==1 and not any(GA in open(os.path.join(repo,f),encoding='utf-8').read() for f in ('index.html','contact/index.html','services/index.html')))
+    def gctx(**kw):
+        c=_orig_new_context(viewport={'width':390,'height':800},**kw); pg=c.new_page(); reqs=[]
+        pg.on('request',lambda r: reqs.append(r.url))
+        pg.route('https://www.googletagmanager.com/**',lambda route: route.fulfill(status=200,content_type='application/javascript',body='window.__gtm=1;'))
+        return c,pg,reqs
+    goog=lambda reqs:[r for r in reqs if 'google' in r]
+    ctx,pg,reqs=gctx(); pg.goto(base+'index.html'); pg.wait_for_timeout(1200)
+    check('analytics: first visit shows the notice and requests nothing from Google',pg.locator('.consent').is_visible() and not goog(reqs),str(goog(reqs)))
+    hts=pg.evaluate("[...document.querySelectorAll('.consent button, .consent a')].map(e=>e.getBoundingClientRect().height)")
+    check('analytics: the notice has Allow, No thanks and Privacy, each at least 48 px tall',len(hts)==3 and min(hts)>=48,str(hts))
+    def lum(c):
+        r,g,bb=[int(x) for x in re.findall(r'\d+',c)[:3]]
+        f=lambda v:(v/255)/12.92 if v/255<=.03928 else (((v/255)+.055)/1.055)**2.4
+        return .2126*f(r)+.7152*f(g)+.0722*f(bb)
+    cols=pg.evaluate("[...document.querySelectorAll('.consent button')].map(e=>[getComputedStyle(e).color,getComputedStyle(e).backgroundColor,getComputedStyle(e.closest('.consent')).backgroundColor])")
+    def ratio(fg,bg):
+        a,b2=sorted([lum(fg),lum(bg)],reverse=True); return (a+.05)/(b2+.05)
+    ratios=[ratio(c[0], c[1] if 'rgba(0, 0, 0, 0)' not in c[1] else c[2]) for c in cols]
+    check('analytics: both buttons are readable (contrast at least 4.5:1, so "No thanks" cannot vanish)',len(ratios)==2 and min(ratios)>=4.5,str([round(r,1) for r in ratios]))
+    check('analytics: the notice does not trap focus or block the Menu button',pg.evaluate("(()=>{const r=document.querySelector('.nav-toggle').getBoundingClientRect();const e=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return !!e.closest('.nav-toggle')})()"))
+    pg.click('.nav-toggle'); pg.wait_for_timeout(400)
+    check('analytics: the notice is made inert while the menu drawer is open',pg.evaluate("document.querySelector('.consent').hasAttribute('inert')"))
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(350)
+    pg.click('.consent button:has-text("No thanks")'); pg.wait_for_timeout(300)
+    check('analytics: "No thanks" hides the notice, remembers it and still requests nothing',pg.locator('.consent').count()==0 and pg.evaluate("localStorage.getItem('curiohatch-analytics')")=='decline' and not goog(reqs))
+    pg.reload(); pg.wait_for_timeout(1000)
+    check('analytics: the choice is remembered on the next page load',pg.locator('.consent').count()==0 and not goog(reqs))
+    check('analytics: footer "Analytics settings" is available with JavaScript',pg.locator('[data-analytics-settings]').first.is_visible())
+    pg.evaluate("document.cookie='_ga=GA1.1.1.1; path=/'; document.cookie='_ga_ABC=GS1.1; path=/'")
+    pg.locator('[data-analytics-settings]').first.click(); pg.wait_for_timeout(300)
+    check('analytics: settings reopens the notice and moves focus into it',pg.locator('.consent').is_visible() and pg.evaluate("!!document.activeElement.closest('.consent')"))
+    pg.click('.consent button:has-text("Allow analytics")'); pg.wait_for_timeout(900)
+    check('analytics: "Allow" loads the Google tag for the right id and starts the data layer',any(('googletagmanager.com/gtag/js?id='+GA) in r for r in reqs) and pg.evaluate("window.dataLayer.some(a=>a[0]==='config'&&a[1]==='"+GA+"')") and pg.evaluate("localStorage.getItem('curiohatch-analytics')")=='allow',str(goog(reqs)))
+    n=len(goog(reqs)); pg.reload(); pg.wait_for_timeout(1000)
+    check('analytics: once allowed, it loads on the next page without asking again',pg.locator('.consent').count()==0 and len(goog(reqs))>n)
+    pg.locator('[data-analytics-settings]').first.click(); pg.click('.consent button:has-text("No thanks")'); pg.wait_for_timeout(300)
+    check('analytics: changing to "No thanks" switches the tag off and removes its cookies',pg.evaluate("window['ga-disable-"+GA+"']===true") and pg.evaluate("!/(^|; )_ga/.test(document.cookie)"))
+    ctx.close()
+    ctx=_orig_new_context(viewport={'width':390,'height':800}); ctx.add_init_script("Object.defineProperty(navigator,'globalPrivacyControl',{value:true})")
+    pg=ctx.new_page(); reqs=[]; pg.on('request',lambda r: reqs.append(r.url)); pg.goto(base+'index.html'); pg.wait_for_timeout(1000)
+    check('analytics: Global Privacy Control is respected (no notice, no settings link, no Google request)',pg.locator('.consent').count()==0 and not pg.locator('[data-analytics-settings]').first.is_visible() and not goog(reqs))
+    ctx.close()
+    ctx=_orig_new_context(viewport={'width':390,'height':800},java_script_enabled=False); pg=ctx.new_page(); reqs=[]; pg.on('request',lambda r: reqs.append(r.url)); pg.goto(base+'index.html'); pg.wait_for_timeout(600)
+    check('analytics: with JavaScript off there is no notice, no tag and no hidden settings button showing',pg.locator('.consent').count()==0 and not goog(reqs) and not pg.locator('[data-analytics-settings]').first.is_visible())
+    ctx.close()
+    ctx,pg,reqs=gctx(); pg.goto(base+'privacy/'); pg.wait_for_timeout(800)
+    check('analytics: the privacy page describes it (consent, cookies, Google, change of choice, GPC) and no longer says there is none','Google Analytics 4' in pg.inner_text('main') and 'only if you allow it' in pg.inner_text('main') and 'Global Privacy Control' in pg.inner_text('main') and 'does not run analytics' not in pg.inner_text('main'))
+    ctx.close()
+    for path in ('contact/thanks/',):
+        ctx=_orig_new_context(viewport={'width':390,'height':800}); ctx.add_init_script("localStorage.setItem('curiohatch-analytics','decline')"); pg=ctx.new_page(); pg.goto(base+path); pg.wait_for_timeout(500)
+        check(path+': noindex, one h1, shared header and footer, honest wording',pg.locator('meta[name=robots][content=noindex]').count()==1 and pg.locator('h1').count()==1 and pg.locator('.site-header').count()==1 and 'If you just sent' in pg.inner_text('main'))
+        ctx.close()
     # ---------- view transitions API present, no errors on cross-page nav
     ctx=b.new_context(viewport={'width':1280,'height':800}); pg=ctx.new_page(); errs=[]; pg.on('pageerror',lambda e:errs.append(str(e))); pg.on('console',lambda m: errs.append(m.text) if m.type=='error' else None)
     pg.goto(base+'index.html'); pg.click('.site-nav a[href="services/"]'); pg.wait_for_load_state('load'); pg.wait_for_timeout(600)

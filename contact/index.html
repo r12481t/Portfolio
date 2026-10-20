@@ -22,7 +22,7 @@
 <link rel="preload" href="../assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/ibm-plex-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.className+=' js'</script>
-<link rel="stylesheet" href="../css/site.css?v=2">
+<link rel="stylesheet" href="../css/site.css?v=3">
 </head>
 <body>
 <!-- CHROME:HEADER:START -->
@@ -50,7 +50,7 @@
 
 <section class="band band--cream2 horizon">
   <div class="wrap">
-    <form class="form" id="inquiry-form" name="inquiry" method="POST" data-netlify="true" netlify-honeypot="_gotcha" aria-describedby="form-help">
+    <form class="form" id="inquiry-form" name="inquiry" method="POST" action="/contact/thanks/" data-netlify="true" netlify-honeypot="_gotcha" aria-describedby="form-help">
       <p id="form-help" class="muted">Fields marked <span class="req" aria-hidden="true">*</span><span class="sr-only"> with a star</span> are required.</p>
       <div class="field">
         <label for="inquiry_type">What do you need? <span class="req" aria-hidden="true">*</span></label>
@@ -76,17 +76,12 @@
         <span class="field-error" id="website-error"></span>
       </div>
       <div class="field">
-        <label for="trade">Your trade <span class="hint">Optional</span></label>
-        <select id="trade" name="trade">
-          <option value="">Choose one</option>
-          <option>Plumbing</option>
-          <option>Electrical</option>
-          <option>Other trade or service</option>
-        </select>
+        <label for="business_type">Type of business <span class="hint">Optional</span></label>
+        <input id="business_type" name="business_type" type="text" autocomplete="off" placeholder="For example: bakery, consultant, clinic">
       </div>
       <div class="field">
-        <label for="city">City and state <span class="hint">Optional</span></label>
-        <input id="city" name="city_state" type="text" autocomplete="address-level2">
+        <label for="city">Where you are based <span class="hint">Optional</span></label>
+        <input id="city" name="location" type="text" autocomplete="address-level2" placeholder="City and country">
       </div>
       <div class="field">
         <label for="message">Message <span class="hint">Optional</span></label>
@@ -162,7 +157,7 @@
         </ul>
       </nav>
     </div>
-    <p class="footer-small"><span>&copy; 2026 Curiohatch</span><a href="#main">Back to top</a></p>
+    <p class="footer-small"><span>&copy; 2026 Curiohatch</span><button class="linklike" type="button" data-analytics-settings hidden>Analytics settings</button><a href="#main">Back to top</a></p>
   </div>
 </footer>
 <div class="drawer" id="drawer">
@@ -195,6 +190,6 @@
   </div>
 </div>
 <!-- CHROME:FOOTER:END -->
-<script src="../js/site.js?v=2" defer></script>
+<script src="../js/site.js?v=3" defer></script>
 </body>
 </html>

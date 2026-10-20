@@ -1,37 +1,4 @@
 {
   "schema": 1,
-  "topics": [
-    {
-      "id": "t001",
-      "slug": "your-first-look-at-web-development",
-      "status": "published",
-      "title": "Your First Look at Web Development",
-      "summary": "An introduction to web development and the roles HTML, CSS, and responsive design play in creating websites.",
-      "category": "Web Development",
-      "subtopics": [
-        "Structure of a web page",
-        "Visual styling of a website",
-        "Adapting layouts to different screen sizes"
-      ],
-      "tags": [
-        "web development",
-        "html",
-        "css",
-        "responsive design",
-        "beginners"
-      ],
-      "concepts": [
-        "HTML",
-        "CSS",
-        "Responsive design",
-        "Web development"
-      ],
-      "videoId": "VpF2MWFZe7w",
-      "publishedAt": "2026-10-18",
-      "updatedAt": "",
-      "prerequisites": [],
-      "related": [],
-      "courses": []
-    }
-  ]
+  "topics": []
 }

@@ -2,7 +2,7 @@
 
 The form on `/contact/` is a Netlify Forms form named `inquiry`: `data-netlify="true"`, a hidden spam-trap field called
 `_gotcha` (`netlify-honeypot`), and `method="POST"`. `js/site.js` validates it, then sends a urlencoded POST to `/` with
-`form-name=inquiry`. With JavaScript off, the browser posts the form normally and Netlify shows its own thank-you page.
+`form-name=inquiry`. With JavaScript off, the browser posts the form normally and lands on `/contact/thanks/`, a branded page that says "If you just sent the contact form, we have it and will reply by email" (the form's `action`). With JavaScript on, the same page text appears inline instead and the visitor stays on the contact page.
 
 No email address, endpoint or secret is in the code. The recipient is set in the Netlify dashboard.
 
@@ -36,6 +36,6 @@ reCAPTCHA option needs a small code change; ask before adding it.
 
 ## Fields
 
-`inquiry_type` (audit, website, fixes), `name`, `email`, `website`, `trade`, `city_state`, `message`, `_gotcha`.
+`inquiry_type` (audit, website, fixes), `name`, `email`, `website`, `business_type`, `location`, `message`, `_gotcha`.
 `?type=audit|website|fixes` in the address preselects the type. If you add a field, add it to the HTML only; the script
 sends everything in the form.

@@ -219,7 +219,8 @@ a:hover{text-decoration-thickness:.16em}
 /* ---------- hero ---------- */
 .hero.sky{padding-block:clamp(var(--s6),6vw,5.5rem) clamp(var(--s8),9vw,7.5rem)}
 .hero.sky .hero-grid{align-items:center}
-.hero.sky h1{max-width:15ch}
+.hero.sky h1{max-width:16ch}
+.hero.sky .mono-label{margin-bottom:var(--s2)}
 .hero.sky .hero-note{color:var(--cream-2)}
 .hero.sky .hero-note a{color:var(--cream)}
 
@@ -258,8 +259,8 @@ a:hover{text-decoration-thickness:.16em}
 @media (prefers-reduced-motion:no-preference){
   .hero-in{animation:rise var(--t-slow) var(--ease-out) both;animation-delay:calc(var(--n,0) * 90ms + 60ms)}
   .hero h1.hero-in{animation-name:rise-t}
-  .map-lines polyline{stroke-dasharray:1;animation:draw 1.4s var(--ease-io) .35s both}
-  .node{animation:rise var(--t-slow) var(--ease-out) both;animation-delay:calc(var(--n,0) * 110ms + 350ms)}
+  .audit-map.is-in .map-lines polyline,.hero .map-lines polyline{stroke-dasharray:1;animation:draw 1.4s var(--ease-io) .2s both}
+  .audit-map.is-in .node{animation:rise var(--t-slow) var(--ease-out) both;animation-delay:calc(var(--n,0) * 110ms + 250ms)}
 }
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes rise-t{from{transform:translateY(14px)}to{transform:none}}
@@ -499,6 +500,52 @@ main .card h3 a:hover,main .rows--links .row h3 a:hover{background-color:transpa
 .footer-links a::after{content:"";position:absolute;left:0;right:0;bottom:.7rem;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform var(--t-base) var(--ease-out)}
 .footer-links a:hover::after,.footer-links a:focus-visible::after,.footer-links a[aria-current="page"]::after{transform:scaleX(1)}
 .footer-links a:hover{text-decoration:none}
+
+/* ---------- case-study pages (TAQEN, Classly) and the 404 page ---------- */
+.case-head{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s3)}
+.case-head h1{margin:0}
+.case-logo{width:72px;height:72px;border-radius:var(--radius);flex:none}
+.page-note{margin:var(--s2) 0 0;max-width:40rem;font-size:1rem;color:var(--cream-2)}
+.lookbook{list-style:none;margin:0 0 var(--s4);padding:0;display:grid;gap:var(--s2);grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr))}
+.lookbook figure{margin:0}
+.lookbook img{display:block;width:100%;height:auto;border-radius:var(--radius);border:1px solid var(--rule)}
+.lookbook a{display:block;border-radius:var(--radius);transition:transform var(--t-base) var(--ease-out)}
+.lookbook a:hover{transform:translateY(-3px)}
+.lookbook figcaption{margin-top:.25rem;font-size:1rem;color:var(--muted)}
+.facts{display:grid;gap:var(--s3) var(--s4);margin:0;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}
+.facts dt{font-family:var(--head);font-weight:600;font-size:.875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:.25rem 0 0}
+.spec--numbered{counter-reset:n}
+.spec--numbered dt::before{counter-increment:n;content:counter(n,decimal-leading-zero) "  ";color:var(--cyan);font-weight:700}
+.spec dd>div>p:first-child{margin-top:0}
+.link-list{list-style:none;margin:var(--s3) 0 0;padding:0;display:grid;gap:var(--s2);grid-template-columns:repeat(auto-fit,minmax(14rem,1fr))}
+.link-list a{display:flex;flex-direction:column;justify-content:center;min-height:56px;padding:var(--s2) var(--s3);background:var(--white);border:2px solid var(--navy);border-radius:var(--radius);color:var(--navy);text-decoration:none;transition:background-color var(--t-fast),color var(--t-fast)}
+.link-list a:hover{background:var(--navy);color:var(--cream)}
+.link-list .where{font-family:var(--head);font-weight:700}
+.link-list .what-url{font-size:1rem;overflow-wrap:anywhere}
+
+/* ---------- brand mark in the hero, and the "How we work" principles ---------- */
+.hero-badge{display:grid;place-items:center}
+.hero-badge img{display:block;width:min(100%,22rem);height:auto;filter:drop-shadow(0 0 48px rgba(253,196,75,.22))}
+@media (max-width:51.99em){.hero-badge img{width:min(70%,13rem);margin-top:var(--s2)}}
+.values{list-style:none;margin:var(--s4) 0 0;padding:0;display:grid;gap:var(--s4) var(--s4)}
+@media (min-width:40em){.values{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:80em){.values{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.values li{border-top:1px solid var(--glow);padding-top:var(--s2)}
+.values h3{font-size:clamp(1.5rem,1.2rem + 1.2vw,2rem);margin:0 0 var(--s1);color:var(--gold)}
+.values p{margin:0;color:var(--cream-2)}
+
+/* ---------- analytics notice and footer settings link ---------- */
+.consent{position:fixed;left:12px;right:12px;bottom:12px;z-index:40;max-width:32rem;margin:0 auto;background:var(--navy);color:var(--cream);border:1px solid var(--glow);border-radius:var(--radius);padding:var(--s2) var(--s3);box-shadow:0 8px 30px rgba(1,16,34,.45)}
+.consent p{margin:0 0 var(--s2);font-size:1rem}
+.consent .btn-row{margin:0;gap:var(--s1) var(--s2);align-items:center}
+.consent .btn--line{background:transparent;color:var(--cream);border-color:var(--cream)}
+.consent .btn--line:hover{background:rgba(254,240,213,.14);color:var(--cream)}
+.consent a{color:var(--cream);min-height:48px;display:inline-flex;align-items:center}
+.consent :focus-visible{outline-color:var(--cyan-light)}
+@media (min-width:52em){.consent{left:var(--s3);right:auto;bottom:var(--s3);margin:0;max-width:30rem}}
+@media print{.consent{display:none}}
+.linklike{min-height:48px;padding:0;background:none;border:0;color:inherit;font:inherit;text-decoration:underline;cursor:pointer}
 
 /* ---------- reduced motion: a calm version, not just one effect removed ----------
    No parallax, no drifting layers, no entrance or reveal movement, no hover lifts, no line drawing.

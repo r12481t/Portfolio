@@ -1,160 +1,184 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Classly | Curiohatch</title>
+<meta name="description" content="Classly is admin software for a language center: student registration with fees, class tracking, course pricing, staff accounts and analytics. Built as a demo for an English language teaching agency. Try it live.">
+<meta name="theme-color" content="#011022">
 <link rel="canonical" href="https://curiohatch.studio/projects/classley/case-study">
-<meta name="description" content="Classly is admin software for a language center: student registration with fees, class tracking, course pricing, staff accounts and analytics. Built as a demo for an English language teaching agency. Try it live." />
-<meta name="theme-color" content="#1a1410" />
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Classly | Curiohatch" />
-<meta property="og:description" content="Admin software for a language center. Built as a demo for an English language teaching agency. Try it live, no signup." />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%99%3C/text%3E%3C/svg%3E" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/case-study.css?v=4" />
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Curiohatch">
+<meta property="og:title" content="Classly | Curiohatch">
+<meta property="og:description" content="Admin software for a language center. Built as a demo for an English language teaching agency. Try it live, no signup.">
+<meta property="og:url" content="https://curiohatch.studio/projects/classley/case-study">
+<meta property="og:image" content="https://curiohatch.studio/assets/brand/social-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/brand/favicon.ico" sizes="48x48">
+<link rel="icon" href="../../assets/brand/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../../assets/brand/apple-touch-icon.png">
+<link rel="preload" href="../../assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/ibm-plex-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.className+=' js'</script>
+<link rel="stylesheet" href="../../css/site.css?v=3">
 </head>
-<!-- Project page for the Classly demo. No 3D scene here, so it opens fast.
-     The demo itself is classley.html, in this same folder. -->
 <body>
-
-<a href="#main" class="skip-link">Skip to content</a>
-<div class="backdrop" aria-hidden="true"></div>
-
-<nav aria-label="Primary">
-  <a href="../../index.html" class="brand">Curiohatch</a>
-  <a class="nav-link" href="#try">Try it</a>
-</nav>
-
+<!-- CHROME:HEADER:START -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../../"><img src="../../assets/brand/wordmark-cream-320.webp" width="160" height="32" alt="Curiohatch"></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="drawer" hidden>Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="../../services/">Services</a></li><li><a href="../../work/">Work</a></li><li><a href="../../about/">About</a></li><li><a href="../../contact/">Contact</a></li>
+        <li><a class="btn btn--gold" href="../../contact/?type=audit">Get a free audit</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<!-- CHROME:HEADER:END -->
 <main id="main">
-
-  <section class="hero" aria-labelledby="title">
-    <div class="hero-copy">
-      <p class="label mono">Language center software</p>
-      <h1 id="title">Classly</h1>
-      <p class="lede">Sign students up, take fees, tick off classes, check the numbers.</p>
-      <div class="hero-action">
-        <a class="btn" href="classley.html" data-boot>Open the live demo</a>
-        <p class="note mono">No signup. Data stays in your browser.</p>
-      </div>
-    </div>
-
-    <!-- The screen lists the demo's real sections. To show a real screenshot instead, replace the
-         .screen-menu list and .screen-prompt with:
-         <img src="img/registration.webp" alt="..." width="1200" height="750" /> -->
-    <div class="monitor" aria-hidden="true">
-      <div class="monitor-bezel">
-        <div class="monitor-screen mono">
-          <p class="screen-title">classly <span>demo</span></p>
-          <ul class="screen-menu">
-            <li><span>1</span>Course Registration</li>
-            <li><span>2</span>Class Counter</li>
-            <li><span>3</span>Courses &amp; Pricing</li>
-            <li><span>4</span>Staff Accounts</li>
-            <li><span>5</span>Analytics</li>
-          </ul>
-          <p class="screen-prompt">sign in as any account_</p>
-        </div>
-      </div>
-      <div class="monitor-neck"></div>
-      <div class="monitor-base"></div>
-    </div>
-  </section>
-
-  <section class="facts-strip" aria-label="Project facts">
-    <dl class="facts">
-      <div>
-        <dt class="mono">Built for</dt>
-        <dd>An English language teaching agency</dd>
-      </div>
-      <div>
-        <dt class="mono">Outcome</dt>
-        <dd>A demo for the agency. It didn't lead to a sale.</dd>
-      </div>
-      <div>
-        <dt class="mono">Built by</dt>
-        <dd>Ruhan Tahlil and Barshon. Design and systems design by Barshon.</dd>
-      </div>
-      <div>
-        <dt class="mono">Built with</dt>
-        <dd>HTML, JavaScript, browser localStorage</dd>
-      </div>
-    </dl>
-  </section>
-
-  <section class="what" aria-labelledby="what-title">
-    <h2 id="what-title">What it does</h2>
-    <!-- Screenshots, if we add them, go between the heading and the list:
-    <figure class="shot">
-      <img src="img/registration.webp" alt="The registration form, step 2, choosing courses" width="1200" height="750" loading="lazy" />
-      <figcaption>Registration, step 2.</figcaption>
-    </figure> -->
-    <div class="spec">
-      <div class="spec-row">
-        <h3>Course Registration</h3>
-        <p>A three-step form: student details, courses, then fees and payment. It takes individual courses and package deals, works out the total as you pick, and keeps track of what's paid and what's still due. It also records which account registered the student, so the referral credit goes to the right person.</p>
-      </div>
-      <div class="spec-row">
-        <h3>Class Counter</h3>
-        <p>Tick off classes as they happen. Today's classes sit in one place, and you can see your own recent ticks.</p>
-      </div>
-      <div class="spec-row">
-        <h3>Courses &amp; Pricing</h3>
-        <p>The list of courses and what each one costs, in one place you can edit.</p>
-      </div>
-      <div class="spec-row">
-        <h3>Staff Accounts</h3>
-        <p>Manage who can sign in.</p>
-      </div>
-      <div class="spec-row">
-        <h3>Analytics</h3>
-        <p>An overview of how the center is doing.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="try" class="try" aria-labelledby="try-title">
-    <div class="try-copy">
-      <h2 id="try-title">Try it</h2>
-      <p class="lede">It's a working app, so you can use it yourself.</p>
-      <ol class="steps">
-        <li>Open the demo.</li>
-        <li>On the sign-in screen, pick any account under "Try it as". No signup.</li>
-        <li>Register a student, tick a class, look at the analytics.</li>
-      </ol>
-    </div>
-    <div class="try-action">
-      <a class="btn" href="classley.html" data-boot>Open the live demo</a>
-      <p class="note mono">Everything you do is saved only in your browser. The Reset demo data button puts it back the way it was.</p>
-    </div>
-  </section>
-
-  <section class="notes" aria-label="Notes">
-    <div>
-      <h2>How it's built</h2>
-      <p>The demo is plain HTML and JavaScript. It runs in your browser and saves to the browser's localStorage, so there is no server and no account. It is a demo, not production sign-in.</p>
-    </div>
-    <div>
-      <h2>How it went</h2>
-      <p>Classly was built as a demo for an English language teaching agency. It didn't lead to a sale. The app still works from start to finish, so it lives here as a project you can try.</p>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <p class="mono">A personal and team project, shown on <a href="../../index.html">Curiohatch</a>.</p>
-</footer>
-
-<!-- Screen-boot transition, played by js/case-study.js when a demo button is pressed (full power-on, or a plain fade for reduced motion) -->
-<div class="boot" aria-hidden="true">
-  <div class="boot-panel"></div>
-  <div class="boot-line"></div>
-  <p class="boot-text mono">&gt; classly_</p>
+<div class="sky sky--orbit band--navy">
+  <div class="wrap page-head">
+    <p class="crumbs"><a href="../../work/">Work</a> &middot; Language center software</p>
+    <h1>Classly</h1>
+    <p class="lede">Sign students up, take fees, tick off classes, check the numbers.</p>
+    <div class="btn-row"><a class="btn btn--gold" href="classley.html">Open the live demo</a></div>
+    <p class="page-note">No signup. Data stays in your browser.</p>
+  </div>
 </div>
-
-<script src="js/case-study.js?v=3" defer></script>
+<section class="band horizon">
+  <div class="wrap" data-reveal>
+    <dl class="facts">
+      <div><dt>Built for</dt><dd>An English language teaching agency</dd></div>
+      <div><dt>Outcome</dt><dd>A demo for the agency. It didn't lead to a sale.</dd></div>
+      <div><dt>Built by</dt><dd>Ruhan Tahlil and Barshon. Design and systems design by Barshon.</dd></div>
+      <div><dt>Built with</dt><dd>HTML, JavaScript, browser localStorage</dd></div>
+    </dl>
+  </div>
+</section>
+<section class="band band--cream2">
+  <div class="wrap" data-reveal>
+    <h2>What it does</h2>
+    <dl class="spec">
+      <dt>Course Registration</dt>
+      <dd><p>A three-step form: student details, courses, then fees and payment. It takes individual courses and package deals, works out the total as you pick, and keeps track of what's paid and what's still due. It also records which account registered the student, so the referral credit goes to the right person.</p></dd>
+      <dt>Class Counter</dt>
+      <dd><p>Tick off classes as they happen. Today's classes sit in one place, and you can see your own recent ticks.</p></dd>
+      <dt>Courses &amp; Pricing</dt>
+      <dd><p>The list of courses and what each one costs, in one place you can edit.</p></dd>
+      <dt>Staff Accounts</dt>
+      <dd><p>Manage who can sign in.</p></dd>
+      <dt>Analytics</dt>
+      <dd><p>An overview of how the center is doing.</p></dd>
+    </dl>
+  </div>
+</section>
+<section class="band band--navy sky sky--field" id="try">
+  <div class="wrap" data-reveal>
+    <h2>Try it</h2>
+    <p class="lede">It's a working app, so you can use it yourself.</p>
+    <ol class="steps">
+      <li><p>Open the demo.</p></li>
+      <li><p>On the sign-in screen, pick any account under "Try it as". No signup.</p></li>
+      <li><p>Register a student, tick a class, look at the analytics.</p></li>
+    </ol>
+    <div class="btn-row"><a class="btn btn--gold" href="classley.html">Open the live demo</a></div>
+    <p class="page-note">Everything you do is saved only in your browser. The Reset demo data button puts it back the way it was.</p>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap" data-reveal>
+    <div class="pair"><div><h2 style="font-size:1.5rem">How it's built</h2><p>The demo is plain HTML and JavaScript. It runs in your browser and saves to the browser's localStorage, so there is no server and no account. It is a demo, not production sign-in.</p></div><div><h2 style="font-size:1.5rem">How it went</h2><p>Classly was built as a demo for an English language teaching agency. It didn't lead to a sale. The app still works from start to finish, so it lives here as a project you can try.</p></div></div>
+    <p class="prose" style="margin-top:2rem">A personal and team project, shown on <a href="../../work/">Curiohatch</a>.</p>
+  </div>
+</section>
+<section class="band band--navy sky sky--orbit">
+  <div class="wrap" data-reveal>
+    <h2>Want to see what we find on your site?</h2>
+    <p class="lede">We will email you what we find within 1 to 2 business days.</p>
+    <div class="btn-row"><a class="btn btn--gold" href="../../contact/?type=audit">Get a free website audit</a><a class="btn btn--line" href="../../work/">See all work</a></div>
+  </div>
+</section>
+</main>
+<!-- CHROME:FOOTER:START -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="../../assets/brand/badge-128.webp" width="64" height="64" alt="">
+        <p>Curiohatch is a studio name used by Ruhan Tahlil. It is not a registered company.</p>
+      </div>
+      <nav class="footer-col" aria-labelledby="f-studio">
+        <h2 id="f-studio">Studio</h2>
+        <ul class="footer-links">
+          <li><a href="../../services/">Services</a></li>
+          <li><a href="../../services/builds/">Website builds</a></li>
+          <li><a href="../../work/">Work</a></li>
+          <li><a href="../../about/">About</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-labelledby="f-start">
+        <h2 id="f-start">Get started</h2>
+        <ul class="footer-links">
+          <li><a href="../../contact/?type=audit">Free website audit</a></li>
+          <li><a href="../../contact/?type=website">Start a project</a></li>
+          <li><a href="../../services/#pricing">Pricing</a></li>
+          <li><a href="../../contact/">Contact</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-labelledby="f-learn">
+        <h2 id="f-learn">Learn</h2>
+        <ul class="footer-links">
+          <li><a href="../../courses/">Courses</a></li>
+          <li><a href="../../learn/">Learning library</a></li>
+          <li><a href="https://www.youtube.com/@curiohatchstudio">Curiohatch on YouTube</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-col" aria-labelledby="f-more">
+        <h2 id="f-more">More</h2>
+        <ul class="footer-links">
+          <li><a href="../../ruhan/Ruhan-portfolio.html">Ruhan&rsquo;s portfolio</a></li>
+          <li><a href="../../privacy/">Privacy</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-small"><span>&copy; 2026 Curiohatch</span><button class="linklike" type="button" data-analytics-settings hidden>Analytics settings</button><a href="#main">Back to top</a></p>
+  </div>
+</footer>
+<div class="drawer" id="drawer">
+  <div class="drawer-backdrop" data-drawer-close></div>
+  <div class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer-top">
+      <p class="mono-label" id="drawer-title">Menu</p>
+      <button class="drawer-close" type="button" data-drawer-close>Close</button>
+    </div>
+    <nav aria-label="Menu">
+      <ul class="drawer-links">
+        <li style="--i:1"><a href="../../services/">Services</a></li>
+        <li style="--i:2"><a href="../../work/">Work</a></li>
+        <li style="--i:3"><a href="../../about/">About</a></li>
+        <li style="--i:4"><a href="../../contact/">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="drawer-cta" style="--i:5">
+      <a class="btn btn--gold" href="../../contact/?type=audit">Get a free website audit</a>
+      <p>The audit is free, and you do not have to buy anything afterward.</p>
+    </div>
+    <nav class="drawer-learn" style="--i:6" aria-label="Learn">
+      <p class="mono-label">Learn</p>
+      <ul class="drawer-sub">
+        <li><a href="../../courses/">Courses</a></li>
+        <li><a href="../../learn/">Learning library</a></li>
+        <li><a href="https://www.youtube.com/@curiohatchstudio">Curiohatch on YouTube</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+<!-- CHROME:FOOTER:END -->
+<script src="../../js/site.js?v=3" defer></script>
 </body>
 </html>

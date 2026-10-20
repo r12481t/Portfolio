@@ -10,7 +10,7 @@ base=f'http://127.0.0.1:{PORT}/'; res=[]
 def check(n,ok,d=''):
     res.append(bool(ok)); print(('PASS ' if ok else 'FAIL ')+n+(f'  [{d}]' if d else ''))
 with sync_playwright() as p:
-    b=p.chromium.launch(); ctx=b.new_context(viewport={'width':390,'height':844}); pg=ctx.new_page(); errs=[]
+    b=p.chromium.launch(); ctx=b.new_context(viewport={'width':390,'height':844}); ctx.add_init_script("try{localStorage.setItem('curiohatch-analytics','decline')}catch(e){}"); pg=ctx.new_page(); errs=[]
     pg.on('pageerror',lambda e:errs.append(str(e))); pg.on('console',lambda m: errs.append(m.text) if m.type=='error' else None)
     pg.goto(base+'learn/'); pg.wait_for_timeout(400)
     check('library lists only the 2 published topics',pg.locator('#topic-list > li').count()==2,str(pg.locator('#topic-list > li').count()))

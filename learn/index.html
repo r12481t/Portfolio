@@ -22,7 +22,7 @@
 <link rel="preload" href="../assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/ibm-plex-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.className+=' js'</script>
-<link rel="stylesheet" href="../css/site.css?v=2">
+<link rel="stylesheet" href="../css/site.css?v=3">
 </head>
 <body>
 <!-- CHROME:HEADER:START -->
@@ -61,17 +61,11 @@
     </div>
     <div data-reveal>
       <!-- TOPICS:START -->
-<h2>All topics</h2>
-<ul class="cards" id="topic-list">
-<li data-category="Web Development" data-tags="web development|html|css|responsive design|beginners" data-text="your first look at web development an introduction to web development and the roles html, css, and responsive design play in creating websites. web development web development html css responsive design beginners structure of a web page visual styling of a website adapting layouts to different screen sizes html css responsive design web development">
-  <article class="card">
-    <p class="tag">Web Development</p>
-    <h3><a href="your-first-look-at-web-development/">Your First Look at Web Development</a></h3>
-    <p>An introduction to web development and the roles HTML, CSS, and responsive design play in creating websites.</p>
-    <p class="card-meta">Published <time datetime="2026-10-18">October 18, 2026</time></p>
-  </article>
-</li>
-</ul>
+<div class="empty" id="library-empty">
+  <h2>No topics are published yet</h2>
+  <p>Each Curiohatch video will get a written lesson here, with the video, the explanation, the key ideas and links to related lessons. Nothing has been published yet, so this list is empty.</p>
+  <p>The videos come first. You can find them on <a href="https://www.youtube.com/@curiohatchstudio">the Curiohatch YouTube channel</a>.</p>
+</div>
 <!-- TOPICS:END -->
     </div>
   </div>
@@ -125,7 +119,7 @@
         </ul>
       </nav>
     </div>
-    <p class="footer-small"><span>&copy; 2026 Curiohatch</span><a href="#main">Back to top</a></p>
+    <p class="footer-small"><span>&copy; 2026 Curiohatch</span><button class="linklike" type="button" data-analytics-settings hidden>Analytics settings</button><a href="#main">Back to top</a></p>
   </div>
 </footer>
 <div class="drawer" id="drawer">
@@ -158,7 +152,7 @@
   </div>
 </div>
 <!-- CHROME:FOOTER:END -->
-<script src="../js/site.js?v=2" defer></script>
+<script src="../js/site.js?v=3" defer></script>
 <script src="../js/learn.js?v=1" defer></script>
 </body>
 </html>

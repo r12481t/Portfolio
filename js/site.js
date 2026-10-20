@@ -21,7 +21,6 @@
     if (!header || !toggle || !drawer) return;
     var panel = drawer.querySelector('.drawer-panel');
     var closeButton = drawer.querySelector('.drawer-close');
-    var behind = [].slice.call(document.querySelectorAll('.skip-link, .site-header, main, .site-footer'));
     var wide = window.matchMedia('(min-width: 52em)');
     var lastFocus = null;
 
@@ -31,7 +30,7 @@
 
     function isOpen() { return drawer.classList.contains('is-open'); }
     function setBehind(hidden) {
-      behind.forEach(function (el) {
+      [].slice.call(document.querySelectorAll('.skip-link, .site-header, main, .site-footer, .consent')).forEach(function (el) {
         if (hidden) el.setAttribute('inert', ''); else el.removeAttribute('inert');
       });
     }
@@ -220,6 +219,77 @@
     });
   }
 
+  /* ---------- Analytics (Google Analytics 4) ----------
+     Nothing is requested from Google until the visitor presses "Allow analytics". The choice is kept in this browser
+     (local storage) and can be changed from "Analytics settings" in the footer. A browser that sends the Global Privacy
+     Control signal is treated as "No thanks": no banner, no analytics.
+     To stop asking and load analytics for everyone, set askFirst to false. That is not advised for visitors in the UK or EU. */
+  var ANALYTICS = { id: 'G-B29TWFJY0Q', askFirst: true, key: 'curiohatch-analytics' };
+
+  function initAnalytics() {
+    if (navigator.globalPrivacyControl === true) return;
+    var stored = null, banner = null, loaded = false;
+    try { stored = window.localStorage.getItem(ANALYTICS.key); } catch (e) { /* storage blocked: ask each visit */ }
+
+    function load() {
+      if (loaded) return;
+      loaded = true;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', ANALYTICS.id);
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(ANALYTICS.id);
+      document.head.appendChild(s);
+    }
+    function stop() {
+      window['ga-disable-' + ANALYTICS.id] = true;
+      var names = document.cookie.split(';').map(function (c) { return c.split('=')[0].trim(); }).filter(function (n) { return n === '_ga' || n.indexOf('_ga_') === 0; });
+      var host = location.hostname.split('.');
+      var domains = ['', location.hostname, '.' + location.hostname, host.length > 1 ? '.' + host.slice(-2).join('.') : ''];
+      names.forEach(function (n) { domains.forEach(function (d) { document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + (d ? '; domain=' + d : ''); }); });
+    }
+    function choose(value) {
+      try { window.localStorage.setItem(ANALYTICS.key, value); } catch (e) { /* the choice lasts for this page only */ }
+      if (banner) { banner.remove(); banner = null; }
+      if (value === 'allow') { window['ga-disable-' + ANALYTICS.id] = false; load(); } else stop();
+      var back = document.querySelector('[data-analytics-settings]');
+      if (back && document.activeElement === document.body) back.focus();
+    }
+    function ask(focus) {
+      if (banner) { if (focus) banner.querySelector('button').focus(); return; }
+      banner = document.createElement('section');
+      banner.className = 'consent';
+      banner.setAttribute('role', 'region');
+      banner.setAttribute('aria-label', 'Analytics choice');
+      var p = document.createElement('p');
+      p.textContent = 'May we use Google Analytics to count visits? It sets cookies and sends usage data to Google. The site works the same either way.';
+      var row = document.createElement('div');
+      row.className = 'btn-row';
+      var yes = document.createElement('button'), no = document.createElement('button');
+      yes.type = no.type = 'button';
+      yes.className = 'btn btn--gold'; no.className = 'btn btn--line';
+      yes.textContent = 'Allow analytics'; no.textContent = 'No thanks';
+      yes.addEventListener('click', function () { choose('allow'); });
+      no.addEventListener('click', function () { choose('decline'); });
+      var more = document.createElement('a');
+      more.href = (document.querySelector('.site-footer a[href$="privacy/"]') || { getAttribute: function () { return '/privacy/'; } }).getAttribute('href');
+      more.textContent = 'Privacy';
+      row.appendChild(yes); row.appendChild(no); row.appendChild(more);
+      banner.appendChild(p); banner.appendChild(row);
+      document.body.appendChild(banner);
+      if (focus) yes.focus();
+    }
+
+    [].slice.call(document.querySelectorAll('[data-analytics-settings]')).forEach(function (b) {
+      b.hidden = false;
+      b.addEventListener('click', function () { ask(true); });
+    });
+    if (!ANALYTICS.askFirst || stored === 'allow') load();
+    else if (stored === null) ask(false);
+  }
+
   /* ---------- Inquiry form ---------- */
   function initForm() {
     var form = document.getElementById('inquiry-form');
@@ -303,5 +373,6 @@
   initDrawer();
   initVideo();
   initForm();
+  initAnalytics();
   whenIdle(function () { initReveal(); initSky(); initJump(); });
 })();

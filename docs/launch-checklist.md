@@ -11,6 +11,8 @@ Tick each item only after you have seen it with your own eyes. Order matters: it
 - [ ] **Terms decision**: approve, change or drop the draft terms (`terms.approved` in `content/pricing.json`). Decide how clients pay before publishing a deposit line.
 - [ ] **Audit turnaround approved**: "1 to 2 business days, Monday to Friday, not counting US federal holidays" appears on the home, Services, Work and Contact pages.
 - [ ] **YouTube channel link confirmed.** The footer and menu link to `https://www.youtube.com/@curiohatchstudio`. I could not verify it. Open it yourself.
+- [ ] **Analytics works.** On the live site press "Allow analytics", then see your visit in Google Analytics Realtime (`docs/analytics.md`). Also press "No thanks" in a private window and confirm nothing is requested from Google.
+- [ ] **No-JavaScript form send** lands on `/contact/thanks/` (needs the real Netlify deploy; it cannot be tested locally).
 - [ ] **Privacy page read.** It now names Netlify as the form handler and host, and describes the video box. Confirm it matches reality.
 
 ## Check on the preview
