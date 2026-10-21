@@ -443,7 +443,9 @@ def save_project(body):
            'builtWith': text(rec.get('builtWith'), 'Built with', False, 200), 'outcome': text(rec.get('outcome'), 'Outcome', False, 300),
            'shows': text(rec.get('shows'), 'What this shows', False, 600), 'links': links_list(rec.get('links'), 'A')}
     if new['page'] == 'generated':
-        new.update({'built': text(rec.get('built'), 'What was built', False, 4000), 'role': text(rec.get('role'), 'Our part', False, 3000),
+        look = rec.get('look') or 'field'
+        if look not in ('field', 'path', 'orbit'): raise Refused('Look of the page must be field, path or orbit.')
+        new.update({'look': look, 'built': text(rec.get('built'), 'What was built', False, 4000), 'role': text(rec.get('role'), 'Our part', False, 3000),
                     'whatHappened': text(rec.get('whatHappened'), 'What happened', False, 3000), 'learned': str_list(rec.get('learned'), 'What we learned'), 'images': images})
         if new['status'] == 'published' and not (new['built'] or new['role']):
             raise Refused('A published case study page needs "What was built" or "Our part" written.')

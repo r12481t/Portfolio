@@ -43,11 +43,12 @@ with sync_playwright() as p:
     for rel in pages:
         url = base + rel
         ctx = b.new_context(viewport={'width': 390, 'height': 800}, reduced_motion='reduce' if reduce else 'no-preference')
+        ctx.route('https://www.googletagmanager.com/**', lambda r: r.fulfill(status=200, content_type='application/javascript', body=''))   # the analytics tag cannot load in an offline run
         pg = ctx.new_page()
         errs = []
         pg.on('console', lambda m, errs=errs: errs.append(m.text) if m.type == 'error' else None)
         pg.on('pageerror', lambda e, errs=errs: errs.append('pageerror: ' + str(e)))
-        pg.on('requestfailed', lambda r, errs=errs: errs.append('requestfailed: ' + r.url) if not r.url.startswith('https://fonts.') and 'cdn' not in r.url else None)
+        pg.on('requestfailed', lambda r, errs=errs: errs.append('requestfailed: ' + r.url) if not r.url.startswith('https://fonts.') and 'cdn' not in r.url and 'googletagmanager.com' not in r.url else None)   # the analytics tag is requested before a choice; it cannot load in an offline test run
         try:
             resp = pg.goto(url, wait_until='load', timeout=15000)
             report['pages'][rel] = resp.status if resp else None

@@ -5,14 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Ruhan Tahlil | Front-End Developer</title>
 <link rel="canonical" href="https://curiohatch.studio/ruhan/ruhan-portfolio">
-<meta name="description" content="Ruhan Tahlil, front-end web developer." />
-<meta name="theme-color" content="#0d0a08" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%99%3C/text%3E%3C/svg%3E" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<meta name="description" content="Ruhan Tahlil, front-end web developer, who runs the Curiohatch web studio. Projects, skills and how to get in touch." />
+<meta name="theme-color" content="#011022" />
+<link rel="icon" href="../assets/brand/favicon.ico" sizes="48x48" />
+<link rel="icon" href="../assets/brand/icon-192.png" type="image/png" sizes="192x192" />
+<link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Curiohatch" />
+<meta property="og:title" content="Ruhan Tahlil | Front-End Developer" />
+<meta property="og:description" content="Ruhan Tahlil, front-end web developer, who runs the Curiohatch web studio." />
+<meta property="og:url" content="https://curiohatch.studio/ruhan/ruhan-portfolio" />
+<meta property="og:image" content="https://curiohatch.studio/assets/brand/social-preview.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preload" href="../assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="../assets/fonts/ibm-plex-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css?v=5" />
+<link rel="stylesheet" href="style.css?v=7" />
 <!-- Loading screen switch. Runs before first paint so the page never flashes dark and then jumps.
      Two safety nets: with JS off the class is never added (the loader stays hidden), and if main.js
      never reports back, the loader lets go after 16 seconds anyway. It also starts downloading the
@@ -25,7 +35,7 @@
     var saver = navigator.connection && navigator.connection.saveData;
     if (!saver) {
       var l = document.createElement('link');
-      l.rel = 'modulepreload'; l.href = 'scene.js?v=3';
+      l.rel = 'modulepreload'; l.href = 'scene.js?v=4';
       document.head.appendChild(l);
     }
   })();
@@ -35,7 +45,8 @@
 
 <div id="loader" class="loader" role="status" aria-live="polite">
   <div class="loader-inner">
-    <p class="loader-name">Ruhan</p>
+    <img class="loader-badge" src="../assets/brand/badge-128.webp" width="96" height="96" alt="" />
+    <p class="loader-name">Ruhan Tahlil</p>
     <p class="loader-label mono" id="loader-label">Loading the scene</p>
     <div class="loader-bar" aria-hidden="true"><span></span></div>
   </div>
@@ -48,7 +59,7 @@
 <div class="veil" aria-hidden="true"></div>
 
 <nav class="site-nav" aria-label="Primary">
-  <a href="#hero" class="brand">Ruhan</a>
+  <a href="../" class="brand" aria-label="Curiohatch home"><img src="../assets/brand/wordmark-cream-320.webp" width="160" height="32" alt="Curiohatch" /></a>
   <div class="nav-links">
     <a href="#projects">Projects</a>
     <a href="#services">Services</a>
@@ -58,9 +69,10 @@
 
 <header id="hero" class="hero">
   <div class="hero-copy">
+    <p class="eyebrow">Portfolio</p>
     <h1>Ruhan Tahlil</h1>
-    <p class="role">Front-end developer.</p>
-    <p class="hero-body">I taught myself to code, mostly from my phone, mostly at night. Right now I take on freelance work through Fiverr, and I'm looking for more.</p>
+    <p class="role">Front-end developer. I run Curiohatch.</p>
+    <p class="hero-body">I taught myself to code, mostly from my phone, mostly at night. Right now I take on freelance work through Curiohatch, the small web studio I run, and through Fiverr. I'm looking for more.</p>
     <div class="hero-actions">
       <a href="#projects" class="btn btn-primary">See projects</a>
       <a href="mailto:ruhantahlil25@gmail.com" class="btn btn-ghost">Get in touch</a>
@@ -134,22 +146,22 @@
   <section id="services" tabindex="-1">
     <div class="section-inner">
       <h2>Services</h2>
-      <p class="lede">For businesses whose website needs fixing, or building.</p>
+      <p class="lede">For businesses whose website needs fixing, or building. This work runs through Curiohatch.</p>
 
       <div class="project-list">
         <article class="project-card">
-          <p class="project-tag mono">Free report, fixes quoted first</p>
-          <h3><a class="card-link" href="../services/">Audit and Fix</a></h3>
-          <p>I test your site with Google's PageSpeed tool and send you a plain list of what is slow or broken. The list is free. If you want any of it fixed, I quote you a price first.</p>
+          <p class="project-tag mono">Free audit, fixes quoted first</p>
+          <h3><a class="card-link" href="../services/">Free website audit</a></h3>
+          <p>I test your site with Google's PageSpeed tool and send you a plain list of what is slow or broken. The audit is free. If you want any of it fixed, I quote the fix in writing first.</p>
           <p class="project-meta mono">Speed, mobile layout, broken links, search basics</p>
           <p class="project-more" aria-hidden="true">See what it covers <span class="arrow">&rarr;</span></p>
         </article>
 
         <article class="project-card">
-          <p class="project-tag mono">Every project quoted in writing</p>
-          <h3><a class="card-link" href="../services/builds/">Website Builds</a></h3>
-          <p>A landing page, small business site or online store for your business. Start from one of my templates, or have a site built to order. Every project is quoted in writing before work starts.</p>
-          <p class="project-meta mono">Landing pages, restaurants, e-commerce</p>
+          <p class="project-tag mono">Scope and price agreed in writing</p>
+          <h3><a class="card-link" href="../services/builds/">New websites</a></h3>
+          <p>A landing page, a business website or a custom-coded site, built around what your customers look for. You see a preview on your phone and your computer before it goes live.</p>
+          <p class="project-meta mono">Landing pages, business websites, custom builds</p>
           <p class="project-more" aria-hidden="true">See how builds work <span class="arrow">&rarr;</span></p>
         </article>
       </div>
@@ -161,6 +173,7 @@
       <h2>Contact</h2>
       <p class="lede">Want to work together, or just say hello?</p>
       <a class="contact-email" href="mailto:ruhantahlil25@gmail.com">ruhantahlil25@gmail.com</a>
+      <p class="contact-alt">Or send a project request through <a href="../contact/?type=website">the Curiohatch contact page</a>.</p>
     </div>
   </section>
 </main>
@@ -169,8 +182,9 @@
   <div class="footer-inner">
     <div class="footer-grid">
       <div class="footer-about">
+        <img class="footer-badge" src="../assets/brand/badge-128.webp" width="64" height="64" alt="" />
         <p class="footer-name">Ruhan Tahlil</p>
-        <p class="footer-line">Front-end developer. Open to freelance work.</p>
+        <p class="footer-line">Front-end developer. I run Curiohatch, a small web studio. Open to freelance work.</p>
       </div>
       <nav class="footer-col" aria-label="On this page">
         <p class="footer-h mono">On this page</p>
@@ -187,7 +201,8 @@
         <ul>
           <li><a href="mailto:ruhantahlil25@gmail.com">Email</a></li>
           <li><a href="https://github.com/r12481t" rel="noopener">GitHub</a></li>
-          <li><a href="../index.html">Curiohatch home</a></li>
+          <li><a href="../">Curiohatch home</a></li>
+          <li><a href="../work/">Curiohatch work</a></li>
         </ul>
       </div>
     </div>
@@ -202,6 +217,6 @@
   </div>
 </footer>
 
-<script type="module" src="main.js?v=4"></script>
+<script type="module" src="main.js?v=5"></script>
 </body>
 </html>

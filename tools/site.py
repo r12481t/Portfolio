@@ -21,7 +21,7 @@ import argparse, datetime, difflib, glob, html, json, os, re, sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 DOMAIN = 'https://curiohatch.studio'
 YOUTUBE = 'https://www.youtube.com/@curiohatchstudio'
-CSS_V, JS_V, LEARN_JS_V = 3, 3, 1
+CSS_V, JS_V, LEARN_JS_V = 4, 4, 1
 TOPICS_FILE = os.path.join(ROOT, 'content', 'learn', 'topics.json')
 COURSES_FILE = os.path.join(ROOT, 'content', 'courses', 'courses.json')
 PRICING_FILE = os.path.join(ROOT, 'content', 'pricing.json')
@@ -544,6 +544,7 @@ def render_project_page(p):
     canonical = f'{DOMAIN}/projects/{p["slug"]}/'
     title, summary = p['title'], p.get('summary', '')
     robots = '' if published else '<meta name="robots" content="noindex">\n'
+    look = p.get('look') if p.get('look') in ('field', 'path', 'orbit') else 'field'   # the page's own look: which sky sits behind the title
     body = []
     for img in p.get('images', []):
         cap = f'<figcaption>{esc(img["caption"])}</figcaption>' if img.get('caption') else ''
@@ -597,7 +598,7 @@ def render_project_page(p):
 <body>
 {marked('HEADER', render_header(rel))}
 <main id="main">
-<div class="sky sky--field band--navy">
+<div class="sky sky--{look} band--navy">
   <div class="wrap page-head">
     <p class="crumbs"><a href="{P}work/">Work</a> &middot; {esc(p["tag"])}</p>
     <h1>{esc(title)}</h1>

@@ -318,7 +318,8 @@
       { k: 'links', label: 'Links', type: 'links', help: 'One per line: Label | address. An address is a page in the site (projects/x/page.html) or a web address.' },
       { k: 'featured', label: 'Show on the home page', type: 'bool', help: 'Up to three featured projects are shown.' }, { k: 'order', label: 'Order (1 first)', type: 'int' }
     ], rec);
-    var gen = form([{ k: 'built', label: 'What was built', type: 'textarea', rows: 6, help: 'Plain paragraphs. A blank line starts a new paragraph.' },
+    var gen = form([{ k: 'look', label: 'Look of the page', type: 'select', options: [['field', 'Starfield (stars scattered across the top)'], ['path', 'Path (a winding line, for journeys and process)'], ['orbit', 'Orbit (rings, for systems and tools)']], help: 'Changes the top of the page, so each case study can feel like its own. Same brand either way.' },
+      { k: 'built', label: 'What was built', type: 'textarea', rows: 6, help: 'Plain paragraphs. A blank line starts a new paragraph.' },
       { k: 'role', label: 'Our part', type: 'textarea', rows: 4, help: 'Who did what, without claiming more than was done.' },
       { k: 'whatHappened', label: 'What happened', type: 'textarea', rows: 4 }, { k: 'learned', label: 'What we learned (one per line)', type: 'lines', rows: 4 }], rec);
     var genBox = h('div', {}, h('h2', { text: 'Case study page' }), gen.el);

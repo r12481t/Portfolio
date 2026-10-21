@@ -1,0 +1,88 @@
+/* Classly case study: it should feel like the app. A monitor, a sidebar, screens you switch between, and the
+   power-on transition when you open the demo.
+   Loaded after css/site.css, on this one page only, every rule scoped to .case-classly.
+   Same Curiohatch brand (fonts, navy and cream, gold buttons). The accent is Classly's own: its navy #1E385D and its pink #F75B69.
+   Pink is used for markers and the screen illustration only, never for text on cream. */
+
+.case-classly{--cl-navy:#1E385D;--cl-pink:#F75B69;--cl-ink:#011022}
+
+/* ---------- hero with the monitor ---------- */
+.case-classly .cl-hero-grid{display:grid;gap:var(--s6);align-items:center}
+@media (min-width:52em){.case-classly .cl-hero-grid{grid-template-columns:1fr 1.05fr;gap:var(--s8)}}
+.case-classly .cl-monitor{margin:0;max-width:34rem;width:100%}
+.case-classly .cl-bezel{background:#0A1830;border:2px solid rgba(254,240,213,.28);border-radius:14px 14px 6px 6px;padding:10px 10px 12px;box-shadow:0 30px 60px -28px rgba(0,0,0,.85),0 0 0 1px rgba(1,16,34,.6)}
+.case-classly .cl-screen{display:grid;grid-template-columns:30% 1fr;min-height:15.5rem;background:#FEFEFE;border-radius:5px;overflow:hidden;font-family:var(--head);font-size:.75rem;line-height:1.3;color:var(--cl-navy)}
+.case-classly .cl-side{background:var(--cl-navy);color:#FEFEFE;padding:12px 8px;display:grid;gap:4px;align-content:start}
+.case-classly .cl-side b{display:block;margin:0 0 8px 6px;font-size:.875rem;letter-spacing:.02em}
+.case-classly .cl-side span{padding:6px;border-radius:4px;opacity:.9}
+.case-classly .cl-side span.on{background:var(--cl-pink);color:var(--cl-ink);opacity:1;font-weight:700}
+.case-classly .cl-main{padding:12px 14px;display:grid;align-content:start;gap:10px}
+.case-classly .cl-main h2,.case-classly .cl-main p{margin:0}
+.case-classly .cl-title{font-size:.9375rem;font-weight:700;color:var(--cl-navy)}
+.case-classly .cl-steps{display:flex;gap:6px;flex-wrap:wrap}
+.case-classly .cl-steps span{padding:3px 8px;border-radius:99px;background:#E9EEF5;color:#3A4A63;font-weight:600}
+.case-classly .cl-steps span.on{background:var(--cl-pink);color:var(--cl-ink)}
+.case-classly .cl-field{display:grid;gap:3px;color:#3A4A63}
+.case-classly .cl-field i{display:block;height:20px;border:1px solid #C5CFDD;border-radius:4px;background:#fff;position:relative}
+.case-classly .cl-field i.caret::after{content:"";position:absolute;left:8px;top:4px;width:1px;height:10px;background:var(--cl-navy);animation:cl-blink 1.1s steps(1) infinite}
+@keyframes cl-blink{50%{opacity:0}}
+.case-classly .cl-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.case-classly .cl-save{justify-self:start;padding:6px 14px;border-radius:5px;background:var(--cl-pink);color:var(--cl-ink);font-weight:700}
+.case-classly .cl-stand{width:22%;height:20px;margin:0 auto;background:linear-gradient(#16263F,#0A1830)}
+.case-classly .cl-base{width:42%;height:8px;margin:0 auto;border-radius:6px 6px 0 0;background:#16263F}
+.case-classly .cl-cap{margin:var(--s2) 0 0;font-size:.9375rem;color:var(--cream-2)}
+
+/* ---------- facts as a status bar ---------- */
+.case-classly .facts{gap:0;background:var(--white);border:2px solid var(--cl-navy);border-radius:var(--radius);overflow:hidden}
+.case-classly .facts>div{padding:var(--s2) var(--s3);border-left:5px solid var(--cl-pink);border-top:1px solid var(--rule)}
+
+/* ---------- the five screens ---------- */
+.case-classly .cl-panel{background:var(--white);border:2px solid var(--cl-navy);border-radius:var(--radius);overflow:hidden;margin-top:var(--s3)}
+.case-classly .cl-tabs[data-ready] .cl-panel{margin-top:0}
+.case-classly .cl-bar{display:flex;align-items:center;gap:6px;padding:.5rem .75rem;background:var(--cl-navy);color:var(--cream-2);font-family:var(--head);font-size:.875rem}
+.case-classly .cl-bar i{width:.6rem;height:.6rem;border-radius:50%;background:var(--cl-pink)}
+.case-classly .cl-bar i:nth-child(2){background:var(--gold)}
+.case-classly .cl-bar i:nth-child(3){background:var(--cream-2)}
+.case-classly .cl-bar span{margin-left:auto}
+.case-classly .cl-body{padding:var(--s3)}
+.case-classly .cl-body h3{font-size:1.5rem;color:var(--cl-navy)}
+.case-classly .cl-body p{max-width:var(--measure)}
+.case-classly .cl-tabs[data-ready]{display:grid;gap:var(--s2);margin-top:var(--s3)}
+.case-classly .cl-tablist{display:flex;gap:var(--s1);overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.case-classly .cl-tablist::-webkit-scrollbar{display:none}
+.case-classly .cl-tab{flex:none;min-height:48px;padding:.5rem 1rem;border:2px solid var(--cl-navy);border-radius:var(--radius);background:var(--white);color:var(--cl-navy);font-family:var(--head);font-weight:600;font-size:1rem;text-align:left;cursor:pointer;transition:background-color var(--t-fast),color var(--t-fast)}
+.case-classly .cl-tab:hover{background:var(--cream)}
+.case-classly .cl-tab[aria-selected="true"]{background:var(--cl-navy);color:var(--white);box-shadow:inset 5px 0 0 var(--cl-pink);padding-left:1.25rem}
+.case-classly .cl-panel[hidden]{display:none}
+@media (min-width:52em){
+  .case-classly .cl-tabs[data-ready]{grid-template-columns:15rem 1fr;gap:var(--s3);align-items:start}
+  .case-classly .cl-tablist{flex-direction:column;overflow:visible}
+  .case-classly .cl-body{padding:var(--s4)}
+}
+
+/* ---------- try it ---------- */
+.case-classly #try .steps li::before{color:var(--cl-pink)}
+
+/* ---------- screen-boot: plays when a [data-boot] link is pressed, then the demo opens ---------- */
+.boot{position:fixed;inset:0;z-index:500;visibility:hidden;pointer-events:none}
+.is-booting .boot{visibility:visible;pointer-events:auto}
+.boot-panel{position:absolute;inset:0;opacity:0;transform:scaleY(.004);
+  background:repeating-linear-gradient(to bottom,rgba(254,240,213,.045) 0 1px,transparent 1px 3px),radial-gradient(ellipse 80% 60% at 50% 50%,#2A4A7A 0%,#1E385D 60%,#0F2038 100%)}
+.boot-line{position:absolute;inset-inline:0;top:50%;height:3px;margin-top:-1px;background:var(--cl-pink);box-shadow:0 0 28px 4px rgba(247,91,105,.55);opacity:0;transform:scaleX(.15)}
+.boot-text{position:absolute;inset:0;margin:0;display:grid;place-items:center;color:var(--cream);font-family:var(--head);font-weight:600;font-size:1.25rem;letter-spacing:.04em;opacity:0}
+.boot-full .boot-line{animation:boot-line-in 200ms var(--ease-out) forwards,boot-line-out 180ms 320ms ease-in forwards}
+.boot-full .boot-panel{animation:boot-panel 340ms 180ms cubic-bezier(.65,0,.35,1) forwards}
+.boot-full .boot-text{animation:boot-text 160ms 480ms var(--ease-out) forwards}
+.boot-fade .boot-panel{transform:none;animation:boot-fade 220ms ease-out forwards}
+.boot-fade .boot-text{animation:boot-text 120ms 120ms ease-out forwards}
+@keyframes boot-line-in{from{opacity:0;transform:scaleX(.15)}to{opacity:1;transform:scaleX(1)}}
+@keyframes boot-line-out{from{opacity:1}to{opacity:0}}
+@keyframes boot-panel{from{opacity:1;transform:scaleY(.004)}to{opacity:1;transform:scaleY(1)}}
+@keyframes boot-text{from{opacity:0}to{opacity:1}}
+@keyframes boot-fade{from{opacity:0}to{opacity:1}}
+/* The site-wide reduced-motion rule switches animations off. The boot is the one exception: it becomes a short fade
+   (see .boot-fade), so pressing the button still gives feedback. */
+@media (prefers-reduced-motion:reduce){
+  .boot-fade .boot-panel{animation:boot-fade 220ms ease-out forwards!important}
+  .boot-fade .boot-text{animation:boot-text 120ms 120ms ease-out forwards!important}
+}

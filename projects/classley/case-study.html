@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="case-classly">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +22,8 @@
 <link rel="preload" href="../../assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/ibm-plex-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.className+=' js'</script>
-<link rel="stylesheet" href="../../css/site.css?v=3">
+<link rel="stylesheet" href="../../css/site.css?v=4">
+<link rel="stylesheet" href="../../css/case-classly.css?v=1">
 </head>
 <body>
 <!-- CHROME:HEADER:START -->
@@ -44,10 +45,30 @@
 <div class="sky sky--orbit band--navy">
   <div class="wrap page-head">
     <p class="crumbs"><a href="../../work/">Work</a> &middot; Language center software</p>
-    <h1>Classly</h1>
-    <p class="lede">Sign students up, take fees, tick off classes, check the numbers.</p>
-    <div class="btn-row"><a class="btn btn--gold" href="classley.html">Open the live demo</a></div>
-    <p class="page-note">No signup. Data stays in your browser.</p>
+    <div class="cl-hero-grid">
+      <div class="cl-copy">
+        <h1>Classly</h1>
+        <p class="lede">Sign students up, take fees, tick off classes, check the numbers.</p>
+        <div class="btn-row"><a class="btn btn--gold" href="classley.html" data-boot>Open the live demo</a></div>
+        <p class="page-note">No signup. Data stays in your browser.</p>
+      </div>
+      <figure class="cl-monitor">
+        <div class="cl-bezel">
+          <div class="cl-screen" aria-hidden="true">
+            <div class="cl-side"><b>Classly</b><span class="on">Registration</span><span>Class counter</span><span>Courses</span><span>Staff</span><span>Analytics</span></div>
+            <div class="cl-main">
+              <p class="cl-title">New registration</p>
+              <div class="cl-steps"><span class="on">1 Student</span><span>2 Courses</span><span>3 Payment</span></div>
+              <div class="cl-field">Student name<i class="caret"></i></div>
+              <div class="cl-row"><div class="cl-field">Mobile<i></i></div><div class="cl-field">Email<i></i></div></div>
+              <span class="cl-save">Next</span>
+            </div>
+          </div>
+        </div>
+        <div class="cl-stand"></div><div class="cl-base"></div>
+        <figcaption class="cl-cap">An illustration of the layout, not a screenshot.</figcaption>
+      </figure>
+    </div>
   </div>
 </div>
 <section class="band horizon">
@@ -63,18 +84,13 @@
 <section class="band band--cream2">
   <div class="wrap" data-reveal>
     <h2>What it does</h2>
-    <dl class="spec">
-      <dt>Course Registration</dt>
-      <dd><p>A three-step form: student details, courses, then fees and payment. It takes individual courses and package deals, works out the total as you pick, and keeps track of what's paid and what's still due. It also records which account registered the student, so the referral credit goes to the right person.</p></dd>
-      <dt>Class Counter</dt>
-      <dd><p>Tick off classes as they happen. Today's classes sit in one place, and you can see your own recent ticks.</p></dd>
-      <dt>Courses &amp; Pricing</dt>
-      <dd><p>The list of courses and what each one costs, in one place you can edit.</p></dd>
-      <dt>Staff Accounts</dt>
-      <dd><p>Manage who can sign in.</p></dd>
-      <dt>Analytics</dt>
-      <dd><p>An overview of how the center is doing.</p></dd>
-    </dl>
+    <div class="cl-tabs" data-tabs>
+      <section class="cl-panel" id="cl-registration"><div class="cl-bar" aria-hidden="true"><i></i><i></i><i></i><span>classly / registration</span></div><div class="cl-body"><h3>Course Registration</h3><p>A three-step form: student details, courses, then fees and payment. It takes individual courses and package deals, works out the total as you pick, and keeps track of what's paid and what's still due. It also records which account registered the student, so the referral credit goes to the right person.</p></div></section>
+      <section class="cl-panel" id="cl-counter"><div class="cl-bar" aria-hidden="true"><i></i><i></i><i></i><span>classly / class counter</span></div><div class="cl-body"><h3>Class Counter</h3><p>Tick off classes as they happen. Today's classes sit in one place, and you can see your own recent ticks.</p></div></section>
+      <section class="cl-panel" id="cl-courses"><div class="cl-bar" aria-hidden="true"><i></i><i></i><i></i><span>classly / courses</span></div><div class="cl-body"><h3>Courses &amp; Pricing</h3><p>The list of courses and what each one costs, in one place you can edit.</p></div></section>
+      <section class="cl-panel" id="cl-staff"><div class="cl-bar" aria-hidden="true"><i></i><i></i><i></i><span>classly / staff</span></div><div class="cl-body"><h3>Staff Accounts</h3><p>Manage who can sign in.</p></div></section>
+      <section class="cl-panel" id="cl-analytics"><div class="cl-bar" aria-hidden="true"><i></i><i></i><i></i><span>classly / analytics</span></div><div class="cl-body"><h3>Analytics</h3><p>An overview of how the center is doing.</p></div></section>
+    </div>
   </div>
 </section>
 <section class="band band--navy sky sky--field" id="try">
@@ -86,7 +102,7 @@
       <li><p>On the sign-in screen, pick any account under "Try it as". No signup.</p></li>
       <li><p>Register a student, tick a class, look at the analytics.</p></li>
     </ol>
-    <div class="btn-row"><a class="btn btn--gold" href="classley.html">Open the live demo</a></div>
+    <div class="btn-row"><a class="btn btn--gold" href="classley.html" data-boot>Open the live demo</a></div>
     <p class="page-note">Everything you do is saved only in your browser. The Reset demo data button puts it back the way it was.</p>
   </div>
 </section>
@@ -103,6 +119,7 @@
     <div class="btn-row"><a class="btn btn--gold" href="../../contact/?type=audit">Get a free website audit</a><a class="btn btn--line" href="../../work/">See all work</a></div>
   </div>
 </section>
+<div class="boot" aria-hidden="true"><div class="boot-panel"></div><div class="boot-line"></div><p class="boot-text">Starting Classly</p></div>
 </main>
 <!-- CHROME:FOOTER:START -->
 <footer class="site-footer">
@@ -179,6 +196,7 @@
   </div>
 </div>
 <!-- CHROME:FOOTER:END -->
-<script src="../../js/site.js?v=3" defer></script>
+<script src="../../js/site.js?v=4" defer></script>
+<script src="../../js/case-classly.js?v=1" defer></script>
 </body>
 </html>

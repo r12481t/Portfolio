@@ -219,25 +219,31 @@
     });
   }
 
-  /* ---------- Analytics (Google Analytics 4) ----------
-     Nothing is requested from Google until the visitor presses "Allow analytics". The choice is kept in this browser
-     (local storage) and can be changed from "Analytics settings" in the footer. A browser that sends the Global Privacy
-     Control signal is treated as "No thanks": no banner, no analytics.
-     To stop asking and load analytics for everyone, set askFirst to false. That is not advised for visitors in the UK or EU. */
-  var ANALYTICS = { id: 'G-B29TWFJY0Q', askFirst: true, key: 'curiohatch-analytics' };
+  /* ---------- Analytics (Google Analytics 4, with Google Consent Mode) ----------
+     Why it works this way: Google checks that the tag is on the page when it loads. A tag that is only added after a
+     visitor presses "Allow" is invisible to that check, so Google reports "no data". So the tag is on every page from the
+     start, but with every kind of storage switched OFF until the visitor says yes. While storage is off the tag sets no
+     cookies and sends only anonymous pings (no cookie id, no advertising use). "Allow analytics" switches analytics
+     storage on; "No thanks" keeps it off. A saved "No thanks", or a browser that sends the Global Privacy Control signal,
+     stops the tag from loading at all.
+     To go back to "nothing reaches Google before a yes", set loadBeforeChoice to false (then update the privacy page). */
+  var ANALYTICS = { id: 'G-B29TWFJY0Q', loadBeforeChoice: true, key: 'curiohatch-analytics' };
 
   function initAnalytics() {
     if (navigator.globalPrivacyControl === true) return;
     var stored = null, banner = null, loaded = false;
     try { stored = window.localStorage.getItem(ANALYTICS.key); } catch (e) { /* storage blocked: ask each visit */ }
 
-    function load() {
+    function load(granted) {
       if (loaded) return;
       loaded = true;
       window.dataLayer = window.dataLayer || [];
       window.gtag = function () { window.dataLayer.push(arguments); };
+      var state = granted ? 'granted' : 'denied';
+      /* Consent defaults must be set before the config call below. Advertising storage is always off: this site shows no ads. */
+      window.gtag('consent', 'default', { analytics_storage: state, ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', wait_for_update: 500 });
       window.gtag('js', new Date());
-      window.gtag('config', ANALYTICS.id);
+      window.gtag('config', ANALYTICS.id, { allow_google_signals: false, allow_ad_personalization_signals: false });
       var s = document.createElement('script');
       s.async = true;
       s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(ANALYTICS.id);
@@ -253,7 +259,14 @@
     function choose(value) {
       try { window.localStorage.setItem(ANALYTICS.key, value); } catch (e) { /* the choice lasts for this page only */ }
       if (banner) { banner.remove(); banner = null; }
-      if (value === 'allow') { window['ga-disable-' + ANALYTICS.id] = false; load(); } else stop();
+      if (value === 'allow') {
+        window['ga-disable-' + ANALYTICS.id] = false;
+        if (loaded) window.gtag('consent', 'update', { analytics_storage: 'granted' });   // the tag was already waiting
+        else load(true);
+      } else {
+        if (loaded) window.gtag('consent', 'update', { analytics_storage: 'denied' });
+        stop();
+      }
       var back = document.querySelector('[data-analytics-settings]');
       if (back && document.activeElement === document.body) back.focus();
     }
@@ -264,7 +277,7 @@
       banner.setAttribute('role', 'region');
       banner.setAttribute('aria-label', 'Analytics choice');
       var p = document.createElement('p');
-      p.textContent = 'May we use Google Analytics to count visits? It sets cookies and sends usage data to Google. The site works the same either way.';
+      p.textContent = 'May we use Google Analytics cookies to count visits? Until you choose, Google gets only anonymous pings with no cookies. The site works the same either way.';
       var row = document.createElement('div');
       row.className = 'btn-row';
       var yes = document.createElement('button'), no = document.createElement('button');
@@ -286,8 +299,11 @@
       b.hidden = false;
       b.addEventListener('click', function () { ask(true); });
     });
-    if (!ANALYTICS.askFirst || stored === 'allow') load();
-    else if (stored === null) ask(false);
+    if (stored === 'allow') load(true);
+    else if (stored === null) {
+      if (ANALYTICS.loadBeforeChoice) load(false);   // tag present, storage off, until the visitor chooses
+      ask(false);
+    } else stop();                                   // a saved "No thanks": nothing loads, any old cookies are cleared
   }
 
   /* ---------- Inquiry form ---------- */

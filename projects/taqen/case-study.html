@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="case-taqen">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +22,8 @@
 <link rel="preload" href="../../assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/ibm-plex-sans-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.className+=' js'</script>
-<link rel="stylesheet" href="../../css/site.css?v=3">
+<link rel="stylesheet" href="../../css/site.css?v=4">
+<link rel="stylesheet" href="../../css/case-taqen.css?v=2">
 </head>
 <body>
 <!-- CHROME:HEADER:START -->
@@ -41,9 +42,10 @@
 </header>
 <!-- CHROME:HEADER:END -->
 <main id="main">
-<div class="sky sky--field band--navy">
+<div class="sky sky--field band--navy tq-hero">
   <div class="wrap page-head">
     <p class="crumbs"><a href="../../work/">Work</a> &middot; Print-on-demand brand</p>
+    <p class="mono-label">Art with Meaning</p>
     <div class="case-head">
       <img class="case-logo" src="img/logo-white.png" alt="TAQEN Collection logo" width="96" height="96">
       <h1>TAQEN Collection</h1>
@@ -53,16 +55,22 @@
     <p class="page-note">Opens in a new tab. The store is still online, but no new products are being added.</p>
   </div>
 </div>
-<section class="band horizon">
+<section class="band horizon tq-looks" aria-labelledby="looks-h">
+  <div class="wrap">
+    <div class="tq-looks-head"><h2 id="looks-h">Three of the designs</h2><p class="tq-hint" aria-hidden="true">Swipe <span>&rarr;</span></p></div>
+  </div>
+  <ul class="lookbook" aria-label="Three of the designs">
+    <li><figure><a href="https://www.pinterest.com/pin/659707045458274719/" target="_blank" rel="noopener" aria-label="View design 1 on Pinterest (opens in a new tab)"><img src="img/product-1.webp" alt="Black t-shirt, back view, printed with a spider&#x27;s web across a cave opening and Arabic calligraphy underneath" width="474" height="474" loading="lazy"></a>
+    <figcaption><b>01</b> A web across a cave opening</figcaption></figure></li>
+    <li><figure><a href="https://www.pinterest.com/pin/659707045458294944/" target="_blank" rel="noopener" aria-label="View design 2 on Pinterest (opens in a new tab)"><img src="img/product-2.webp" alt="Navy t-shirt, back view, with hand-lettered text about not selling your deen for dunya" width="474" height="474" loading="lazy"></a>
+    <figcaption><b>02</b> Hand-lettering on navy</figcaption></figure></li>
+    <li><figure><a href="https://www.pinterest.com/pin/659707045458274755/" target="_blank" rel="noopener" aria-label="View design 3 on Pinterest (opens in a new tab)"><img src="img/product-3.webp" alt="Black t-shirt, back view, printed with a winding path through a night sky, a small horse on the path and a tree and moon at one end" width="474" height="474" loading="lazy"></a>
+    <figcaption><b>03</b> A path through a night sky</figcaption></figure></li>
+  </ul>
+  <p class="tq-count" data-look-count aria-hidden="true"><span><span data-look-now>1</span> / 3</span><i class="is-on"></i><i></i><i></i></p>
+</section>
+<section class="band" aria-label="Project facts">
   <div class="wrap" data-reveal>
-    <ul class="lookbook" aria-label="Three of the designs">
-      <li><figure><a href="https://www.pinterest.com/pin/659707045458274719/" target="_blank" rel="noopener" aria-label="View design 1 on Pinterest (opens in a new tab)"><img src="img/product-1.webp" alt="Black t-shirt, back view, printed with a spider&#x27;s web across a cave opening and Arabic calligraphy underneath" width="474" height="474" loading="lazy"></a>
-      <figcaption>Design 1</figcaption></figure></li>
-      <li><figure><a href="https://www.pinterest.com/pin/659707045458294944/" target="_blank" rel="noopener" aria-label="View design 2 on Pinterest (opens in a new tab)"><img src="img/product-2.webp" alt="Navy t-shirt, back view, with hand-lettered text about not selling your deen for dunya" width="474" height="474" loading="lazy"></a>
-      <figcaption>Design 2</figcaption></figure></li>
-      <li><figure><a href="https://www.pinterest.com/pin/659707045458274755/" target="_blank" rel="noopener" aria-label="View design 3 on Pinterest (opens in a new tab)"><img src="img/product-3.webp" alt="Black t-shirt, back view, printed with a winding path through a night sky, a small horse on the path and a tree and moon at one end" width="474" height="474" loading="lazy"></a>
-      <figcaption>Design 3</figcaption></figure></li>
-    </ul>
     <dl class="facts">
       <div><dt>Timeline</dt><dd>Started early Ramadan 2026, launched early 2026</dd></div>
       <div><dt>Outcome</dt><dd>No orders. The store is still online, but no longer developed.</dd></div>
@@ -71,7 +79,7 @@
     </dl>
   </div>
 </section>
-<section class="band band--cream2">
+<section class="band band--navy tq-chapter">
   <div class="wrap" data-reveal>
     <h2>The brand</h2>
     <dl class="spec">
@@ -87,7 +95,7 @@
     </dl>
   </div>
 </section>
-<section class="band">
+<section class="band tq-chapter">
   <div class="wrap" data-reveal>
     <h2>The store</h2>
     <dl class="spec">
@@ -111,36 +119,33 @@
     </dl>
   </div>
 </section>
-<section class="band band--cream2">
+<section class="band band--cream2 tq-chapter">
   <div class="wrap" data-reveal>
     <h2>What went wrong</h2>
-    <dl class="spec spec--numbered">
-      <dt>Technical and payment hurdles</dt>
-      <dd><p>Payment options were limited, so checkout stayed on Gumroad's off-site flow, and backend authentication issues with Supabase took time away from growth.</p></dd>
-      <dt>Limited time and capacity</dt>
-      <dd><p>The project depended on the team's spare hours.</p></dd>
-      <dt>Checkout trust</dt>
-      <dd><p>Sending customers to an off-site checkout likely cost trust at the most important moment.</p></dd>
-      <dt>Traffic</dt>
-      <dd><p>Marketing posts did not lead to an order.</p></dd>
+    <dl class="tq-notes">
+      <div><dt>Technical and payment hurdles</dt>
+      <dd><p>Payment options were limited, so checkout stayed on Gumroad's off-site flow, and backend authentication issues with Supabase took time away from growth.</p></dd></div>
+      <div><dt>Limited time and capacity</dt>
+      <dd><p>The project depended on the team's spare hours.</p></dd></div>
+      <div><dt>Checkout trust</dt>
+      <dd><p>Sending customers to an off-site checkout likely cost trust at the most important moment.</p></dd></div>
+      <div><dt>Traffic</dt>
+      <dd><p>Marketing posts did not lead to an order.</p></dd></div>
     </dl>
   </div>
 </section>
-<section class="band">
+<section class="band band--navy tq-chapter">
   <div class="wrap" data-reveal>
     <h2>What the team learned</h2>
-    <dl class="spec spec--numbered">
-      <dt>Trust and checkout friction kill conversion</dt>
-      <dd><p>Visitors who browse will not buy if payment feels unfamiliar or off-site.</p></dd>
-      <dt>A team needs commitment beyond the build</dt>
-      <dd><p>Launching is the easy part. Steady marketing and iteration are what keep a store alive.</p></dd>
-      <dt>Validate demand before building the full store</dt>
-      <dd><p>Testing designs and interest first would have shown what customers wanted before the whole site was built.</p></dd>
-    </dl>
-    <dl class="spec">
-      <dt>Skills gained</dt>
-      <dd><p>Product design, marketing, website logic, web design, Supabase and backend work, front-end development, and team coordination.</p></dd>
-    </dl>
+    <ol class="tq-learned">
+      <li><h3>Trust and checkout friction kill conversion</h3><p>Visitors who browse will not buy if payment feels unfamiliar or off-site.</p></li>
+      <li><h3>A team needs commitment beyond the build</h3><p>Launching is the easy part. Steady marketing and iteration are what keep a store alive.</p></li>
+      <li><h3>Validate demand before building the full store</h3><p>Testing designs and interest first would have shown what customers wanted before the whole site was built.</p></li>
+    </ol>
+    <div class="tq-skills">
+      <h3>Skills gained</h3>
+      <p>Product design, marketing, website logic, web design, Supabase and backend work, front-end development, and team coordination.</p>
+    </div>
   </div>
 </section>
 <section class="band band--cream2" id="links">
@@ -239,6 +244,7 @@
   </div>
 </div>
 <!-- CHROME:FOOTER:END -->
-<script src="../../js/site.js?v=3" defer></script>
+<script src="../../js/site.js?v=4" defer></script>
+<script src="../../js/case-taqen.js?v=1" defer></script>
 </body>
 </html>

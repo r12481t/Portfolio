@@ -49,14 +49,14 @@ export function initScene(opts = {}) {
       antialias: pixelRatio < 2,            // supersampling from a high pixel ratio already smooths edges
       powerPreference: 'high-performance',  // ask laptops to use the discrete GPU instead of the integrated one
     });
-    renderer.setClearColor(0x14100c, 1);
+    renderer.setClearColor(0x04122a, 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = Number.isFinite(opts.exposure) ? opts.exposure : 1.55;
     renderer.setPixelRatio(pixelRatio);
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x14100c, 8, 16); // fades the far left of the room, desk stays crisp
+    scene.fog = new THREE.Fog(0x04122a, 8, 16); // fades the far left of the room, desk stays crisp
     const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 50);
     camera.position.set(...POSE.position);
     camera.lookAt(...POSE.target);
@@ -98,24 +98,24 @@ export function initScene(opts = {}) {
     const lampX = -0.95, lampZ = 0.6, lampTopX = lampX - 0.15;
 
     /* ---------- Lights ---------- */
-    scene.add(new THREE.AmbientLight(0x323c52, 1.35));
-    scene.add(new THREE.HemisphereLight(0x8fb0d8, 0x1a140f, 0.7));
-    const lampLight = new THREE.PointLight(0xffb066, 6, 6, 2);
+    scene.add(new THREE.AmbientLight(0x2c4468, 1.35));
+    scene.add(new THREE.HemisphereLight(0x9cc4e8, 0x0b1a30, 0.7));
+    const lampLight = new THREE.PointLight(0xffd27a, 6, 6, 2);
     lampLight.position.set(lampTopX, 0.86, lampZ);
     scene.add(lampLight);
-    const windowLight = new THREE.PointLight(0x4d6ea3, 2.2, 8, 2);
+    const windowLight = new THREE.PointLight(0x4f86b8, 2.2, 8, 2);
     windowLight.position.set(win.cx, win.cy, 0.3);
     scene.add(windowLight);
 
     /* ---------- Desk, legs, floor, wall ---------- */
     const desk = new THREE.Mesh(
       new THREE.BoxGeometry(3.2, 0.12, 1.6),
-      new THREE.MeshStandardMaterial({ color: 0x1c1712, roughness: 0.85 })
+      new THREE.MeshStandardMaterial({ color: 0x14243f, roughness: 0.85 })
     );
     desk.position.set(-0.4, 0, 0);
     scene.add(desk);
 
-    const legMat = new THREE.MeshStandardMaterial({ color: 0x15110d, roughness: 0.8 });
+    const legMat = new THREE.MeshStandardMaterial({ color: 0x0d192c, roughness: 0.8 });
     [[-1.94, -0.74], [1.14, -0.74], [-1.94, 0.74], [1.14, 0.74]].forEach(([lx, lz]) => {
       const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, -0.06 - floorY, 0.08), legMat);
       leg.position.set(lx, (-0.06 + floorY) / 2, lz);
@@ -124,7 +124,7 @@ export function initScene(opts = {}) {
 
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(28, 16),
-      new THREE.MeshStandardMaterial({ color: 0x120e0b, roughness: 0.9 })
+      new THREE.MeshStandardMaterial({ color: 0x081426, roughness: 0.9 })
     );
     floor.rotation.x = -Math.PI / 2;
     floor.position.set(-1.5, floorY, wallZ + 8);
@@ -146,14 +146,14 @@ export function initScene(opts = {}) {
     wallShape.holes.push(wallHole);
     const wall = new THREE.Mesh(
       new THREE.ShapeGeometry(wallShape),
-      new THREE.MeshStandardMaterial({ color: 0x342d28, roughness: 0.95 })
+      new THREE.MeshStandardMaterial({ color: 0x1d2f4c, roughness: 0.95 })
     );
     wall.position.z = wallZ;
     scene.add(wall);
 
     const baseboard = new THREE.Mesh(
       new THREE.BoxGeometry(22, 0.12, 0.03),
-      new THREE.MeshStandardMaterial({ color: 0x1a1512, roughness: 0.8 })
+      new THREE.MeshStandardMaterial({ color: 0x101e36, roughness: 0.8 })
     );
     baseboard.position.set(-1.5, floorY + 0.06, wallZ + 0.015);
     scene.add(baseboard);
@@ -167,12 +167,12 @@ export function initScene(opts = {}) {
     const codeFont = "12px 'Courier New', monospace";
     const codeLineHeight = 15;
     const linesPerScreen = 16;
-    const codeFG = '#c9d1d9';
-    const codeKeyword = '#7fb3ff';
-    const codeString = '#e9c46a';
+    const codeFG = '#dbe7f3';
+    const codeKeyword = '#5CD6F0';
+    const codeString = '#FEF0D5';
     const codeComment = '#6b7280';
-    const codeNumber = '#f2a75a';
-    const codePunct = '#b5a898';
+    const codeNumber = '#FDC44B';
+    const codePunct = '#9fb3c8';
     const keywordRe = /^(import|from|export|function|const|let|var|new|return|if|else|for|of|in|class|extends|null|true|false|typeof)$/;
     const tokenRe = /(\/\/[^\n]*)|('[^']*'|"[^"]*")|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)|(\s+)|([^\sA-Za-z0-9_$])/g;
 
@@ -193,7 +193,7 @@ export function initScene(opts = {}) {
       "  const camera = new THREE.Camera();",
       "",
       "  const lamp = new THREE.PointLight(",
-      "    0xffb066, 6, 6",
+      "    0xfdc44b, 6, 6",
       "  );",
       "  scene.add(lamp);",
       "",
@@ -272,7 +272,7 @@ export function initScene(opts = {}) {
     // soft glow bleed around the screen edges + a power LED on the bottom bezel
     const screenHalo = new THREE.Mesh(
       new THREE.PlaneGeometry(1.06, 0.76),
-      new THREE.MeshBasicMaterial({ color: 0x6fa8ff, transparent: true, opacity: 0.18 })
+      new THREE.MeshBasicMaterial({ color: 0x5cd6f0, transparent: true, opacity: 0.18 })
     );
     screenHalo.position.set(-0.4, 0.72, -0.305);
     scene.add(screenHalo);
@@ -284,7 +284,7 @@ export function initScene(opts = {}) {
     scene.add(monitorLed);
 
     // Bounce light off the screen so it actually lights the desk below it
-    const screenGlow = new THREE.PointLight(0x6fa8ff, 1.3, 2.4, 2);
+    const screenGlow = new THREE.PointLight(0x5cd6f0, 1.3, 2.4, 2);
     screenGlow.position.set(-0.4, 0.55, 0.05);
     scene.add(screenGlow);
 
@@ -321,7 +321,7 @@ export function initScene(opts = {}) {
 
     const screen2Halo = new THREE.Mesh(
       new THREE.PlaneGeometry(0.8, 0.57),
-      new THREE.MeshBasicMaterial({ color: 0x6fa8ff, transparent: true, opacity: 0.16 })
+      new THREE.MeshBasicMaterial({ color: 0x5cd6f0, transparent: true, opacity: 0.16 })
     );
     screen2Halo.position.set(0.594, 0.545, -0.283);
     screen2Halo.rotation.y = -0.32;
@@ -388,12 +388,12 @@ export function initScene(opts = {}) {
     // subtle RGB underglow along the front edge
     const keyGlow = new THREE.Mesh(
       new THREE.PlaneGeometry(0.46, 0.01),
-      new THREE.MeshBasicMaterial({ color: 0x4d8fff, transparent: true, opacity: 0.55 })
+      new THREE.MeshBasicMaterial({ color: 0x5cd6f0, transparent: true, opacity: 0.55 })
     );
     keyGlow.position.set(0, -0.004, 0.09);
     keyGlow.rotation.x = -Math.PI / 2;
     keyboardGroup.add(keyGlow);
-    const keyGlowLight = new THREE.PointLight(0x4d8fff, 0.35, 0.4, 2);
+    const keyGlowLight = new THREE.PointLight(0x5cd6f0, 0.35, 0.4, 2);
     keyGlowLight.position.set(0, 0.02, 0.09);
     keyboardGroup.add(keyGlowLight);
 
@@ -458,15 +458,15 @@ export function initScene(opts = {}) {
     fCtx.fillStyle = '#1a1b20'; fCtx.fillRect(0, 0, 100, 200);
     fCtx.fillStyle = '#0c0d10'; fCtx.fillRect(12, 12, 76, 12);
     fCtx.fillStyle = '#2a2c34'; fCtx.fillRect(14, 17, 48, 2);
-    fCtx.strokeStyle = '#4d8fff'; fCtx.lineWidth = 2;
+    fCtx.strokeStyle = '#5CD6F0'; fCtx.lineWidth = 2;
     fCtx.beginPath(); fCtx.arc(50, 44, 8, 0, Math.PI * 2); fCtx.stroke();
     fCtx.fillStyle = '#0c0d10';
     fCtx.beginPath(); fCtx.arc(50, 44, 5, 0, Math.PI * 2); fCtx.fill();
     fCtx.fillStyle = '#050506'; fCtx.fillRect(16, 41, 10, 5); fCtx.fillRect(74, 41, 10, 5);
     fCtx.fillStyle = '#0b0c10'; fCtx.fillRect(10, 62, 80, 128);
     const fanGlow = fCtx.createRadialGradient(50, 128, 4, 50, 128, 54);
-    fanGlow.addColorStop(0, 'rgba(77,143,255,0.9)');
-    fanGlow.addColorStop(1, 'rgba(77,143,255,0)');
+    fanGlow.addColorStop(0, 'rgba(92,214,240,0.9)');
+    fanGlow.addColorStop(1, 'rgba(92,214,240,0)');
     fCtx.fillStyle = fanGlow; fCtx.fillRect(10, 62, 80, 128);
     fCtx.strokeStyle = 'rgba(11,12,16,0.85)'; fCtx.lineWidth = 1.6;
     for (let x = 12; x < 90; x += 4) { fCtx.beginPath(); fCtx.moveTo(x, 62); fCtx.lineTo(x, 190); fCtx.stroke(); }
@@ -481,7 +481,7 @@ export function initScene(opts = {}) {
     // vertical LED strip down the front edge (pulses in the loop)
     const cpuAccent = new THREE.Mesh(
       new THREE.PlaneGeometry(0.008, 0.44),
-      new THREE.MeshBasicMaterial({ color: 0x5599ff, transparent: true, opacity: 0.85 })
+      new THREE.MeshBasicMaterial({ color: 0x5cd6f0, transparent: true, opacity: 0.85 })
     );
     cpuAccent.position.set(towerX - towerW / 2 + 0.012, towerY, towerFront + 0.003);
     scene.add(cpuAccent);
@@ -512,18 +512,18 @@ export function initScene(opts = {}) {
     sCtx.fillStyle = '#10121a'; sCtx.fillRect(58, 8, 110, 148);
     sCtx.strokeStyle = '#1c2030'; sCtx.lineWidth = 1;
     for (let i = 0; i < 6; i++) { sCtx.beginPath(); sCtx.moveTo(62, 20 + i * 22); sCtx.lineTo(164, 20 + i * 22); sCtx.stroke(); }
-    drawFan(sCtx, 30, 36, 26, '#4d8fff');
-    drawFan(sCtx, 30, 96, 26, '#4d8fff');
-    drawFan(sCtx, 30, 156, 26, '#4d8fff');
-    drawFan(sCtx, 150, 34, 20, '#a06bff');
+    drawFan(sCtx, 30, 36, 26, '#5CD6F0');
+    drawFan(sCtx, 30, 96, 26, '#5CD6F0');
+    drawFan(sCtx, 30, 156, 26, '#5CD6F0');
+    drawFan(sCtx, 150, 34, 20, '#FDC44B');
     sCtx.fillStyle = '#171a24'; sCtx.fillRect(86, 44, 38, 38);
-    sCtx.strokeStyle = '#ff5fa8'; sCtx.lineWidth = 2;
+    sCtx.strokeStyle = '#FEF0D5'; sCtx.lineWidth = 2;
     sCtx.beginPath(); sCtx.arc(105, 63, 13, 0, Math.PI * 2); sCtx.stroke();
     sCtx.fillStyle = '#0b0c12'; sCtx.beginPath(); sCtx.arc(105, 63, 8, 0, Math.PI * 2); sCtx.fill();
     sCtx.fillStyle = '#171a22'; sCtx.fillRect(64, 104, 106, 34);
-    sCtx.fillStyle = '#2ee6c5'; sCtx.fillRect(64, 104, 106, 3);
-    drawFan(sCtx, 92, 123, 12, '#2ee6c5');
-    drawFan(sCtx, 140, 123, 12, '#2ee6c5');
+    sCtx.fillStyle = '#5CD6F0'; sCtx.fillRect(64, 104, 106, 3);
+    drawFan(sCtx, 92, 123, 12, '#5CD6F0');
+    drawFan(sCtx, 140, 123, 12, '#5CD6F0');
     sCtx.fillStyle = '#0d0e13'; sCtx.fillRect(58, 162, 116, 24);
     sCtx.fillStyle = '#1d2030'; sCtx.fillRect(66, 172, 40, 2);
     const sheen = sCtx.createLinearGradient(0, 0, 176, 192);
@@ -725,7 +725,7 @@ export function initScene(opts = {}) {
     scene.add(lampArm);
     const lampShade = new THREE.Mesh(
       new THREE.ConeGeometry(0.15, 0.2, 24, 1, true),
-      new THREE.MeshStandardMaterial({ color: 0xffb066, emissive: 0xffb066, emissiveIntensity: 1.4, side: THREE.DoubleSide })
+      new THREE.MeshStandardMaterial({ color: 0xfdc44b, emissive: 0xfdc44b, emissiveIntensity: 1.4, side: THREE.DoubleSide })
     );
     lampShade.position.set(lampTopX, 0.93, lampZ);
     scene.add(lampShade);
@@ -744,7 +744,7 @@ export function initScene(opts = {}) {
     scene.add(lampCordTip);
 
     /* ---------- Window on the wall: frame, mullions, sill, glass, rain, condensation ---------- */
-    const frameMat = new THREE.MeshStandardMaterial({ color: 0x4a3828, roughness: 0.7 });
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x2f4a6b, roughness: 0.7 });
     const fw = 0.06;
     [
       [win.w, fw, win.cx, win.y1 - fw / 2],
@@ -818,9 +818,9 @@ export function initScene(opts = {}) {
     const toU = (x) => ((x - (skyCX - skyW / 2)) / skyW) * 512;
     const toV = (y) => (((skyCY + skyH / 2) - y) / skyH) * 384;
     const skyG = skCtx.createLinearGradient(0, 0, 0, 384);
-    skyG.addColorStop(0, '#060a1a');
-    skyG.addColorStop(0.55, '#111a36');
-    skyG.addColorStop(1, '#2a2440');
+    skyG.addColorStop(0, '#011022');
+    skyG.addColorStop(0.55, '#0a1f40');
+    skyG.addColorStop(1, '#173a66');
     skCtx.fillStyle = skyG;
     skCtx.fillRect(0, 0, 512, 384);
     for (let i = 0; i < 70; i++) {
@@ -829,10 +829,10 @@ export function initScene(opts = {}) {
     }
     const moonU = toU(-3.35), moonV = toV(1.72);
     const moonGlow = skCtx.createRadialGradient(moonU, moonV, 2, moonU, moonV, 40);
-    moonGlow.addColorStop(0, 'rgba(239,230,200,0.35)');
-    moonGlow.addColorStop(1, 'rgba(239,230,200,0)');
+    moonGlow.addColorStop(0, 'rgba(255,248,232,0.35)');
+    moonGlow.addColorStop(1, 'rgba(255,248,232,0)');
     skCtx.fillStyle = moonGlow; skCtx.fillRect(moonU - 40, moonV - 40, 80, 80);
-    skCtx.fillStyle = '#efe6c8';
+    skCtx.fillStyle = '#FFF8E8';
     skCtx.beginPath(); skCtx.arc(moonU, moonV, 12, 0, Math.PI * 2); skCtx.fill();
     skCtx.fillStyle = '#0e152d';
     skCtx.beginPath(); skCtx.arc(moonU + 5, moonV - 3, 11, 0, Math.PI * 2); skCtx.fill();
@@ -847,7 +847,7 @@ export function initScene(opts = {}) {
           for (let wy = top - 0.05; wy > -0.7; wy -= 0.06) {
             for (let wx = x + 0.03; wx < x + w - 0.03; wx += 0.05) {
               if (Math.random() < 0.3) {
-                skCtx.fillStyle = `rgba(255,210,138,${0.35 + Math.random() * 0.5})`;
+                skCtx.fillStyle = `rgba(253,196,75,${0.35 + Math.random() * 0.5})`;
                 skCtx.fillRect(toU(wx), toV(wy), 2, 3);
               }
             }
@@ -856,8 +856,8 @@ export function initScene(opts = {}) {
         x += w + (Math.random() < 0.3 ? 0.03 : 0);
       }
     }
-    paintSkyline('#131a30', 1.05, 1.55, false);
-    paintSkyline('#090c17', 0.65, 1.25, true);
+    paintSkyline('#0b2040', 1.05, 1.55, false);
+    paintSkyline('#04101f', 0.65, 1.25, true);
     const skyBackdrop = new THREE.Mesh(
       new THREE.PlaneGeometry(skyW, skyH),
       new THREE.MeshBasicMaterial({ map: canvasTex(skyCanvas), fog: false })
@@ -871,7 +871,7 @@ export function initScene(opts = {}) {
     for (let i = 0; i < cityCount; i++) {
       const light = new THREE.Mesh(
         new THREE.PlaneGeometry(0.02 + Math.random() * 0.03, 0.02 + Math.random() * 0.03),
-        new THREE.MeshBasicMaterial({ color: 0xffd28a, transparent: true, opacity: 0.5 + Math.random() * 0.5, fog: false })
+        new THREE.MeshBasicMaterial({ color: 0xfdc44b, transparent: true, opacity: 0.5 + Math.random() * 0.5, fog: false })
       );
       light.position.set(-4.7 + Math.random() * 2.4, 0.55 + Math.random() * 0.65, wallZ - 1.15);
       cityLights.push(light);
@@ -901,7 +901,7 @@ export function initScene(opts = {}) {
       new THREE.Vector3(win.x1 - 0.05, win.y1 - 0.02, stringZ),
     ]);
     const bulbCount = 14;
-    const bulbMat = new THREE.MeshBasicMaterial({ color: 0xffd28a, transparent: true, opacity: 0.85 });
+    const bulbMat = new THREE.MeshBasicMaterial({ color: 0xfdc44b, transparent: true, opacity: 0.85 });
     const stringBulbs = new THREE.InstancedMesh(new THREE.SphereGeometry(0.02, 8, 8), bulbMat, bulbCount);
     const bulbDummy = new THREE.Object3D();
     for (let i = 0; i < bulbCount; i++) {
@@ -915,7 +915,7 @@ export function initScene(opts = {}) {
       new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.6 })
     );
     scene.add(stringWire);
-    const stringGlowLight = new THREE.PointLight(0xffd28a, 0.6, 2, 2);
+    const stringGlowLight = new THREE.PointLight(0xfdc44b, 0.6, 2, 2);
     stringGlowLight.position.set(win.cx, win.y1 - 0.2, wallZ + 0.4);
     scene.add(stringGlowLight);
 
@@ -925,18 +925,18 @@ export function initScene(opts = {}) {
     scene.add(clockGroup);
     clockGroup.add(new THREE.Mesh(
       new THREE.CircleGeometry(0.16, 32),
-      new THREE.MeshStandardMaterial({ color: 0x18120d, roughness: 0.6 })
+      new THREE.MeshStandardMaterial({ color: 0x0e1b30, roughness: 0.6 })
     ));
     const clockRim = new THREE.Mesh(
       new THREE.RingGeometry(0.155, 0.175, 32),
-      new THREE.MeshStandardMaterial({ color: 0x3a2c1f, roughness: 0.5 })
+      new THREE.MeshStandardMaterial({ color: 0x2f4a6b, roughness: 0.5 })
     );
     clockRim.position.z = 0.001;
     clockGroup.add(clockRim);
     function makeClockHand(length, width) {
       const hand = new THREE.Mesh(
         new THREE.PlaneGeometry(width, length),
-        new THREE.MeshBasicMaterial({ color: 0xd8c9a8 })
+        new THREE.MeshBasicMaterial({ color: 0xfef0d5 })
       );
       hand.position.set(0, length / 2, 0.002);
       const pivot = new THREE.Group();
@@ -951,12 +951,12 @@ export function initScene(opts = {}) {
     clockGroup.add(minuteHand);
 
     const secondHand = makeClockHand(0.14, 0.004);
-    secondHand.children[0].material.color.set(0xe07a4f);
+    secondHand.children[0].material.color.set(0xfdc44b);
     clockGroup.add(secondHand);
 
     const tickMesh = new THREE.InstancedMesh(
       new THREE.PlaneGeometry(0.006, 0.02),
-      new THREE.MeshBasicMaterial({ color: 0xd8c9a8 }),
+      new THREE.MeshBasicMaterial({ color: 0xfef0d5 }),
       12
     );
     const tickDummy = new THREE.Object3D();
@@ -975,14 +975,14 @@ export function initScene(opts = {}) {
     scene.add(printGroup);
     printGroup.add(new THREE.Mesh(
       new THREE.BoxGeometry(0.5, 0.36, 0.02),
-      new THREE.MeshStandardMaterial({ color: 0x2a1f16, roughness: 0.6 })
+      new THREE.MeshStandardMaterial({ color: 0x2f4a6b, roughness: 0.6 })
     ));
     const printCanvas = document.createElement('canvas');
     printCanvas.width = 128; printCanvas.height = 96;
     const pCtx = printCanvas.getContext('2d');
     const pGrad = pCtx.createLinearGradient(0, 0, 0, 96);
-    pGrad.addColorStop(0, '#2b2f45');
-    pGrad.addColorStop(1, '#5a3d38');
+    pGrad.addColorStop(0, '#1b3a63');
+    pGrad.addColorStop(1, '#3d6a8f');
     pCtx.fillStyle = pGrad;
     pCtx.fillRect(0, 0, 128, 96);
     pCtx.fillStyle = 'rgba(10,8,10,0.85)';
@@ -1006,7 +1006,7 @@ export function initScene(opts = {}) {
       motePos[i * 3 + 2] = -0.3 + Math.random() * 1.0;
     }
     moteGeo.setAttribute('position', new THREE.BufferAttribute(motePos, 3));
-    const moteMat = new THREE.PointsMaterial({ color: 0xffcf9e, size: 0.012, transparent: true, opacity: 0.5 });
+    const moteMat = new THREE.PointsMaterial({ color: 0xfdd88a, size: 0.012, transparent: true, opacity: 0.5 });
     const motes = new THREE.Points(moteGeo, moteMat);
     scene.add(motes);
 

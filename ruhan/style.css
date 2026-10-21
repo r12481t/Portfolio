@@ -1,17 +1,26 @@
-/* Ruhan's portfolio page. The 3D night desk is fixed behind everything; the page text rides over it.
+/* Ruhan's portfolio page, in the Curiohatch brand: navy night, cream text, amber-gold accent, a little cyan.
+   The 3D night desk is fixed behind everything; the page text rides over it.
+   Fonts are the same two files the Curiohatch pages use (Space Grotesk, IBM Plex Sans). There is no third family. This page links its own CSS only, never css/site.css.
    Layout rule (keep in step with WIDE_QUERY in camera-fit.js):
      wide screens   text column on the left, desk on the right
      everything else   desk at the top, text below */
 
+@font-face{font-family:"Space Grotesk";src:url("../assets/fonts/space-grotesk-latin-wght.woff2") format("woff2");font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:"IBM Plex Sans";src:url("../assets/fonts/ibm-plex-sans-latin-wght.woff2") format("woff2");font-weight:100 700;font-style:normal;font-display:swap}
+
 /* ================= TOKENS ================= */
 :root{
-  --void:#0d0a08;      /* warm near-black, a dim room, not a cold screen */
-  --paper:#f5efe6;     /* warm off-white, primary text */
-  --ash:#c9bdac;       /* warm taupe, secondary text */
-  --lamp:#f2a75a;      /* the one accent, desk-lamp amber */
-  --lamp-soft:rgba(242,167,90,0.14);
-  --hair:rgba(245,239,230,0.14);
-  --shade:0 1px 2px rgba(0,0,0,0.85), 0 0 22px rgba(0,0,0,0.6);   /* keeps text readable over the scene, with no panel behind it */
+  --void:#011022;      /* Curiohatch navy */
+  --paper:#FFF8E8;     /* Curiohatch cream, primary text */
+  --ash:#FEF0D5;       /* Curiohatch cream-2, secondary text */
+  --lamp:#FDC44B;      /* Curiohatch amber-gold: the one accent (the desk lamp is the same gold) */
+  --lamp-hover:#E7A91B;
+  --cyan:#5CD6F0;      /* used in tiny doses only: focus on dark, the monitor glow */
+  --lamp-soft:rgba(253,196,75,0.14);
+  --hair:rgba(254,240,213,0.24);
+  --shade:0 1px 2px rgba(1,16,34,0.9), 0 0 22px rgba(1,16,34,0.7);   /* keeps text readable over the scene, with no panel behind it */
+  --head:"Space Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
 
   --space-1:0.25rem; --space-2:0.5rem; --space-3:1rem; --space-4:1.5rem;
   --space-5:2rem; --space-6:3rem; --space-7:4rem;
@@ -30,20 +39,21 @@ html{scroll-behavior:smooth; scroll-padding-top:calc(var(--nav-h) + var(--space-
 html.is-loading, html.is-loading body{overflow:hidden}
 body{
   background:var(--void); color:var(--paper);
-  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  font-family:var(--body);
   font-size:16px; line-height:1.55; overflow-x:hidden;
   pointer-events:none;   /* empty space lets clicks through to the scene; the things that need clicks switch it back on below */
 }
-h1,h2{font-family:'Space Grotesk',sans-serif; font-weight:600; color:var(--paper); letter-spacing:-0.01em;}
+h1,h2{font-family:var(--head); font-weight:600; color:var(--paper); letter-spacing:-0.01em;}
 a{color:inherit}
-.mono{font-family:'IBM Plex Mono',monospace}
+.mono{font-family:var(--head);letter-spacing:.04em}
+.project-tag,.footer-h,.loader-label,.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-weight:600}
 .skip-link{
   position:absolute; left:-999px; top:auto;
   background:var(--lamp); color:var(--void);
   padding:var(--space-3) var(--space-4); font-weight:600; z-index:1000;
 }
 .skip-link:focus{ left:var(--space-3); top:var(--space-3); }
-:focus-visible{ outline:2px solid var(--lamp); outline-offset:2px; }
+:focus-visible{ outline:3px solid var(--cyan); outline-offset:3px; }
 section:focus{ outline:none }
 
 /* things that must receive clicks (see body above) */
@@ -62,7 +72,8 @@ section:focus{ outline:none }
 }
 .is-loading .loader{ visibility:visible; opacity:1; transition:none; }
 .loader-inner{ display:grid; gap:var(--space-3); width:min(18rem, 70vw); }
-.loader-name{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.5rem; letter-spacing:-0.01em; }
+.loader-badge{ display:block; width:96px; height:96px; margin:0 0 var(--space-2); }
+.loader-name{ font-family:var(--head); font-weight:600; font-size:1.5rem; letter-spacing:-0.01em; }
 .loader-label{ color:var(--ash); font-size:0.8125rem; letter-spacing:0.04em; }
 .loader-bar{ position:relative; height:2px; background:var(--hair); overflow:hidden; }
 .loader-bar span{
@@ -91,7 +102,7 @@ section:focus{ outline:none }
     radial-gradient(1px 1px at 78% 24%, #fff 100%, transparent),
     radial-gradient(1px 1px at 88% 10%, #fff 100%, transparent),
     radial-gradient(ellipse 60% 45% at 18% 78%, var(--lamp-soft) 0%, transparent 70%),
-    linear-gradient(180deg, #14100c 0%, var(--void) 55%);
+    linear-gradient(180deg, #04122a 0%, var(--void) 55%);
 }
 body.no-3d #scene{ display:none }
 body.no-3d #scene-fallback{ display:block }
@@ -114,7 +125,7 @@ body.no-3d #scene-fallback{ display:block }
 .veil{
   position:fixed; inset:0; z-index:-1;
   background:linear-gradient(180deg,
-    rgba(13,10,8,0.10) 0%, rgba(13,10,8,0.04) 30%, rgba(13,10,8,0.50) 66%, rgba(13,10,8,0.74) 100%);
+    rgba(1,16,34,0.10) 0%, rgba(1,16,34,0.04) 30%, rgba(1,16,34,0.50) 66%, rgba(1,16,34,0.74) 100%);
 }
 
 /* ================= NAV ================= */
@@ -122,10 +133,11 @@ body.no-3d #scene-fallback{ display:block }
   position:fixed; top:0; left:0; width:100%; z-index:100;
   display:flex; align-items:center; justify-content:space-between;
   padding:var(--space-3) var(--space-4);
-  background:rgba(13,10,8,0.74);   /* no blur: a blur over a live canvas is re-drawn every frame, which costs frame rate */
+  background:rgba(1,16,34,0.74);   /* no blur: a blur over a live canvas is re-drawn every frame, which costs frame rate */
   border-bottom:1px solid var(--hair);
 }
-.brand{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.05rem; text-decoration:none; }
+.brand{ display:inline-flex; align-items:center; min-height:44px; text-decoration:none; }
+.brand img{ display:block; width:160px; height:32px; }
 .nav-links{ display:flex; align-items:center; gap:var(--space-3); }
 .nav-links a{ display:inline-flex; align-items:center; min-height:44px; padding:0 var(--space-2);
   text-decoration:none; color:var(--ash); font-size:0.92rem;
@@ -146,18 +158,19 @@ body.no-3d #scene-fallback{ display:block }
 @keyframes heroIn{ from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:none} }
 @media (prefers-reduced-motion:reduce){ .hero-copy{ animation:none } }
 .hero-copy h1{ font-size:clamp(2.1rem,6vw,3.8rem); line-height:1.08; }
+.eyebrow{ color:var(--lamp); font-size:.8125rem; margin-bottom:var(--space-2); }
 .role{ margin-top:var(--space-3); color:var(--lamp); font-size:1.05rem; font-weight:500; }
 .hero-body{ margin-top:var(--space-3); color:var(--ash); max-width:52ch; line-height:1.6; }
 .hero-actions{ display:flex; gap:var(--space-3); margin-top:var(--space-5); flex-wrap:wrap; }
 .btn{
-  display:inline-flex; align-items:center; min-height:44px;
+  display:inline-flex; align-items:center; min-height:48px; font-family:var(--head); font-weight:600;
   padding:0 var(--space-5); font-size:0.95rem; text-decoration:none;
   border:1px solid transparent; text-shadow:none;
   transition:background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
 }
-.btn-primary{ background:var(--lamp); color:var(--void); font-weight:600; }
-.btn-primary:hover, .btn-primary:focus-visible{ background:#ffbb70; }
-.btn-ghost{ border-color:var(--hair); color:var(--paper); background:rgba(13,10,8,0.35); }
+.btn-primary{ background:var(--lamp); color:var(--void); font-weight:600; font-family:var(--head); }
+.btn-primary:hover, .btn-primary:focus-visible{ background:var(--lamp-hover); }
+.btn-ghost{ border-color:var(--hair); color:var(--paper); background:rgba(1,16,34,0.35); }
 .btn-ghost:hover, .btn-ghost:focus-visible{ border-color:var(--lamp); color:var(--lamp); }
 
 /* ================= CONTENT SECTIONS: no backgrounds, the scene shows through ================= */
@@ -180,23 +193,24 @@ section + section{ border-top:1px solid var(--hair); }
 .skill-group h3{ font-size:0.95rem; font-weight:600; color:var(--paper); margin-bottom:var(--space-2); }
 .skill-group ul{ list-style:none; color:var(--ash); }
 .skill-group li{ padding:var(--space-1) 0; }
-.skill-group li::before{ content:''; display:inline-block; width:5px; height:5px; margin-right:0.75em; border-radius:50%; background:var(--lamp); vertical-align:middle; }
+.skill-group li::before{ content:''; display:inline-block; width:.75rem; height:.75rem; margin-right:.75em; background:var(--lamp); vertical-align:middle;
+  clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%); }   /* the star from the Curiohatch logo */
 
 /* projects: whole card is the link (one real link inside, stretched over the card) */
 .project-list{ display:grid; gap:var(--space-4); }
 .project-card{
   position:relative; display:grid; gap:var(--space-2);
   padding:var(--space-4); border:1px solid var(--hair); border-radius:6px;
-  background:rgba(13,10,8,0.66);
+  background:rgba(1,16,34,0.66);
   transition:border-color var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
 }
-.project-card:hover{ border-color:rgba(242,167,90,0.75); background:rgba(13,10,8,0.8); transform:translateY(-2px); }
+.project-card:hover{ border-color:rgba(253,196,75,0.85); background:rgba(1,16,34,0.8); transform:translateY(-2px); }
 .project-tag{ color:var(--ash); font-size:0.8125rem; letter-spacing:0.02em; }
-.project-card h3{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.35rem; line-height:1.2; }
+.project-card h3{ font-family:var(--head); font-weight:600; font-size:1.35rem; line-height:1.2; }
 .card-link{ color:inherit; text-decoration:none; }
 .card-link::after{ content:''; position:absolute; inset:0; border-radius:inherit; }
 .card-link:focus-visible{ outline:none; }
-.card-link:focus-visible::after{ outline:2px solid var(--lamp); outline-offset:3px; }
+.card-link:focus-visible::after{ outline:3px solid var(--cyan); outline-offset:3px; }
 .project-card p{ color:var(--ash); max-width:58ch; line-height:1.6; }
 .project-card .project-tag, .project-card .project-meta{ font-size:0.8125rem; }
 .project-more{ display:flex; align-items:center; gap:var(--space-2); margin-top:var(--space-2); color:var(--lamp) !important; font-weight:500; }
@@ -204,17 +218,21 @@ section + section{ border-top:1px solid var(--hair); }
 .project-card:hover .arrow, .project-card:focus-within .arrow{ transform:translateX(4px); }
 
 /* a card that is not a link yet: same box, no hover lift */
-.project-card.is-soon{ background:rgba(13,10,8,0.5); }
-.project-card.is-soon:hover{ border-color:var(--hair); background:rgba(13,10,8,0.5); transform:none; }
+.project-card.is-soon{ background:rgba(1,16,34,0.5); }
+.project-card.is-soon:hover{ border-color:var(--hair); background:rgba(1,16,34,0.5); transform:none; }
 
 /* contact */
 .contact-email{
   display:inline-block; margin-top:var(--space-3);
-  font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.4rem; color:var(--lamp);
+  font-family:var(--head); font-weight:600; font-size:1.4rem; color:var(--lamp);
   text-decoration:none; border-bottom:1px solid transparent;
   transition:border-color var(--dur-fast) var(--ease-out);
 }
 .contact-email:hover, .contact-email:focus-visible{ border-color:var(--lamp); }
+
+.contact-alt{ margin-top:var(--space-3); color:var(--ash); }
+.contact-alt a{ color:var(--paper); text-underline-offset:.2em; }
+.contact-alt a:hover, .contact-alt a:focus-visible{ color:var(--lamp); }
 
 /* ================= FOOTER ================= */
 .site-footer{
@@ -223,7 +241,8 @@ section + section{ border-top:1px solid var(--hair); }
 }
 .footer-inner{ max-width:640px; margin:0 auto; }
 .footer-grid{ display:grid; gap:var(--space-5); }
-.footer-name{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.15rem; }
+.footer-badge{ display:block; width:64px; height:64px; margin-bottom:var(--space-3); }
+.footer-name{ font-family:var(--head); font-weight:600; font-size:1.15rem; }
 .footer-line{ margin-top:var(--space-2); color:var(--ash); max-width:34ch; }
 .footer-h{ margin-bottom:var(--space-1); color:var(--ash); font-size:0.8125rem; letter-spacing:0.04em; }
 .footer-col ul{ list-style:none; }
@@ -247,7 +266,7 @@ section + section{ border-top:1px solid var(--hair); }
   position:fixed; left:var(--space-3); bottom:calc(var(--space-3) + env(safe-area-inset-bottom, 0px)); z-index:90;
   min-height:44px; padding:0 var(--space-3);
   font:inherit; font-size:0.85rem; color:var(--ash); cursor:pointer;
-  background:rgba(17,13,10,0.9); border:1px solid var(--hair);
+  background:rgba(1,16,34,0.94); border:1px solid var(--hair);
   opacity:0;
   transition:opacity var(--dur-base) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
 }
@@ -266,13 +285,13 @@ section + section{ border-top:1px solid var(--hair); }
   position:fixed; right:var(--space-4); bottom:calc(var(--space-4) + env(safe-area-inset-bottom, 0px)); z-index:150;
   width:min(24rem, calc(100% - 2 * var(--space-4)));
   padding:var(--space-4); text-shadow:none;
-  background:rgba(23,18,14,0.96); border:1px solid var(--hair); border-left:3px solid var(--lamp); border-radius:6px;
+  background:rgba(1,16,34,0.97); border:1px solid var(--hair); border-left:3px solid var(--lamp); border-radius:6px;
   box-shadow:0 18px 40px -18px rgba(0,0,0,0.9);
   opacity:0; transform:translateY(12px);
   transition:opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
 }
 .notice.is-in{ opacity:1; transform:none; }
-.notice-title{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.05rem; color:var(--paper); }
+.notice-title{ font-family:var(--head); font-weight:600; font-size:1.05rem; color:var(--paper); }
 .notice-body{ margin-top:var(--space-2); color:var(--ash); font-size:0.92rem; line-height:1.55; }
 .notice-meta{ margin-top:var(--space-2); color:var(--ash); font-size:0.75rem; line-height:1.6; opacity:0.85; overflow-wrap:anywhere; }
 .notice-actions{ display:flex; flex-wrap:wrap; gap:var(--space-2); margin-top:var(--space-3); }
@@ -283,14 +302,14 @@ section + section{ border-top:1px solid var(--hair); }
 }
 .notice-btn:hover, .notice-btn:focus-visible{ border-color:var(--lamp); color:var(--lamp); }
 .notice-btn-primary{ background:var(--lamp); border-color:var(--lamp); color:var(--void); font-weight:600; }
-.notice-btn-primary:hover, .notice-btn-primary:focus-visible{ background:#ffbb70; border-color:#ffbb70; color:var(--void); }
+.notice-btn-primary:hover, .notice-btn-primary:focus-visible{ background:var(--lamp-hover); border-color:var(--lamp-hover); color:var(--void); }
 
 /* ================= WIDE SCREENS: text on the left, desk on the right ================= */
 @media (min-aspect-ratio:23/20) and (min-width:820px){
   :root{ --gutter:var(--col-left); }
   .veil{
     background:
-      linear-gradient(90deg, rgba(13,10,8,0.74) 0%, rgba(13,10,8,0.52) 26%, rgba(13,10,8,0.12) 46%, rgba(13,10,8,0) 58%),
+      linear-gradient(90deg, rgba(1,16,34,0.74) 0%, rgba(1,16,34,0.52) 26%, rgba(1,16,34,0.12) 46%, rgba(1,16,34,0) 58%),
       radial-gradient(ellipse 95% 90% at 68% 52%, transparent 55%, rgba(0,0,0,0.34) 100%);
   }
   .hero-copy{ margin:0 0 0 var(--col-left); max-width:var(--col-w); padding:var(--space-4) 0 12vh; }
@@ -302,7 +321,13 @@ section + section{ border-top:1px solid var(--hair); }
 /* small phones: tighter buttons so both fit on one row */
 @media (max-width:480px){ .btn{ padding:0 var(--space-4); } }
 /* three nav links plus the name must fit on a 320px screen */
-@media (max-width:380px){ .nav-links{ gap:0; } .nav-links a{ padding:0 6px; } }
+@media (max-width:560px){
+  .site-nav{ padding-inline:var(--space-3); }
+  .brand img{ width:116px; height:23px; }
+  .nav-links{ gap:0; }
+  .nav-links a{ padding:0 8px; font-size:.875rem; }
+}
+@media (max-width:360px){ .brand img{ width:100px; height:20px; } .nav-links a{ padding:0 5px; } }
 
 /* ================= REDUCED MOTION ================= */
 @media (prefers-reduced-motion:reduce){

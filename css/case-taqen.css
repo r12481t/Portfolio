@@ -1,0 +1,82 @@
+/* TAQEN Collection case study: an editorial lookbook.
+   Loaded after css/site.css, on this one page only, and every rule is scoped to .case-taqen so nothing leaks.
+   Same brand (navy, cream, gold, Space Grotesk and IBM Plex Sans). The personality is different on purpose:
+   arch-framed designs you swipe through, hang-tag facts, and a faint eight-point-star tile for the Islamic geometry
+   the brand drew on. */
+
+.case-taqen{
+  --tq-tile:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96' width='96' height='96' fill='none' stroke='%23FEF0D5' stroke-opacity='.05' stroke-width='1.2'%3E%3Crect x='24' y='24' width='48' height='48'/%3E%3Crect x='24' y='24' width='48' height='48' transform='rotate(45 48 48)'/%3E%3C/svg%3E");
+}
+
+/* ---------- hero ---------- */
+.case-taqen .tq-hero{background-image:var(--tq-tile);background-size:96px 96px}
+.case-taqen .tq-hero .mono-label{margin-bottom:var(--s2)}
+.case-taqen .case-head{gap:var(--s2) var(--s3)}
+.case-taqen .case-logo{width:88px;height:88px;border-radius:0}
+
+/* ---------- the lookbook: swipe on phones, three arches side by side on wide screens ---------- */
+.case-taqen .tq-looks{background:var(--cream-2);padding-bottom:var(--s6)}
+.case-taqen .tq-looks-head{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s2)}
+.case-taqen .tq-hint{margin:0;white-space:nowrap;font-family:var(--head);font-weight:600;font-size:.875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.case-taqen .tq-hint span{display:inline-block;margin-left:.25rem}
+.case-taqen .lookbook{
+  --pad:var(--s3);
+  margin:0;padding:var(--s3) var(--pad) var(--s2);
+  display:flex;gap:var(--s3);
+  overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--pad);
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.case-taqen .lookbook::-webkit-scrollbar{display:none}
+.case-taqen .lookbook li{flex:0 0 min(76vw,19rem);scroll-snap-align:start}
+.case-taqen .lookbook li:nth-child(2){margin-top:var(--s4)}
+.case-taqen .lookbook li:nth-child(3){margin-top:var(--s1)}
+.case-taqen .lookbook a{display:block;overflow:hidden;background:var(--white);border:2px solid var(--navy);border-radius:999px 999px var(--radius) var(--radius)}
+.case-taqen .lookbook a:hover{transform:none}
+.case-taqen .lookbook img{width:100%;aspect-ratio:4/5;object-fit:cover;border:0;border-radius:0;transition:transform var(--t-slow) var(--ease-out)}
+.case-taqen .lookbook a:hover img{transform:scale(1.04)}
+.case-taqen .lookbook figcaption{display:flex;gap:.75rem;margin-top:var(--s1);color:var(--ink)}
+.case-taqen .lookbook figcaption b{font-family:var(--head);font-weight:700;color:var(--navy)}
+.case-taqen .tq-count{display:none;align-items:center;gap:var(--s1);margin:var(--s1) var(--s3) 0;font-family:var(--head);font-weight:600;font-size:.9375rem;color:var(--navy)}
+.case-taqen.js .tq-count{display:flex}
+.case-taqen .tq-count i{width:.5rem;height:.5rem;border-radius:50%;background:var(--rule);transition:background-color var(--t-base),width var(--t-base) var(--ease-out)}
+.case-taqen .tq-count i.is-on{width:1.5rem;border-radius:.25rem;background:var(--navy)}
+@media (min-width:52em){
+  .case-taqen .lookbook{max-width:68rem;margin-inline:auto;overflow:visible;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4);padding-inline:var(--s3)}
+  .case-taqen .lookbook li{flex:none}
+  .case-taqen .lookbook li:nth-child(2){margin-top:var(--s6)}
+  .case-taqen .lookbook li:nth-child(3){margin-top:var(--s2)}
+  .case-taqen .tq-hint,.case-taqen.js .tq-count{display:none}
+}
+
+/* ---------- facts as hang-tags ---------- */
+.case-taqen .facts{gap:var(--s2);grid-template-columns:repeat(auto-fit,minmax(10rem,1fr))}
+.case-taqen .facts>div{position:relative;background:var(--white);border:1px solid var(--rule);border-radius:var(--radius);padding:var(--s4) var(--s2) var(--s2)}
+.case-taqen .facts>div::before{content:"";position:absolute;top:.8rem;left:50%;width:.75rem;height:.75rem;margin-left:-.375rem;border-radius:50%;border:2px solid var(--navy);background:var(--cream)}
+
+/* ---------- chapters ---------- */
+.case-taqen{counter-reset:chapter}
+.case-taqen .tq-chapter h2{counter-increment:chapter;display:flex;align-items:baseline;gap:var(--s2)}
+.case-taqen .tq-chapter h2::before{content:counter(chapter,decimal-leading-zero);font-size:.45em;letter-spacing:.08em;color:var(--muted)}
+.case-taqen .band--navy.tq-chapter h2::before{color:var(--gold)}
+.case-taqen .band--navy .spec dt{color:var(--gold)}
+.case-taqen .band--navy .spec dd{color:var(--cream)}
+
+/* what went wrong: four notes in a grid */
+.case-taqen .tq-notes{display:grid;gap:var(--s2);margin:var(--s3) 0 0}
+.case-taqen .tq-notes>div{background:var(--white);border:1px solid var(--rule);border-top:4px solid var(--gold);border-radius:var(--radius);padding:var(--s3)}
+.case-taqen .tq-notes dt{margin:0 0 var(--s1);font-family:var(--head);font-weight:700;font-size:1.25rem;color:var(--navy)}
+.case-taqen .tq-notes dt::before{content:none}
+.case-taqen .tq-notes dd{margin:0}
+@media (min-width:44em){.case-taqen .tq-notes{grid-template-columns:1fr 1fr}}
+
+/* what the team learned: big statements */
+.case-taqen .tq-learned{display:grid;gap:var(--s4);margin:var(--s4) 0 0;padding:0;list-style:none;counter-reset:learn}
+.case-taqen .tq-learned li{counter-increment:learn;border-top:1px solid var(--rule-light);padding-top:var(--s2)}
+.case-taqen .tq-learned li::before{content:counter(learn,decimal-leading-zero);display:block;margin-bottom:var(--s1);font-family:var(--head);font-weight:700;font-size:.9375rem;letter-spacing:.08em;color:var(--gold)}
+.case-taqen .tq-learned h3{font-size:clamp(1.375rem,1.1rem + 1vw,1.875rem);color:var(--cream)}
+.case-taqen .tq-learned p{margin:0;color:var(--cream-2)}
+@media (min-width:52em){.case-taqen .tq-learned{grid-template-columns:repeat(3,1fr);gap:var(--s4)}}
+.case-taqen .tq-skills{margin-top:var(--s6);padding-top:var(--s3);border-top:1px solid var(--rule-light);max-width:var(--measure)}
+.case-taqen .tq-skills h3{font-size:1.125rem;color:var(--gold)}
+
+@media (prefers-reduced-motion:reduce){.case-taqen .lookbook a:hover img{transform:none}.case-taqen .lookbook{scroll-behavior:auto}}

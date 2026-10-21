@@ -267,7 +267,7 @@ function debugReadout(pick) {
   if (!params.has('debug')) return;
   const box = document.createElement('pre');
   box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:9999;margin:0;padding:8px 10px;max-width:92vw;' +
-    'font:12px/1.5 ui-monospace,monospace;color:#f5efe6;background:rgba(13,10,8,.92);border:1px solid #f2a75a;white-space:pre-wrap;pointer-events:none';
+    'font:12px/1.5 ui-monospace,monospace;color:#FFF8E8;background:rgba(1,16,34,.92);border:1px solid #FDC44B;white-space:pre-wrap;pointer-events:none';
   document.body.appendChild(box);
   const saved = () => { try { return localStorage.getItem(KEY) || 'empty'; } catch (e) { return 'unreadable'; } };
   const paint = () => {
@@ -340,7 +340,7 @@ async function start() {
   loadTimer = setTimeout(() => goStatic('slow-load', { limitMs: LIMITS.loadMs }), LIMITS.loadMs);
 
   try {
-    const { initScene } = await import('./scene.js?v=3');   // Three.js only downloads here
+    const { initScene } = await import('./scene.js?v=4');   // Three.js only downloads here
     if (abandoned) return;                                   // gave up while it was still downloading
     setStage('Building the room', 0.6);
     await nextPaint();                                       // let the loading screen repaint before the heavy part
