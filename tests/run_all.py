@@ -3,6 +3,9 @@ Needs: Python 3.8+, `pip install playwright` and `playwright install chromium`. 
 `cd tests && npm install axe-core`; it is skipped with a clear note if axe-core is missing.
 Browser tests run in headless Chromium only. Nothing here tests Safari, Firefox, real phones, screen readers or live delivery of the form."""
 import os, re, subprocess, sys
+# Every step uses the JSON files unless it says otherwise: nothing here may reach a real database, whatever is in .env.local or the shell.
+os.environ['CURIOHATCH_STORE'] = 'json'
+for _k in ('TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN', 'CURIOHATCH_DB'): os.environ.pop(_k, None)
 here = os.path.dirname(os.path.abspath(__file__)); repo = os.path.dirname(here)
 sys.path.insert(0, here)
 import fixture
@@ -11,6 +14,9 @@ steps = [
     ('content and pricing check', [sys.executable, os.path.join(repo, 'tools', 'site.py'), 'check']),
     ('SEO and metadata', [sys.executable, os.path.join(here, 'seo_check.py'), repo]),
     ('admin panel (temp copy)', [sys.executable, os.path.join(here, 'admin_test.py')]),
+    ('database layer (schema, round trips, Turso client, db.py)', [sys.executable, os.path.join(here, 'db_test.py')]),
+    ('live lesson function (byte-for-byte against the Python renderer)', [sys.executable, os.path.join(here, 'function_test.py')]),
+    ('admin panel with the content in a database (temp copy)', [sys.executable, os.path.join(here, 'admin_test.py'), '--database']),
     ('lesson and pricing tooling (temp copy)', [sys.executable, os.path.join(here, 'tools_test.py')]),
     ('interaction, form, pricing', [sys.executable, os.path.join(here, 'interact.py'), repo]),
     ('SEO and metadata with sample lessons published', [sys.executable, os.path.join(here, 'seo_check.py'), sample]),
@@ -21,7 +27,10 @@ steps = [
 ]
 fails = 0
 for name, cmd in steps:
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    env = dict(os.environ)
+    if cmd[-1] == '--database':
+        cmd = cmd[:-1]; env['CURIOHATCH_TEST_DB'] = '1'
+    r = subprocess.run(cmd, capture_output=True, text=True, env=env)
     out = r.stdout + r.stderr
     if 'crawl.py' in cmd[1]:
         import json
@@ -31,6 +40,7 @@ for name, cmd in steps:
             ok = problems == 0
         except Exception: line, ok = out[-200:], False
     elif 'axe-core not installed' in out: line, ok = 'SKIPPED (axe-core not installed)', None
+    elif out.startswith('SKIPPED: Node'): line, ok = 'SKIPPED (Node 18+ not found)', None
     elif 'axe_run' in cmd[1]:
         m = re.search(r'TOTAL violations (\d+)', out); line = f'{m.group(0)}' if m else out[-200:]; ok = bool(m) and m.group(1) == '0'
     elif 'site.py' in cmd[1]:

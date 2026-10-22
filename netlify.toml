@@ -1,0 +1,150 @@
+# Netlify settings. The site has no build step. This file does three things:
+#   1. sends every page that comes from stored records to the live function, which reads the database, so a new lesson, a price
+#      change, a new course or a new case study needs no deploy (docs/database.md, "No deploy for anything that is stored");
+#   2. keeps the hand-made pages (home, services, work, courses and the Learn list) as the frames the function fills in;
+#   3. skips a production deploy when a push changes nothing a visitor can see, because each production deploy costs 15 credits
+#      and the free plan has 300 a month.
+# Nothing here has been run on Netlify yet. Try it on a deploy preview first (preview deploys are free): docs/database.md.
+
+[functions]
+  directory = "netlify/functions"
+
+# The function reads these five pages as the frames it fills in, so they must be served as the plain files and not sent back to
+# the function (that would loop). Rules are read top to bottom and the first match wins, so these come first.
+[[redirects]]
+  from = "/index.html"
+  to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/services/index.html"
+  to = "/services/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/work/index.html"
+  to = "/work/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/courses/index.html"
+  to = "/courses/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/learn/index.html"
+  to = "/learn/index.html"
+  status = 200
+  force = true
+
+# Pages that are mostly hand-written, with one live part (prices, project lists, course list, lesson list). If the database cannot
+# be reached the function sends the page as last deployed.
+[[redirects]]
+  from = "/"
+  to = "/.netlify/functions/learn?view=home"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/services"
+  to = "/.netlify/functions/learn?view=services"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/services/"
+  to = "/.netlify/functions/learn?view=services"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/work"
+  to = "/.netlify/functions/learn?view=work"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/work/"
+  to = "/.netlify/functions/learn?view=work"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/courses"
+  to = "/.netlify/functions/learn?view=courses"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/courses/"
+  to = "/.netlify/functions/learn?view=courses"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/learn"
+  to = "/.netlify/functions/learn?view=index"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/learn/"
+  to = "/.netlify/functions/learn?view=index"
+  status = 200
+  force = true
+
+# Pages made entirely from a record. The /index.html forms are routed too, so a saved copy of a draft in the repository can never
+# be reached by guessing its address.
+[[redirects]]
+  from = "/learn/:slug"
+  to = "/.netlify/functions/learn?view=lesson&slug=:slug"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/learn/:slug/"
+  to = "/.netlify/functions/learn?view=lesson&slug=:slug"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/learn/:slug/index.html"
+  to = "/.netlify/functions/learn?view=lesson&slug=:slug"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/projects/:slug"
+  to = "/.netlify/functions/learn?view=project&slug=:slug"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/projects/:slug/"
+  to = "/.netlify/functions/learn?view=project&slug=:slug"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/projects/:slug/index.html"
+  to = "/.netlify/functions/learn?view=project&slug=:slug"
+  status = 200
+  force = true
+
+# The sitemap lists every published lesson and case study.
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/.netlify/functions/learn?view=sitemap"
+  status = 200
+  force = true
+
+# Skip the deploy when only these changed: notes, tests, local tools, the schema, the example settings, the saved copy of the
+# content (nothing reads it while the site is running), the sitemap, and the saved copies of lesson and case-study pages (the live
+# function serves the real ones). Anything else, including the function itself and every hand-made page, deploys as normal. If
+# either commit is unknown (the very first deploy) or git cannot compare, the command fails, and a failure means "deploy".
+[build]
+  ignore = "test -n \"$CACHED_COMMIT_REF\" && test -n \"$COMMIT_REF\" && git diff --quiet \"$CACHED_COMMIT_REF\" \"$COMMIT_REF\" -- . \":(exclude)docs\" \":(exclude)tests\" \":(exclude)tools\" \":(exclude)db\" \":(exclude)architecture.md\" \":(exclude).env.example\" \":(exclude).gitignore\" \":(exclude)content\" \":(exclude)sitemap.xml\" \":(exclude,glob)learn/*/index.html\" \":(exclude,glob)projects/*/index.html\""

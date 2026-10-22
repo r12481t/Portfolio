@@ -88,6 +88,7 @@ def revert(act):
             os.remove(p)
     for rel in act.modified:
         shutil.copy2(os.path.join(act.dir, 'files', rel), os.path.join(ROOT, rel))
+    restore_database_from_files()
 
 
 def undo_last():
@@ -114,6 +115,7 @@ def undo_last():
             shutil.copy2(os.path.join(BACKUPS, stamp, 'files', rel), os.path.join(ROOT, rel))
         m['undone'] = True
         json.dump(m, open(mp, 'w', encoding='utf-8'))
+        restore_database_from_files()
         return m['name']
     raise Refused('There is nothing to undo.')
 
@@ -139,8 +141,21 @@ def write_bytes(path, data):
     os.replace(tmp, path)
 
 
-def save_json(path, key, items, schema=1):
-    sc.write(path, json.dumps({'schema': schema, key: items}, indent=2, ensure_ascii=False) + '\n')
+def save_json(path, key, items, schema=1, articles=None):
+    try:
+        sc.save_json(path, key, items, schema, articles)
+    except SystemExit as e:
+        raise Refused(str(e))
+
+
+def restore_database_from_files():
+    """After files are put back (undo, or a failed save), make the database match them. The JSON files and the lesson pages
+    are always an exact copy of the database after a successful save, so putting them back and re-importing is a full undo."""
+    if sc.store.active():
+        try:
+            sc.store.replace_all(sc.store.read_files())
+        except (sc.turso.DbError, sc.store.StoreError) as e:
+            raise Refused(f'The files were restored, but the database could not be: {e}. Run python tools/db.py import to copy the files into it.')
 
 
 def run_sync():
@@ -246,7 +261,7 @@ def save_topic(body):
             raise Refused('A published lesson needs a real article. Write it before publishing.')
     with action(('Add lesson ' if create else 'Edit lesson ') + new['title']) as act:
         topics = [new if (t.get('id') == new['id']) else t for t in topics] if not create else topics + [new]
-        save_json(sc.TOPICS_FILE, 'topics', topics)
+        save_json(sc.TOPICS_FILE, 'topics', topics, articles={slug: '\n' + article.strip() + '\n'} if isinstance(article, str) and article.strip() else None)
         try:
             log = run_sync()
             if isinstance(article, str) and article.strip():
@@ -268,6 +283,9 @@ def get_article(slug):
     t = next((t for t in topics if t['slug'] == slug), None)
     if not t:
         raise Refused('No such lesson.')
+    if sc.store.active():
+        body = sc.db_call(sc.store.get_article, slug).strip()
+        return {'html': '' if sc.PLACEHOLDER in body else body}
     page = os.path.join(ROOT, 'learn', slug, 'index.html')
     if not os.path.exists(page):
         return {'html': ''}
@@ -346,7 +364,10 @@ def save_pricing(body):
     if new['terms']['approved'] and not new['terms']['items']:
         raise Refused('Terms cannot be published with no items.')
     with action('Edit packages and prices') as act:
-        sc.write(sc.PRICING_FILE, json.dumps(new, indent=2, ensure_ascii=False) + '\n')
+        try:
+            sc.save_pricing_data(new)
+        except SystemExit as e:
+            raise Refused(str(e))
         try:
             log = run_sync()
         except (SystemExit, Exception) as e:

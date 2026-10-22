@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /tests/
+Disallow: /db/
+Disallow: /netlify/
 Disallow: /tools/
 Disallow: /docs/
 Disallow: /content/

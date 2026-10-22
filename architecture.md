@@ -22,11 +22,18 @@ Portfolio/
 ├── css/case-classly.css    # Classly case study only (scoped to .case-classly): monitor, screen tabs, power-on transition. Loaded after site.css
 ├── js/case-taqen.js        # TAQEN: shows which design you are on while swiping. Optional
 ├── js/case-classly.js      # Classly: turns the five screens into tabs and plays the power-on before the demo opens. Optional
-├── content/                # The only place facts about lessons and courses are written
+├── netlify.toml            # Routes /learn/ and the sitemap to the live function; skips deploys that change nothing visible
+├── netlify/functions/      # learn.mjs and lib/: the live Learn pages, read from the database (docs/database.md)
+├── db/migrations/          # The database schema (Turso / SQLite), one numbered file per change. Readable: 001_init.sql
+├── .env.example            # Placeholders for the two Turso settings. The real file is .env.local (never committed)
+├── content/                # Lessons, courses, projects and prices. With the database off these files are the master; with it on they are an always-current copy (docs/database.md)
 │   ├── learn/topics.json   # One record per YouTube video and its lesson page
 │   ├── courses/courses.json # One record per course (empty until a real course exists)
 │   ├── pricing.json        # Prices, scopes, first-three-client offer switch, unpublished terms draft
 │   └── projects.json       # Work page and home projects, and the case studies made by the admin panel
+├── tools/db.py             # Database tool: status, ping, init, import, export, check, backup (docs/database.md)
+├── tools/store.py          # Data layer: reads and writes lessons, courses, projects and prices in the database, in the same shapes as the JSON files
+├── tools/turso.py          # Tiny database client, no packages: a local SQLite file for practice and tests, Turso over HTTPS for real
 ├── tools/admin.py, tools/admin/   # Local-only admin panel (docs/admin-panel.md): lessons, courses, packages, case studies
 ├── projects/<slug>/        # Case-study pages made by the admin panel (the older ones in projects/taqen, classley and templates are hand-built)
 ├── assets/work/<slug>/     # Screenshots uploaded through the admin panel
@@ -84,7 +91,7 @@ Portfolio/
 | Path | Purpose |
 |---|---|
 | `index.html` | Curiohatch home page, built on `css/site.css`. The old home styles (`index.css`) were no longer linked and were removed; both old files are in the `pre-curiohatch` tag. |
-| `content/learn/topics.json`, `content/courses/courses.json` | The single source for the Learning library, lesson pages, Courses page and sitemap. Edit these, then run `python tools/site.py sync`. How to add a lesson: `docs/adding-a-learning-topic.md`. |
+| `content/learn/topics.json`, `content/courses/courses.json` | The source for the Learning library, lesson pages, Courses page and sitemap while the database is off; a copy of the database while it is on. With the database on, change content through the admin panel, not by hand (`python tools/db.py check` flags a mismatch). Then run `python tools/site.py sync`. How to add a lesson: `docs/adding-a-learning-topic.md`. |
 | `tools/site.py` | Convenience script, not needed to run the site. `chrome` rewrites the header, menu drawer and footer on every Curiohatch page (they live in the script, not in ten files). `sync` writes the lists, lesson-page frames, prices and sitemap. `new` adds a draft topic and refuses near-duplicates. `covered` lists what has already been taught. `check` validates and changes nothing. |
 | `courses/`, `learn/` | Educational area. Not in the header bar, on purpose: the commercial links stay first. They are in the menu drawer and the footer. Nothing is listed until a real video or course exists. |
 | `ruhan/` | Everything that belongs to Ruhan's own portfolio. Named after the person, lowercase. |
@@ -147,7 +154,7 @@ Relative links that are in use (all start from the folder the page is in):
 - Curiohatch pages: no libraries (the menu drawer, reveals, depth and the analytics choice are plain JavaScript in `js/site.js`). Google Analytics 4 (id in the `ANALYTICS` block) is on every page in Google Consent Mode, with storage off until the visitor allows it (`docs/analytics.md`); the privacy page describes it. Cross-page transitions use the browser's own `@view-transition` rule; browsers without it just navigate normally. Two variable WOFF2 fonts (Space Grotesk, IBM Plex Sans) are self-hosted from `assets/fonts/`, so the pages make no third-party requests on load. Only the contact form posts to an outside service. The landing template still loads Google Fonts, and the restaurant template uses system fonts only, because a client owns it. Pictures are WebP with `width` and `height` written on the tag.
 - Contact form: a Netlify Forms form named `inquiry` (`data-netlify`, honeypot `_gotcha`). `js/site.js` posts it, urlencoded, to `/` and shows success only on a success response. The recipient email is set in the Netlify dashboard, not in the code. Delivery is not verified until a real test message arrives: `docs/contact-form.md`. `python tools/site.py check` fails if any `{{` placeholder returns.
 - Reduced motion: the 3D scene still runs but calm; links jump instead of scrolling; the Classly demo button fades. On the Curiohatch pages reduced motion turns off every animation and transition, the drifting backgrounds, the scroll reveals and the page transition; content appears at once and the drawer opens without sliding.
-- Hosting: Netlify (publishes the repository root, no build step). `tests/`, `tools/`, `docs/` and `content/` are therefore public addresses; `robots.txt` asks search engines to skip them. Keep nothing private in them.
+- Hosting: Netlify (publishes the repository root, no build step). `tests/`, `tools/`, `docs/`, `db/` and `content/` are therefore public addresses (the schema is not a secret; the token and the database file never are in the repository, and `python tools/db.py check` fails if one is); `robots.txt` asks search engines to skip them. Keep nothing private in them.
 
 ## CSS ownership (read this before adding a stylesheet)
 
@@ -219,3 +226,28 @@ Prices are published from one file, `content/pricing.json` (Fixes from $49, Land
 - [ ] Add a Pinterest board screenshot to `projects/taqen/img/` and uncomment the figure in `projects/taqen/case-study.html`.
 - [ ] Add Classly screenshots to `projects/classley/img/` and uncomment the figure in `case-study.html`.
 - [ ] Add a short README pointing here.
+
+## Database (Turso), added 2026-10-22
+
+Full guide: `docs/database.md`. The database is the master copy of lessons (with their article text), courses, projects and prices.
+The tools read and write through `tools/store.py`, which keeps the JSON files and lesson pages as an exact, always-current copy (the
+git backup) and makes Undo work by putting the files back and re-importing them. It is off unless `.env.local` has the Turso settings
+(or `CURIOHATCH_DB=file:...` for a practice database), so everything above still works without it.
+
+**Live pages, no deploy for anything stored.** `netlify/functions/learn.mjs` (with `lib/db.mjs`, `lib/content.mjs`, `lib/render.mjs`)
+serves, from the database and cached at the edge for 5 minutes: whole pages for each published lesson and each published case study
+made in the admin panel; the Learn list, courses, work, services and home pages, by reading the hand-written page as a frame and
+swapping in its generated region (LIBRARY/TOPICS, COURSES, PROJECTS, PRICING, PRICING-TEASER, PROJECTS-HOME); and the sitemap.
+`netlify.toml` routes those addresses to it with forcing rewrites (the five frames are served as plain files first, because the
+function reads them), routes the `/index.html` forms too so a saved draft can never be reached by guessing, and skips a production
+deploy when a push changes only docs, tests, tools, the schema, `content/`, the saved lesson and case-study copies or the sitemap.
+If the database cannot be reached a hand-written page is sent as last deployed; a record-only page gets an uncached 503. The function
+holds a **read-only** token as a Netlify environment variable and sends only SELECTs. `render.mjs` is a port of `render_topic` and
+`render_project_page` (`absolute=True`), `render_library`, `render_courses`, `render_work`, `render_home_projects`,
+`render_pricing`, `render_pricing_teaser` and `render_sitemap` in `tools/site.py`; if you change one, change its twin;
+`tests/function_test.py` fails if they differ. The static pages are still generated (a copy for git, local preview and tests); in
+production the function wins. What is still a normal deploy: the hand-written words, design and code of every page.
+
+Every test step runs with the database forced off except the ones that test it (`tests/db_test.py`, the admin suite with
+`CURIOHATCH_TEST_DB=1`, and `tests/function_test.py`, all against throwaway local databases and a fake Turso server). Not yet proven
+against real Turso or real Netlify: `python tools/db.py ping` first, then a deploy preview (docs/database.md).

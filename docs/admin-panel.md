@@ -18,7 +18,7 @@ On a phone, run it in Termux, open the address in the phone's browser, and keep 
 
 | Can | Cannot |
 |---|---|
-| Add, edit and archive lessons, courses and case studies | Publish. It never runs git, pushes or deploys. You commit and deploy yourself, after a preview |
+| Add, edit and archive lessons, courses and case studies | Publish. It never runs git, pushes or deploys. You commit and deploy yourself, after a preview. **Exception once the live lesson function is on (docs/database.md): a published lesson is live without any deploy.** |
 | Edit prices, the first-three-client switch and the terms (publish or hide) | Delete a lesson, course or project outright. It archives (the page stays reachable). Remove a package with its button |
 | Upload case-study screenshots (PNG, JPG or WebP, up to 3 MB) | Edit the other pages (home text, About, Services text, FAQ). Those are still edited in the HTML files |
 | Run the site check and the SEO check, rebuild pages, show your changed files | Manage leads or customers (that is a separate CRM and has not been built) |

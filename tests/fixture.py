@@ -4,7 +4,7 @@ import json, os, re, shutil, subprocess, sys, tempfile
 
 def build(repo):
     dest = tempfile.mkdtemp(prefix='curiohatch-fixture-')
-    shutil.copytree(repo, os.path.join(dest, 'site'), ignore=shutil.ignore_patterns('.git', 'node_modules', '__pycache__'))
+    shutil.copytree(repo, os.path.join(dest, 'site'), ignore=shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.env.local', '.env.*.local', '*.db', '.db-backups'))
     site = os.path.join(dest, 'site')
     topics = {"schema": 1, "topics": [
         {"id": "t001", "slug": "what-is-a-variable", "status": "published", "title": "What is a variable?", "summary": "A variable is a named box for a value. This lesson shows how to create one, change it and use it.", "category": "JavaScript basics", "subtopics": ["declaring", "assigning"], "tags": ["variables", "beginner"], "concepts": ["let and const", "assignment"], "videoId": "dQw4w9WgXcQ", "publishedAt": "2026-10-20", "updatedAt": "2026-10-22", "prerequisites": [], "related": ["t002", "t003"], "courses": ["c001"]},

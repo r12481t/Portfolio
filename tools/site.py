@@ -18,6 +18,11 @@ would otherwise have to be typed in several places. Here each fact is written on
 """
 import argparse, datetime, difflib, glob, html, json, os, re, sys
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+if HERE not in sys.path:
+    sys.path.insert(0, HERE)
+import store, turso   # the database layer (tools/store.py). Only used when the database is switched on; see docs/database.md
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 DOMAIN = 'https://curiohatch.studio'
 YOUTUBE = 'https://www.youtube.com/@curiohatchstudio'
@@ -61,7 +66,30 @@ def esc(s):
     return html.escape(str(s), quote=True)
 
 
+def db_call(fn, *args, **kw):
+    """Run a database call and turn a database failure into a plain message the tools already know how to show."""
+    try:
+        return fn(*args, **kw)
+    except (turso.DbError, store.StoreError) as e:
+        raise SystemExit(f'The database did not accept that: {e}')
+
+
+def ensure_db_ready():
+    """Refuse to build pages from a database that is not set up, or that is empty while the content files are not. Without
+    this, switching the database on before importing would replace every lesson with a blank page."""
+    if not store.active():
+        return
+    if not db_call(store.schema_ready):
+        raise SystemExit('The database has no tables yet. Run: python tools/db.py init')
+    if db_call(store.is_empty):
+        files = store.read_files()
+        if files['topics'] or files['courses'] or files['projects'] or files['pricing']:
+            raise SystemExit('The database is empty, but content/ has records. Run: python tools/db.py import   (it copies the files into the database)')
+
+
 def load_json(path, key):
+    if store.active() and key in ('topics', 'courses', 'projects'):
+        return db_call(store.load, key)
     if not os.path.exists(path):
         return []
     with open(path, encoding='utf-8') as f:
@@ -336,9 +364,12 @@ def replace_between(text, tag, body):
 ARTICLE_RE = re.compile(r'<!-- ARTICLE:START -->(.*?)<!-- ARTICLE:END -->', re.S)
 
 
-def render_topic(t, topics, courses, article):
-    P = '../../'
-    rel = f'learn/{t["slug"]}/index.html'
+def render_topic(t, topics, courses, article, absolute=False):
+    """The whole lesson page. `absolute=True` gives the same page with every link starting from the site root, which is how
+    the live lesson function (netlify/functions) serves it from any address; tests compare the two renderers with it."""
+    P = '/' if absolute else '../../'
+    up = '/learn/' if absolute else '../'
+    rel = '404.html' if absolute else f'learn/{t["slug"]}/index.html'
     by_id = {x['id']: x for x in topics}
     published = t.get('status') == 'published'
     canonical = f'{DOMAIN}/learn/{t["slug"]}/'
@@ -352,7 +383,7 @@ def render_topic(t, topics, courses, article):
                 'mainEntityOfPage': canonical, 'publisher': {'@type': 'Organization', 'name': 'Curiohatch'}}
         ld = '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace('</', '<\\/') + '</script>\n'
     cat = t.get('category')
-    crumbs = f'<p class="crumbs"><a href="../">Learning library</a>' + (f' &middot; {esc(cat)}' if cat else '') + '</p>'
+    crumbs = f'<p class="crumbs"><a href="{up}">Learning library</a>' + (f' &middot; {esc(cat)}' if cat else '') + '</p>'
     meta = ''
     if published:
         meta = f'<p class="topic-meta">Published <time datetime="{t["publishedAt"]}">{pretty_date(t["publishedAt"])}</time>'
@@ -371,15 +402,15 @@ def render_topic(t, topics, courses, article):
         side.append('<h2>Concepts covered</h2>\n<ul>' + ''.join(f'<li>{esc(c)}</li>' for c in t['concepts']) + '</ul>')
     pre = [by_id[i] for i in t.get('prerequisites', []) if i in by_id and by_id[i].get('status') == 'published']
     if pre:
-        side.append('<h2>Before you start</h2>\n<ul>' + ''.join(f'<li><a href="../{esc(x["slug"])}/">{esc(x["title"])}</a></li>' for x in pre) + '</ul>')
+        side.append('<h2>Before you start</h2>\n<ul>' + ''.join(f'<li><a href="{up}{esc(x["slug"])}/">{esc(x["title"])}</a></li>' for x in pre) + '</ul>')
     rel_topics = [by_id[i] for i in t.get('related', []) if i in by_id and by_id[i].get('status') == 'published']
     if rel_topics:
-        side.append('<h2>Related topics</h2>\n<ul>' + ''.join(f'<li><a href="../{esc(x["slug"])}/">{esc(x["title"])}</a></li>' for x in rel_topics) + '</ul>')
+        side.append('<h2>Related topics</h2>\n<ul>' + ''.join(f'<li><a href="{up}{esc(x["slug"])}/">{esc(x["title"])}</a></li>' for x in rel_topics) + '</ul>')
     cmap = {c['id']: c for c in courses}
     live = [cmap[i] for i in t.get('courses', []) if i in cmap and cmap[i].get('status') == 'available' and cmap[i].get('url')]
     if live:
         side.append('<h2>Part of a course</h2>\n<ul>' + ''.join(f'<li><a href="{esc(c["url"])}">{esc(c["title"])}</a></li>' for c in live) + '</ul>')
-    side.append(f'<h2>More from Curiohatch</h2>\n<ul><li><a href="../">All topics</a></li><li><a href="{P}courses/">Courses</a></li><li><a href="{YOUTUBE}">YouTube channel</a></li></ul>')
+    side.append(f'<h2>More from Curiohatch</h2>\n<ul><li><a href="{up}">All topics</a></li><li><a href="{P}courses/">Courses</a></li><li><a href="{YOUTUBE}">YouTube channel</a></li></ul>')
     side_html = '\n'.join(side)
     og_title = esc(f'{title} | Curiohatch Learn')
     return f'''<!doctype html>
@@ -451,6 +482,9 @@ def placeholder_article(title):
 
 
 def current_article(t):
+    if store.active():
+        stored = db_call(store.get_article, t['slug'])
+        return stored if stored.strip() else placeholder_article(t['title'])
     path = os.path.join(ROOT, 'learn', t['slug'], 'index.html')
     if os.path.exists(path):
         m = ARTICLE_RE.search(read(path))
@@ -537,9 +571,11 @@ def render_home_projects(projects):
     return '\n      '.join(render_plate(p, '', home=True) for p in feat)
 
 
-def render_project_page(p):
-    P = '../../'
-    rel = f'projects/{p["slug"]}/index.html'
+def render_project_page(p, absolute=False):
+    """A case-study page made from a record. `absolute=True` is the same page with every link starting from the site root,
+    which is how the live function (netlify/functions) serves it; tests compare the two renderers with it."""
+    P = '/' if absolute else '../../'
+    rel = '404.html' if absolute else f'projects/{p["slug"]}/index.html'
     published = p.get('status') == 'published'
     canonical = f'{DOMAIN}/projects/{p["slug"]}/'
     title, summary = p['title'], p.get('summary', '')
@@ -625,8 +661,27 @@ def render_project_page(p):
 
 # ---------------------------------------------------------------- pricing
 def load_pricing():
+    if store.active():
+        pr = db_call(store.load, 'pricing')
+        if pr is None:
+            raise SystemExit('The database has no packages and prices yet. Run: python tools/db.py import')
+        return pr
     with open(PRICING_FILE, encoding='utf-8') as f:
         return json.load(f)
+
+
+def save_json(path, key, items, schema=1, articles=None):
+    """Write a content collection. With the database on, the database is written first (all or nothing), then the JSON file,
+    which stays as an always-current copy that is committed with the site as a backup."""
+    if store.active():
+        db_call(store.save, key, items, articles=articles)
+    write(path, json.dumps({'schema': schema, key: items}, indent=2, ensure_ascii=False) + '\n')
+
+
+def save_pricing_data(data):
+    if store.active():
+        db_call(store.save, 'pricing', data)
+    write(PRICING_FILE, json.dumps(data, indent=2, ensure_ascii=False) + '\n')
 
 
 def money(n):
@@ -700,6 +755,7 @@ def expected_files():
 
 def _expected_files():
     """Everything generated, as {relative path: text}. Used by sync (write) and check (compare)."""
+    ensure_db_ready()
     topics = load_json(TOPICS_FILE, 'topics')
     courses = load_json(COURSES_FILE, 'courses')
     out = {}
@@ -802,7 +858,7 @@ def cmd_new(slug, title, allow_similar=False):
     rec = {'id': new_id, 'slug': slug, 'status': 'drafted', 'title': title, 'summary': '', 'category': '', 'subtopics': [],
            'tags': [], 'concepts': [], 'videoId': '', 'publishedAt': '', 'updatedAt': '', 'prerequisites': [], 'related': [], 'courses': []}
     topics.append(rec)
-    write(TOPICS_FILE, json.dumps({'schema': 1, 'topics': topics}, indent=2, ensure_ascii=False) + '\n')
+    save_json(TOPICS_FILE, 'topics', topics)
     cmd_sync()
     print(f'added {new_id} ({slug}) as a draft and created learn/{slug}/index.html. Fill in the record in content/learn/topics.json, write the article, then run: python tools/site.py sync')
 

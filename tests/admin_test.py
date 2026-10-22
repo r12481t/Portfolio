@@ -3,8 +3,18 @@ Covers: localhost-only and token security, every save path (lessons, courses, pa
 that come out, refusal of bad data, undo, and the browser interface (phone-sized). The real repo is never changed."""
 import base64, http.client, json, os, re, shutil, struct, subprocess, sys, tempfile, time, zlib
 repo = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Content comes from the JSON files unless CURIOHATCH_TEST_DB=1, which runs the very same checks with the content in a throwaway
+# local database instead (the database layer's home-made undo, article storage and file mirror all get exercised). Never a real database.
+if os.environ.get('CURIOHATCH_TEST_DB'):
+    os.environ.pop('CURIOHATCH_STORE', None); os.environ['CURIOHATCH_DB'] = 'file:content/test.db'
+else:
+    os.environ['CURIOHATCH_STORE'] = 'json'
+for _k in ('TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN'): os.environ.pop(_k, None)
 tmp = tempfile.mkdtemp(prefix='curiohatch-admin-'); site = os.path.join(tmp, 'site')
-shutil.copytree(repo, site, ignore=shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.admin-backups'))
+shutil.copytree(repo, site, ignore=shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.admin-backups', '.env.local', '.env.*.local', '*.db', '.db-backups'))
+if os.environ.get('CURIOHATCH_TEST_DB'):
+    for _a in ('init', 'import'):
+        subprocess.run([sys.executable, os.path.join(site, 'tools', 'db.py'), _a], check=True, capture_output=True, cwd=site)
 PORT = 8791
 proc = subprocess.Popen([sys.executable, os.path.join(site, 'tools', 'admin.py'), '--port', str(PORT)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 res = []
@@ -188,6 +198,12 @@ try:
         check('UI: undo removes the lesson just added', not os.path.exists(os.path.join(site, 'learn/loops-in-plain-words/index.html')) and not os.path.exists(os.path.join(site, 'learn/loops-in-plain-words')))
         check('UI: no console or page errors', not errs, str(errs)[:200])
         b.close()
+    if os.environ.get('CURIOHATCH_TEST_DB'):
+        # After every save, undo and refusal above, the database and the file copy must still be identical.
+        out = subprocess.run([sys.executable, os.path.join(site, 'tools', 'db.py'), 'check'], capture_output=True, text=True, cwd=site)
+        check('database mode: after all of that, the database and the files still agree exactly', 'PROBLEM' not in out.stdout and 'differ' not in out.stdout and '0 problem(s)' in out.stdout, out.stdout[-300:])
+        out = subprocess.run([sys.executable, os.path.join(site, 'tools', 'db.py'), 'status'], capture_output=True, text=True, cwd=site)
+        check('database mode: the content really is in the database', 'local file test.db' in out.stdout and re.search(r'projects\s+4', out.stdout), out.stdout[-300:])
 finally:
     proc.terminate()
     try: proc.wait(timeout=5)

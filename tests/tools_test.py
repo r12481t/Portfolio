@@ -1,9 +1,11 @@
 """Tests the lesson tooling (tools/site.py) in a throwaway copy: drafts stay private, duplicates are caught, published
 lessons need real data. Usage: python tests/tools_test.py"""
 import json, os, shutil, subprocess, sys, tempfile
+os.environ['CURIOHATCH_STORE'] = 'json'   # these tools tests are about the JSON files; the database has its own tests (db_test.py)
+for _k in ('TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN', 'CURIOHATCH_DB'): os.environ.pop(_k, None)
 repo = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 tmp = tempfile.mkdtemp(prefix='curiohatch-tools-'); site = os.path.join(tmp, 'site')
-shutil.copytree(repo, site, ignore=shutil.ignore_patterns('.git', 'node_modules', '__pycache__'))
+shutil.copytree(repo, site, ignore=shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.env.local', '.env.*.local', '*.db', '.db-backups'))
 tool = [sys.executable, os.path.join(site, 'tools', 'site.py')]
 res = []
 def run(*a): return subprocess.run(tool + list(a), capture_output=True, text=True)
