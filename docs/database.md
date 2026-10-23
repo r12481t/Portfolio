@@ -127,6 +127,33 @@ per 10,000 requests. Netlify has changed these once already; check netlify.com/p
 second, so as a ballpark 10,000 *uncached* renders would be about 6 credits (assuming 1 GB for 0.2 s each), against 15 for a single
 deploy. Because pages are shared for 5 minutes, far fewer than that actually run.
 
+### If pages 404 or look wrong after a deploy
+
+First, get the site back (this takes about a minute and needs no code):
+
+1. In Netlify open the site, then **Deploys**, pick the last deploy that worked, and choose **Publish deploy**. Visitors get that
+   version again straight away. It should not run a new build, so it should not use deploy credits (confirm on Netlify's usage page).
+2. Netlify then **locks auto publishing**, so new pushes will not go live by themselves. When the fix is ready, press
+   **Start auto publishing** on the Deploys page.
+
+Then find the cause. Each of these is one address typed into a browser:
+
+| Open this | You see | It means |
+|---|---|---|
+| `https://your-site/.netlify/functions/learn?view=sitemap` | an XML list of addresses | the function is deployed and can read the database |
+| the same | Netlify's own "not found" page | the function was not deployed. Check that `netlify/functions/` is in the pushed files and that `netlify.toml` is at the top of the repo |
+| the same | "This page is not available right now" | the function runs but cannot read the database: check `TURSO_DATABASE_URL` and `TURSO_READ_TOKEN` in Netlify (a typo, the wrong token, or the admin token on a different database) |
+| `https://your-site/services/` | the Services page | working |
+| the same | the site's 404 page | the function ran but did not recognise the address; open the browser's developer tools, Network tab, click the page, and read the response headers `X-Curiohatch-View` and `X-Curiohatch-Route` |
+
+`X-Curiohatch-View` says which page the function thought it was serving (`none` means it did not recognise the address) and
+`X-Curiohatch-Route` says whether it learned that from the address (`path`) or from the `?view=` in `netlify.toml` (`query`).
+A page with neither header is a plain file, not the function's. Netlify's Functions log for `learn` has the rest.
+
+**What this fixed once:** the first release of the live function looked only for `?view=` and gave a 404 for every address that
+arrived without it. It now works the address out for itself, whichever way Netlify shows it. If the same symptom ever returns,
+send me the two headers and the log line.
+
 ### If something goes wrong
 
 - **Turso is unreachable:** hand-written pages are sent as last deployed. A lesson or case study that is not in Netlify's cache gets a

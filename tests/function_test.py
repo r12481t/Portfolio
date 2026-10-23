@@ -208,6 +208,27 @@ try:
     check('still only SELECT statements across every view', allsql and all(x.lstrip().upper().startswith('SELECT') for x in allsql))
     check('every request still carries only the read token, in the header', all(e['auth'] == 'Bearer read-token' for e in FAKE['log']) and all('read-token' not in json.dumps(e['body']) for e in FAKE['log']))
 
+    # ---------- the visitor's own address, with no ?view= (how Netlify may show the function a rewritten request)
+    pairs = [('/', 'view=home'), ('/index.html', 'view=home'), ('/services/', 'view=services'), ('/services', 'view=services'), ('/work/', 'view=work'), ('/work', 'view=work'),
+             ('/courses/', 'view=courses'), ('/courses', 'view=courses'), ('/learn/', 'view=index'), ('/learn', 'view=index'), ('/sitemap.xml', 'view=sitemap'),
+             ('/learn/what-is-a-variable/', 'view=lesson&slug=what-is-a-variable'), ('/learn/what-is-a-variable', 'view=lesson&slug=what-is-a-variable'),
+             ('/learn/what-is-a-variable/index.html', 'view=lesson&slug=what-is-a-variable'),
+             ('/projects/cafe-site/', 'view=project&slug=cafe-site'), ('/projects/cafe-site', 'view=project&slug=cafe-site'), ('/projects/cafe-site/index.html', 'view=project&slug=cafe-site')]
+    by_path = {r['query']: r for r in run_node(origin, ['PATH:' + a for a, _ in pairs], env)}
+    by_query = {r['query']: r for r in run_node(origin, sorted({b for _, b in pairs}), env)}
+    for addr, q in pairs:
+        a, b = by_path['PATH:' + addr], by_query[q]
+        check(f'{addr} asked for plainly (no ?view=) gives exactly the same page', a['status'] == 200 and a['body'] == b['body'] and a['headers']['x-curiohatch-route'] == 'path' and a['headers']['x-curiohatch-view'] == q.split('&')[0].split('=')[1], f'{a["status"]} {a["headers"].get("x-curiohatch-view")}')
+    check('the ?view= form still reports how it was reached', all(r['headers']['x-curiohatch-route'] == 'query' for r in by_query.values()))
+    before = len(FAKE['log'])
+    nope = ['/learn/a-draft-lesson/', '/learn/old-archived/', '/learn/Bad_Slug/', '/learn/%E0%A4%A/', '/learn/..%2F..%2Fetc/', '/projects/unpublished-one/', '/projects/archived-one/', '/projects/sample-template/',
+            '/nothing-here/', '/learn/a/b/', '/projects/', '/.netlify/functions/learn']
+    out = run_node(origin, ['PATH:' + a for a in nope], env)
+    check('a draft, an archived record, a bad or unknown address asked for plainly is a 404 that is never cached', all(o['status'] == 404 and o['headers']['netlify-cdn-cache-control'] == 'no-store' for o in out), str([o['status'] for o in out]))
+    check('no draft or archived text leaks through the plain-address route', all('Secret draft' not in o['body'] and 'Draft case study' not in o['body'] and 'Archived' not in o['body'] for o in out))
+    asked = len(FAKE['log']) - before
+    check('only the valid-looking unpublished addresses reached the database', asked == 5, f'{asked} requests')
+
     # ---------- a database problem never breaks a hand-made page
     dead_env = dict(env, TURSO_DATABASE_URL='http://127.0.0.1:1')
     import urllib.request

@@ -238,7 +238,7 @@ git backup) and makes Undo work by putting the files back and re-importing them.
 serves, from the database and cached at the edge for 5 minutes: whole pages for each published lesson and each published case study
 made in the admin panel; the Learn list, courses, work, services and home pages, by reading the hand-written page as a frame and
 swapping in its generated region (LIBRARY/TOPICS, COURSES, PROJECTS, PRICING, PRICING-TEASER, PROJECTS-HOME); and the sitemap.
-`netlify.toml` routes those addresses to it with forcing rewrites (the five frames are served as plain files first, because the
+The function works out which page was asked for from `?view=` if present and otherwise from the path (Netlify may show it either), and tags every response with `X-Curiohatch-View` and `X-Curiohatch-Route`. `netlify.toml` routes those addresses to it with forcing rewrites (the five frames are served as plain files first, because the
 function reads them), routes the `/index.html` forms too so a saved draft can never be reached by guessing, and skips a production
 deploy when a push changes only docs, tests, tools, the schema, `content/`, the saved lesson and case-study copies or the sitemap.
 If the database cannot be reached a hand-written page is sent as last deployed; a record-only page gets an uncached 503. The function

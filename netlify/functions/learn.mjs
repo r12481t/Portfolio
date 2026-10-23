@@ -72,15 +72,44 @@ async function shellView(origin, path, build) {
   }
 }
 
+// Which page was asked for. Netlify may show a function either the address the visitor typed or the rewritten address with the
+// ?view= value from netlify.toml on it, and which one it shows is not something to depend on. So: if ?view= is there, use it,
+// and otherwise work it out from the path. Both give the same answer.
+const FIXED = { '/': 'home', '/services': 'services', '/work': 'work', '/courses': 'courses', '/learn': 'index', '/sitemap.xml': 'sitemap' };
+function routeOf(url) {
+  const asked = url.searchParams.get('view');
+  if (asked) return { view: asked, slug: url.searchParams.get('slug') || '', how: 'query' };
+  let path = url.pathname.replace(/\/index\.html$/, '/');
+  if (path.length > 1) path = path.replace(/\/+$/, '');
+  if (FIXED[path]) return { view: FIXED[path], slug: '', how: 'path' };
+  const m = path.match(/^\/(learn|projects)\/([^/]+)$/);
+  if (m) {
+    let slug = '';
+    try { slug = decodeURIComponent(m[2]); } catch { /* a malformed address is simply not found */ }
+    return { view: m[1] === 'learn' ? 'lesson' : 'project', slug, how: 'path' };
+  }
+  return { view: null, slug: '', how: 'none' };
+}
+
+// Two headers say which page the function thought it was serving and how it knew. They make a wrong page easy to diagnose
+// (browser developer tools, Network tab) and tell a function-made page from a plain file.
 export default async (request) => {
+  const url = new URL(request.url);
+  const route = routeOf(url);
+  const res = await serve(request, url, route);
+  res.headers.set('X-Curiohatch-View', route.view || 'none');
+  res.headers.set('X-Curiohatch-Route', route.how);
+  return res;
+};
+
+async function serve(request, url, route) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD', ...SECURITY } });
   }
-  const url = new URL(request.url);
   const origin = process.env.SITE_ORIGIN || url.origin;
-  const view = url.searchParams.get('view');
+  const view = route.view;
   try {
-    const slugOf = () => (url.searchParams.get('slug') || '').replace(/\/+$/, '');
+    const slugOf = () => route.slug.replace(/\/+$/, '');
     const badSlug = (slug) => slug.length > 80 || !SLUG_RE.test(slug);
     if (view === 'lesson') {
       const slug = slugOf();

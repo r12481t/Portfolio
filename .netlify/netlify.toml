@@ -1,0 +1,281 @@
+functionsDirectory = "/storage/emulated/0/F/portfolio/netlify/functions"
+functionsDirectoryOrigin = "config"
+redirectsOrigin = "config"
+plugins = []
+headers = []
+
+[build]
+publish = "/storage/emulated/0/F/portfolio"
+publishOrigin = "default"
+ignore = "test -n \"$CACHED_COMMIT_REF\" && test -n \"$COMMIT_REF\" && git diff --quiet \"$CACHED_COMMIT_REF\" \"$COMMIT_REF\" -- . \":(exclude)docs\" \":(exclude)tests\" \":(exclude)tools\" \":(exclude)db\" \":(exclude)architecture.md\" \":(exclude).env.example\" \":(exclude).gitignore\" \":(exclude)content\" \":(exclude)sitemap.xml\" \":(exclude,glob)learn/*/index.html\" \":(exclude,glob)projects/*/index.html\""
+functions = "/storage/emulated/0/F/portfolio/netlify/functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[functions]
+
+[functions."*"]
+
+[[redirects]]
+from = "/index.html"
+to = "/index.html"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/services/index.html"
+to = "/services/index.html"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/work/index.html"
+to = "/work/index.html"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/courses/index.html"
+to = "/courses/index.html"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/learn/index.html"
+to = "/learn/index.html"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/"
+to = "/.netlify/functions/learn?view=home"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/services"
+to = "/.netlify/functions/learn?view=services"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/services/"
+to = "/.netlify/functions/learn?view=services"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/work"
+to = "/.netlify/functions/learn?view=work"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/work/"
+to = "/.netlify/functions/learn?view=work"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/courses"
+to = "/.netlify/functions/learn?view=courses"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/courses/"
+to = "/.netlify/functions/learn?view=courses"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/learn"
+to = "/.netlify/functions/learn?view=index"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/learn/"
+to = "/.netlify/functions/learn?view=index"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/learn/:slug"
+to = "/.netlify/functions/learn?view=lesson&slug=:slug"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/learn/:slug/"
+to = "/.netlify/functions/learn?view=lesson&slug=:slug"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/learn/:slug/index.html"
+to = "/.netlify/functions/learn?view=lesson&slug=:slug"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/projects/:slug"
+to = "/.netlify/functions/learn?view=project&slug=:slug"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/projects/:slug/"
+to = "/.netlify/functions/learn?view=project&slug=:slug"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/projects/:slug/index.html"
+to = "/.netlify/functions/learn?view=project&slug=:slug"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/sitemap.xml"
+to = "/.netlify/functions/learn?view=sitemap"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
