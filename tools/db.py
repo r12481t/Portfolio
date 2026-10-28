@@ -120,8 +120,14 @@ def cmd_export(args):
 
 def cmd_inquiries(args):
     conn = need_database()
-    if not store.schema_ready(conn):
-        raise SystemExit('The tables are not up to date. Run: python tools/db.py init')
+    if not any(name == 'inquiries' for _, name, _ in store.migration_files()):
+        raise SystemExit('db/migrations/002_inquiries.sql is missing from this folder. Copy it from the zip, then run: python tools/db.py init')
+    try:
+        conn.query('SELECT 1 FROM inquiries LIMIT 1')
+    except turso.DbError as e:
+        if 'no such table' in str(e):
+            raise SystemExit(f'The inquiries table does not exist in this database ({describe()}). Run: python tools/db.py init')
+        raise
     if args.action == 'mark':
         if len(args.rest) != 2 or not args.rest[0].isdigit() or args.rest[1] not in ('new', 'replied', 'archived'):
             raise SystemExit('Usage: python tools/db.py inquiries mark ID new|replied|archived')

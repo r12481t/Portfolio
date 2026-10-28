@@ -5,7 +5,7 @@ The Curiohatch studio site (home, services, builds, work, about, contact, privac
 - **Repo:** https://github.com/r12481t/Portfolio (public, branch: `main`)
 - **Live:** https://curiohatch.studio on Netlify, connected to GitHub with automatic deploys. On 2026-10-17 it served the first redesign (the milestone 1 site, checked by loading the home page, the portfolio and a case study); the milestone 2 work (prices, Netlify form) is not published until the owner approves a merge. Netlify serves pages without `.html` (for example `/projects/taqen/case-study`), so canonical and sitemap addresses for those pages are written that way. The old GitHub Pages address (https://r12481t.github.io/Portfolio/) is no longer the home. The domain is used in canonical, social-preview and sitemap addresses. Release steps and rollback: `docs/release-workflow.md`.
 - **Naming note:** the repo/root name is the only thing likely to change. Don't hardcode it in paths (see Conventions).
-- **Host-agnostic, with one exception:** nothing depends on a particular host except the contact form, which uses Netlify Forms (`docs/contact-form.md`). Moving host means replacing the form handler.
+- **Host-agnostic, with one exception:** nothing depends on a particular host except the two small functions in `netlify/functions/` (the live page function and the contact-form receiver), which use Netlify's function format. Moving host means porting those two files.
 - **Last updated:** 2026-10-17 (pricing, Netlify form, tests and release docs added). Earlier: 2026-10-15, checked against the uploaded zip (no `.git` inside) after the experience redesign; before that, a clone of `main` (last commit 2026-10-11, 47 files).
 
 ## Folder tree
@@ -51,7 +51,7 @@ Portfolio/
 ├── services/builds/index.html  # How website builds work
 ├── work/index.html         # Personal and team projects, sample template
 ├── about/index.html        # Who runs Curiohatch, how projects are handled
-├── contact/index.html      # Inquiry form (Netlify Forms). contact/thanks/ is the branded page a no-JavaScript send lands on
+├── contact/index.html      # Inquiry form, posted to netlify/functions/inquiry.mjs. contact/thanks/ is the branded page a no-JavaScript send lands on
 ├── privacy/index.html      # Privacy policy
 ├── ruhan/                  # Ruhan's own portfolio
 │   ├── Ruhan-portfolio.html
@@ -152,7 +152,7 @@ Relative links that are in use (all start from the folder the page is in):
   - `?motion=full` pretends the system's "reduce motion" setting is off (also works on the Classly page). On Windows that setting is Settings > Accessibility > Visual effects > Animation effects.
   - `?capture` / `?capture=mobile` downloads the still picture for the fallback.
 - Curiohatch pages: no libraries (the menu drawer, reveals, depth and the analytics choice are plain JavaScript in `js/site.js`). Google Analytics 4 (id in the `ANALYTICS` block) is on every page in Google Consent Mode, with storage off until the visitor allows it (`docs/analytics.md`); the privacy page describes it. Cross-page transitions use the browser's own `@view-transition` rule; browsers without it just navigate normally. Two variable WOFF2 fonts (Space Grotesk, IBM Plex Sans) are self-hosted from `assets/fonts/`, so the pages make no third-party requests on load. Only the contact form posts to an outside service. The landing template still loads Google Fonts, and the restaurant template uses system fonts only, because a client owns it. Pictures are WebP with `width` and `height` written on the tag.
-- Contact form: a Netlify Forms form named `inquiry` (`data-netlify`, honeypot `_gotcha`). `js/site.js` posts it, urlencoded, to `/` and shows success only on a success response. The recipient email is set in the Netlify dashboard, not in the code. Delivery is not verified until a real test message arrives: `docs/contact-form.md`. `python tools/site.py check` fails if any `{{` placeholder returns.
+- Contact form: `js/site.js` posts it as JSON to `/.netlify/functions/inquiry` (`netlify/functions/inquiry.mjs`), which checks it and writes one row to the `inquiries` table of the Turso database (`db/migrations/002_inquiries.sql`). "Sent" is shown only after that function answers `{ok:true}`, which it does only after the database confirms the row. Nothing sends an email: read the inbox with `python tools/db.py inquiries list`. Delivery is not verified until a real test message appears there: `docs/contact-form.md`. `python tools/site.py check` fails if any `{{` placeholder returns.
 - Reduced motion: the 3D scene still runs but calm; links jump instead of scrolling; the Classly demo button fades. On the Curiohatch pages reduced motion turns off every animation and transition, the drifting backgrounds, the scroll reveals and the page transition; content appears at once and the drawer opens without sliding.
 - Hosting: Netlify (publishes the repository root, no build step). `tests/`, `tools/`, `docs/`, `db/` and `content/` are therefore public addresses (the schema is not a secret; the token and the database file never are in the repository, and `python tools/db.py check` fails if one is); `robots.txt` asks search engines to skip them. Keep nothing private in them.
 

@@ -131,7 +131,9 @@ export default async (request, context, deps = {}) => {
     if (result.errors) return wantsJson ? json(400, { ok: false, errors: result.errors, message: 'Please fix the highlighted fields.' }) : page(400, 'Your message was not sent', Object.values(result.errors).join(' '));
 
     if (!env.TURSO_DATABASE_URL || !env.TURSO_WRITE_TOKEN) {
-      console.error('inquiry: TURSO_DATABASE_URL or TURSO_WRITE_TOKEN is not set in Netlify.');
+      const missing = ['TURSO_DATABASE_URL', 'TURSO_WRITE_TOKEN'].filter((k) => !env[k]);
+      const seen = Object.keys(env).filter((k) => k.startsWith('TURSO_') || k === 'SITE_ORIGIN');   // names only, never values
+      console.error('inquiry: not set in Netlify for this function and deploy context: ' + missing.join(', ') + '. Names this function can see: ' + (seen.join(', ') || 'none') + '.');
       return fail(503, 'The message could not be saved right now. Please try again in a few minutes.');
     }
     let stored;
