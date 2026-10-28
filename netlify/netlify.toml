@@ -1,0 +1,14 @@
+[build]
+  functions = "netlify/functions"
+
+# Runs every day at 02:00 UTC
+# Adds new Printify products into the Google Sheet
+[[scheduled-functions]]
+  name = "fill"
+  cron = "0 2 * * *"
+
+# Runs every day at 02:30 UTC
+# Fills prices (Printify cost + shipping) for all sheet rows
+[[scheduled-functions]]
+  name = "fill-prices"
+  cron = "30 2 * * *"

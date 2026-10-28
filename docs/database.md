@@ -215,10 +215,11 @@ a migration that has already been applied.
 
 ## What is deliberately not here yet
 
-- **No write-side API.** The only live code reads published records. Nothing a visitor does can change the database, and nothing
-  stores what a visitor sends (the contact form still goes to Netlify Forms, as before). The places where more would genuinely help are the contact form (to store inquiries for a client
-  list) and anything with accounts or progress (a Learn "mark as done", Classly beyond its browser-only demo). Each would be a
-  small Netlify Function with its own token, and, for anything private, its own database. Tell me which you want first.
+- **No write path to the content database.** The only live code that touches it reads published records. Nothing a visitor does can
+  change the lessons, courses, projects or prices. The one thing a visitor can write is a contact-form message: one fixed INSERT into the `inquiries` table, made by its own
+  function with its own write token (`docs/contact-form.md`). Anything else that stores what a
+  visitor does (accounts, a Learn "mark as done", Classly beyond its browser-only demo) would be another small Netlify Function
+  with its own token, and, for anything private, its own database. Tell me which you want first.
 - **The Classly demo still stores nothing outside the visitor's browser.** That is part of what it promises.
 - **Page text is not in the database.** The words and layout of the home, services, about, contact and privacy pages, and the two
   hand-built case studies (TAQEN and Classly), are HTML files. Moving all of that into records would turn the site into a content

@@ -234,7 +234,7 @@ try:
     # the whole data layer over the wire
     FAKE['path'] = os.path.join(tmp, 'remote2.db')
     store.reset(); store._conn[('test', None)] = turso.Remote(url, FAKE['token']); store.settings = lambda: ('test', None)
-    check('the tables can be created over the wire', store.migrate() == ['001_init'] and store.schema_ready())
+    check('the tables can be created over the wire', store.migrate() == ['001_init', '002_inquiries'] and store.schema_ready())
     store.replace_all(copy.deepcopy(SNAP))
     over = json.dumps(store.snapshot(), sort_keys=True)
     same = load_snapshot(local()) and json.dumps(store.snapshot(), sort_keys=True)

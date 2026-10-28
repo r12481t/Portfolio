@@ -8,6 +8,8 @@
     python tools/db.py export          Write the database back out to the content files and rebuild the pages.
     python tools/db.py check           Compare the database with the content files and look for mistakes (changes nothing).
     python tools/db.py backup          Save everything in the database to a dated JSON file in .db-backups/.
+    python tools/db.py inquiries list|mark   The contact-form inbox (a table in this database; docs/contact-form.md):
+                                       list shows new messages (--all, --limit N), mark ID replied|archived|new.
 
 Switching it on: put these two lines in a file called .env.local at the top of the repo (it is never committed):
     TURSO_DATABASE_URL=libsql://your-database-your-org.turso.io
@@ -116,6 +118,33 @@ def cmd_export(args):
     return 0
 
 
+def cmd_inquiries(args):
+    conn = need_database()
+    if not store.schema_ready(conn):
+        raise SystemExit('The tables are not up to date. Run: python tools/db.py init')
+    if args.action == 'mark':
+        if len(args.rest) != 2 or not args.rest[0].isdigit() or args.rest[1] not in ('new', 'replied', 'archived'):
+            raise SystemExit('Usage: python tools/db.py inquiries mark ID new|replied|archived')
+        if not conn.query('SELECT id FROM inquiries WHERE id = ?', [int(args.rest[0])]):
+            raise SystemExit(f'There is no inquiry number {args.rest[0]}.')
+        conn.query('UPDATE inquiries SET status = ? WHERE id = ?', [args.rest[1], int(args.rest[0])])
+        print(f'Inquiry {args.rest[0]} is now marked {args.rest[1]}.')
+        return 0
+    where = '' if args.all else "WHERE status = 'new'"
+    rows = conn.query(f'SELECT * FROM inquiries {where} ORDER BY id DESC LIMIT ?', [args.limit])
+    if not rows:
+        print('No inquiries.' if args.all else 'No new inquiries. (--all shows replied and archived ones too.)')
+        return 0
+    for r in rows:
+        print(f"#{r['id']}  {r['created_at']}  [{r['status']}]  {r['inquiry_type']}")
+        print(f"    {r['name']} <{r['email']}>" + (f"   site: {r['website']}" if r['website'] else ''))
+        extra = ', '.join(x for x in (r['business_type'], r['location']) if x)
+        if extra: print('    ' + extra)
+        if r['message']: print('    ' + r['message'][:600].replace('\n', '\n    '))
+        print()
+    return 0
+
+
 def cmd_backup(args):
     need_database()
     os.makedirs(BACKUPS, exist_ok=True)
@@ -217,6 +246,12 @@ def main():
         p.set_defaults(fn=fn)
         if name == 'import':
             p.add_argument('--yes', action='store_true', help='replace what the database already holds')
+    pi = sub.add_parser('inquiries', help='the contact-form inbox')
+    pi.add_argument('action', choices=['list', 'mark'])
+    pi.add_argument('rest', nargs='*')
+    pi.add_argument('--all', action='store_true', help='include replied and archived inquiries')
+    pi.add_argument('--limit', type=int, default=20)
+    pi.set_defaults(fn=cmd_inquiries)
     args = ap.parse_args()
     try:
         return args.fn(args)

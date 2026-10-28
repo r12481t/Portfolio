@@ -42,7 +42,7 @@ def serve(FAKE):
                     cur = con.execute(st['sql'], [dec(a) for a in st.get('args', [])])
                     cols = [{'name': d[0], 'decltype': None} for d in (cur.description or [])]
                     rows = [[enc(v) for v in row] for row in cur.fetchall()] if cur.description else []
-                    results.append({'type': 'ok', 'response': {'type': 'execute', 'result': {'cols': cols, 'rows': rows, 'affected_row_count': 0, 'last_insert_rowid': None}}})
+                    results.append({'type': 'ok', 'response': {'type': 'execute', 'result': {'cols': cols, 'rows': rows, 'affected_row_count': (0 if cur.description else max(cur.rowcount, 0)), 'last_insert_rowid': None}}})
                 except sqlite3.Error as e:
                     results.append({'type': 'error', 'error': {'message': str(e), 'code': 'SQLITE_ERROR'}})
             new = None

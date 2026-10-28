@@ -1008,11 +1008,13 @@ def collect_issues():
         txt = read(os.path.join(ROOT, rel))
         txt = re.sub(r'<!-- PRICING(-TEASER)?:START -->.*?<!-- PRICING(-TEASER)?:END -->', '', txt, flags=re.S)
         if re.search(r'\$\s?\d', txt): problems.append(f'{rel}: a price is written by hand outside the generated pricing blocks; move it into content/pricing.json')
-    # contact form must be a real Netlify form
+    # the contact form must post to the inquiry function (which stores the message in the inquiries database)
     contact = read(os.path.join(ROOT, 'contact', 'index.html'))
-    for need in ('data-netlify="true"', 'name="inquiry"', 'netlify-honeypot="_gotcha"', 'method="POST"'):
+    for need in ('name="inquiry"', 'action="/.netlify/functions/inquiry"', 'method="POST"', 'name="_gotcha"'):
         if need not in contact: problems.append(f'contact form is missing {need}')
-    warnings.append('contact form: delivery is NOT verified by this check. After deploying a preview, send a real test message and confirm it arrives (docs/launch-checklist.md).')
+    if 'data-netlify' in contact: problems.append('contact form still carries data-netlify; the form is handled by netlify/functions/inquiry.mjs now')
+    if not os.path.exists(os.path.join(ROOT, 'netlify', 'functions', 'inquiry.mjs')): problems.append('netlify/functions/inquiry.mjs is missing')
+    warnings.append('contact form: delivery is NOT verified by this check. After deploying a preview, send a real test message and confirm the row appears (python tools/db.py inquiries list; docs/launch-checklist.md).')
     left = 0
     for dirpath, _, files in os.walk(ROOT):
         if '.git' in dirpath.split(os.sep) or 'tools' in dirpath.split(os.sep): continue

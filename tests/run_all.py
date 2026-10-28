@@ -16,6 +16,7 @@ steps = [
     ('admin panel (temp copy)', [sys.executable, os.path.join(here, 'admin_test.py')]),
     ('database layer (schema, round trips, Turso client, db.py)', [sys.executable, os.path.join(here, 'db_test.py')]),
     ('live lesson function (byte-for-byte against the Python renderer)', [sys.executable, os.path.join(here, 'function_test.py')]),
+    ('contact function (stores to a fake inquiries database, refuses bad input)', [sys.executable, os.path.join(here, 'inquiry_test.py')]),
     ('admin panel with the content in a database (temp copy)', [sys.executable, os.path.join(here, 'admin_test.py'), '--database']),
     ('lesson and pricing tooling (temp copy)', [sys.executable, os.path.join(here, 'tools_test.py')]),
     ('interaction, form, pricing', [sys.executable, os.path.join(here, 'interact.py'), repo]),

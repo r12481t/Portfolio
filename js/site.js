@@ -363,15 +363,32 @@
 
       e.preventDefault();
       button.disabled = true; form.setAttribute('aria-busy', 'true'); say('Sending...', '');
-      // Netlify Forms: a urlencoded POST to the site root that names the form. Anything other than a success
-      // response (for example a local test server, or a form Netlify has not registered) shows the failure message.
-      var body = new URLSearchParams(new FormData(form));
-      body.set('form-name', 'inquiry');
-      fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() })
+      // The message goes to the site's own inquiry function, which stores it in a database. "Sent" is shown only when the
+      // function answers {ok:true}, which it does only after the database confirms the row. Anything else (a local test server,
+      // a database that is down, too many messages) shows a failure message.
+      var data = {};
+      new FormData(form).forEach(function (value, key) { data[key] = value; });
+      fetch('/.netlify/functions/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
         .then(function (r) {
-          if (!r.ok) throw new Error('bad response');
-          form.reset(); syncUrlRule();
-          say('Thank you. Your message was sent. We will reply by email.', 'ok');
+          return r.json().then(function (j) { return { status: r.status, body: j }; }, function () { return { status: r.status, body: null }; });
+        })
+        .then(function (a) {
+          if (a.status === 200 && a.body && a.body.ok === true) {
+            form.reset(); syncUrlRule();
+            say('Thank you. Your message was sent. We will reply by email.', 'ok');
+            return;
+          }
+          if (a.status === 400 && a.body && a.body.errors) {
+            var first = null;
+            ['name', 'email', 'website'].forEach(function (k) {
+              if (a.body.errors[k]) { fieldError(form.elements[k], a.body.errors[k]); first = first || form.elements[k]; }
+            });
+            say('Please fix the highlighted fields.', 'error');
+            if (first) first.focus();
+            return;
+          }
+          if (a.status === 429) { say('Too many messages were sent from this address recently, so this one was not sent. Please try again in an hour.', 'error'); return; }
+          throw new Error('not stored');
         })
         .catch(function () {
           say('Something went wrong and your message may not have been sent. Please try again in a few minutes.', 'error');

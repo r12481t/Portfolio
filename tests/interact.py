@@ -110,13 +110,13 @@ with sync_playwright() as p:
         if o[1]=='none' or o[2]=='0px': bad.append(o[0])
     check('first 12 tab stops all show a focus outline',not bad,str(bad))
     ctx.close()
-    # ---------- contact form states (Netlify Forms client behaviour; real delivery cannot be tested here)
+    # ---------- contact form states (client behaviour against a mocked inquiry function; real delivery cannot be tested here)
     def fill_valid(pg):
         pg.fill('[name=name]','Test'); pg.fill('[name=email]','a@b.co'); pg.fill('[name=website]','example.com')
     ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page(); pg.goto(base+'contact/?type=audit'); pg.wait_for_timeout(300)
     check('?type=audit preselects the audit option',pg.eval_on_selector('#inquiry-form [name=inquiry_type]','e=>e.value')=='audit')
-    check('form is marked for Netlify (data-netlify, name, honeypot, POST)',pg.evaluate("(()=>{const f=document.getElementById('inquiry-form');return f.hasAttribute('data-netlify')&&f.getAttribute('name')==='inquiry'&&f.getAttribute('netlify-honeypot')==='_gotcha'&&f.method==='post'})()"))
-    check('form posts natively to the branded thank-you page when JavaScript is off',pg.evaluate("document.getElementById('inquiry-form').getAttribute('action')")=='/contact/thanks/' and os.path.exists(os.path.join(repo,'contact','thanks','index.html')))
+    check('form is set up for the inquiry function (name, POST, honeypot field, no Netlify Forms attributes)',pg.evaluate("(()=>{const f=document.getElementById('inquiry-form');return !f.hasAttribute('data-netlify')&&!f.hasAttribute('netlify-honeypot')&&f.getAttribute('name')==='inquiry'&&f.method==='post'&&!!f.querySelector('[name=_gotcha]')})()"))
+    check('with JavaScript off the form posts natively to the inquiry function, which sends the visitor on to the thank-you page',pg.evaluate("document.getElementById('inquiry-form').getAttribute('action')")=='/.netlify/functions/inquiry' and os.path.exists(os.path.join(repo,'contact','thanks','index.html')))
     check('form fields are general (type of business, location), not trade-specific',pg.locator('[name=business_type]').count()==1 and pg.locator('[name=location]').count()==1 and pg.locator('[name=trade]').count()==0 and 'plumb' not in pg.inner_text('form').lower())
     pg.click('#inquiry-form button[type=submit]'); pg.wait_for_timeout(200)
     check('empty submit shows errors and focuses first field',pg.evaluate("document.activeElement.name")=='name' and 'fix' in pg.inner_text('#form-status').lower())
@@ -127,19 +127,45 @@ with sync_playwright() as p:
     ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page(); posts=[]
     def ok(route):
         r=route.request
-        if r.method=='POST': posts.append((r.url,r.post_data or '',r.headers)); route.fulfill(status=200,body='ok')
+        if r.method=='POST': posts.append((r.url,r.post_data or '',r.headers)); route.fulfill(status=200,content_type='application/json',body='{"ok":true}')
         else: route.continue_()
     pg.route('**/*',ok); pg.goto(base+'contact/?type=audit'); pg.wait_for_timeout(300); fill_valid(pg); pg.click('#inquiry-form button[type=submit]'); pg.wait_for_timeout(500)
     check('2xx response shows the success message','your message was sent' in pg.inner_text('#form-status').lower())
     body=posts[0][1] if posts else ''
-    check('POST goes to the site root, urlencoded, names the form',bool(posts) and posts[0][0]==base and 'application/x-www-form-urlencoded' in posts[0][2].get('content-type','') and 'form-name=inquiry' in body,str(posts[:1])[:160])
-    check('POST carries the fields and an empty honeypot','inquiry_type=audit' in body and 'email=a%40b.co' in body and '_gotcha=' in body and 'website=https%3A%2F%2Fexample.com' in body)
+    try: sent=json.loads(body)
+    except Exception: sent={}
+    check('POST goes to the inquiry function as JSON',bool(posts) and posts[0][0]==base+'.netlify/functions/inquiry' and 'application/json' in posts[0][2].get('content-type',''),str(posts[:1])[:160])
+    check('POST carries the fields and an empty honeypot',sent.get('inquiry_type')=='audit' and sent.get('email')=='a@b.co' and sent.get('name')=='Test' and sent.get('_gotcha')=='' and sent.get('website')=='https://example.com' and 'form-name' not in sent,body[:200])
     ctx.close()
     ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page(); posts=[]
     pg.route('**/*',lambda route: (posts.append(1),route.fulfill(status=404,body='no')) if route.request.method=='POST' else route.continue_())
     pg.goto(base+'contact/'); pg.wait_for_timeout(300); fill_valid(pg); pg.click('#inquiry-form button[type=submit]'); pg.wait_for_timeout(500)
     st=pg.inner_text('#form-status').lower()
     check('404 (form not registered) shows the failure message',('may not have been sent' in st) and ('thank you' not in st),st)
+    ctx.close()
+    for label,status,ctype,payload,expect_ok,expect_text in (
+        ('a 200 whose body is not {ok:true} (for example a rewritten page) is not a success',200,'text/html','<html>page</html>',False,'may not have been sent'),
+        ('a 200 that says ok:false is not a success',200,'application/json','{"ok":false}',False,'may not have been sent'),
+        ('503 (database down) shows the failure message',503,'application/json','{"ok":false,"message":"x"}',False,'may not have been sent'),
+        ('429 (too many messages) says so and does not claim success',429,'application/json','{"ok":false}',False,'too many messages'),
+        ('405 (the old rewrite problem) shows the failure message',405,'text/plain','Method not allowed',False,'may not have been sent')):
+        ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page()
+        def answer(st,ct,pl):
+            return lambda route: route.fulfill(status=st,content_type=ct,body=pl) if route.request.method=='POST' else route.continue_()
+        pg.route('**/*',answer(status,ctype,payload))
+        pg.goto(base+'contact/'); pg.wait_for_timeout(300); fill_valid(pg); pg.click('#inquiry-form button[type=submit]'); pg.wait_for_timeout(500)
+        st=pg.inner_text('#form-status').lower()
+        check(label,(expect_text in st) and ('message was sent' not in st) and pg.input_value('[name=email]')=='a@b.co',st)
+        ctx.close()
+    ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page()
+    pg.route('**/*',lambda route: route.fulfill(status=400,content_type='application/json',body='{"ok":false,"errors":{"email":"Enter an email address we can reply to."}}') if route.request.method=='POST' else route.continue_())
+    pg.goto(base+'contact/'); pg.wait_for_timeout(300); fill_valid(pg); pg.click('#inquiry-form button[type=submit]'); pg.wait_for_timeout(500)
+    check('a 400 with field messages shows them next to the field',pg.inner_text('#email-error')!='' and 'fix' in pg.inner_text('#form-status').lower())
+    ctx.close()
+    ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page()
+    pg.route('**/*',lambda route: route.fulfill(status=200,content_type='application/json',body='{"ok":true}') if route.request.method=='POST' else route.continue_())
+    pg.goto(base+'contact/'); pg.wait_for_timeout(300); fill_valid(pg); pg.click('#inquiry-form button[type=submit]'); pg.wait_for_timeout(500)
+    check('after a confirmed send the form is cleared',pg.input_value('[name=name]')=='' and pg.input_value('[name=email]')=='')
     ctx.close()
     ctx=b.new_context(viewport={'width':390,'height':800}); pg=ctx.new_page(); posts=[]
     pg.route('**/*',lambda route: (posts.append(1),route.fulfill(status=200,body='ok')) if route.request.method=='POST' else route.continue_())
